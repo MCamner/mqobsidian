@@ -15,9 +15,11 @@ owner:
 # Summary: {{title}}
 
 ## Purpose
+
 Kort, strukturerad sammanfattning av rådata så att resten av vaulten slipper läsa allt från början.
 
 ## Source context
+
 - Källa:
 - Typ av källa:
 - Datum:
@@ -25,34 +27,42 @@ Kort, strukturerad sammanfattning av rådata så att resten av vaulten slipper l
 - Scope:
 
 ## Executive summary
+
 Skriv 5–10 rader med det viktigaste först.
 
 ## Key findings
-- 
-- 
-- 
+
+-
+-
+-
 
 ## Impacted components
-- 
-- 
-- 
+
+-
+-
+-
 
 ## Risks / constraints
-- 
-- 
+
+-
+-
 
 ## Open questions
-- 
-- 
+
+-
+-
 
 ## Recommended next actions
-1. 
-2. 
-3. 
+
+1.
+2.
+3.
 
 ## Related notes
+
 - [[index]]
-- 
+-
 
 ## Raw references
-- 
+
+-

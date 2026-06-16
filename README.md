@@ -53,6 +53,39 @@ The next layer for `mqobsidian` is context compression: short, durable context
 packs that replace broad repo or vault reads when a task only needs a focused
 slice of MQ knowledge.
 
+## Token reduction layer
+
+`mqobsidian` is designed to reduce repeated token usage in Codex and Claude Code
+by turning durable MQ-stack memory into small, task-specific context packs.
+
+Instead of asking an AI agent to read full READMEs, long docs, old reviews, or
+the entire vault, the MQ stack provides:
+
+```text
+task
+  -> memory query
+  -> relevant context cards
+  -> context-pack.v1
+  -> Codex / Claude Code
+```
+
+Target outputs:
+
+```text
+AGENTS.md
+CLAUDE.md
+.mq/context/repo-card.md
+.mq/context/current-blockers.md
+.mq/context/integration-map.md
+.mq/context/task-pack.md
+```
+
+This makes `mqobsidian` the MQ-stack context compressor, while `mq-agent`
+orchestrates query, selection, export, and validation. The first runnable piece
+is [scripts/generate-context-pack.py](scripts/generate-context-pack.py), which
+emits a [context-pack.v1](schemas/context-pack.v1.json) for a single task. See
+[docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md) for the plan.
+
 ## What belongs here
 
 Safe to publish:
@@ -87,7 +120,7 @@ scripts/    validation, context-pack generation, and safety checks
 
 ## Current focus
 
-The first public-safe scope is:
+Current public-safe scope:
 
 * explain the memory model
 * define portable schemas
