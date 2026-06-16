@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mqobsidian endpoint-truth.v1",
+  "type": "object",
+  "required": ["schema", "provider", "created_at", "summary"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "endpoint-truth.v1" },
+    "provider": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "summary": { "type": "string" },
+    "checks": { "type": "object" }
+  }
+}

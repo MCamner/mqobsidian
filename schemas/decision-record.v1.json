@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mqobsidian decision-record.v1",
+  "type": "object",
+  "required": ["schema", "decision_id", "created_at", "title", "status"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "decision-record.v1" },
+    "decision_id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "title": { "type": "string" },
+    "status": { "type": "string" }
+  }
+}

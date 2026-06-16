@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mqobsidian repo-review.v1",
+  "type": "object",
+  "required": ["schema", "repo", "created_at", "summary"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "repo-review.v1" },
+    "repo": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "summary": { "type": "string" },
+    "findings": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  }
+}

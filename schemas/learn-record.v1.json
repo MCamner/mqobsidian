@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mqobsidian learn-record.v1",
+  "type": "object",
+  "required": ["schema", "pattern_name", "created_at", "summary"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "learn-record.v1" },
+    "pattern_name": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "summary": { "type": "string" },
+    "recommended_action": { "type": "string" }
+  }
+}
