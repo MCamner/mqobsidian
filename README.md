@@ -55,36 +55,26 @@ slice of MQ knowledge.
 
 ## Token reduction layer
 
-`mqobsidian` is designed to reduce repeated token usage in Codex and Claude Code
-by turning durable MQ-stack memory into small, task-specific context packs.
-
-Instead of asking an AI agent to read full READMEs, long docs, old reviews, or
-the entire vault, the MQ stack provides:
+`mqobsidian` reduces repeated Codex and Claude Code context by turning durable
+MQ-stack memory into small, task-specific context packs:
 
 ```text
-task
-  -> memory query
-  -> relevant context cards
-  -> context-pack.v1
-  -> Codex / Claude Code
+task -> memory query -> context-pack.v1 -> Codex / Claude Code
 ```
 
-Target outputs:
+Next milestone: `v0.2.0 — Token Reduction MVP`, not the whole roadmap at
+once. Generate one useful pack for one real MQ task and prove the agent reads
+less.
 
-```text
-AGENTS.md
-CLAUDE.md
-.mq/context/repo-card.md
-.mq/context/current-blockers.md
-.mq/context/integration-map.md
-.mq/context/task-pack.md
+```bash
+python3 scripts/generate-context-pack.py \
+  --task "fix mq-mcp brain writer paths" \
+  --repo mq-mcp \
+  --target codex \
+  --out .mq/context/task-pack.md
 ```
 
-This makes `mqobsidian` the MQ-stack context compressor, while `mq-agent`
-orchestrates query, selection, export, and validation. The first runnable piece
-is [scripts/generate-context-pack.py](scripts/generate-context-pack.py), which
-emits a [context-pack.v1](schemas/context-pack.v1.json) for a single task. See
-[docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md) for the plan.
+See [docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md).
 
 ## What belongs here
 

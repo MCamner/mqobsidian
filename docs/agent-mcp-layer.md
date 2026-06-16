@@ -17,7 +17,7 @@ How Claude Code and Codex are wired to this vault and the MQ stack. The vault is
 | --- | --- | --- |
 | Stored knowledge | `systems/`, `summaries/`, `learn/`, `research/`, `templates/` | The vault itself |
 | Project rules | `AGENTS.md` (Codex), `CLAUDE.md` (Claude) | Read order, output rules, failure rule |
-| Reusable method | `.agents/skills/` (Codex), `.claude/skills/` (Claude) | **Generated** — see below |
+| Reusable method | `.codex/skills/` and `.agents/skills/` (Codex), `.claude/skills/` (Claude) | **Generated** — see below |
 | Live operation | MCP server `mq-mcp` | `.mcp.json` (Claude), `.codex/config.toml` (Codex) |
 
 ## Skills — single source, two targets
@@ -29,7 +29,8 @@ skills-src/<name>/SKILL.md      ← edit here
         │  tools/build-skills.sh
         ▼
 .claude/skills/<name>/SKILL.md   (Claude)
-.agents/skills/<name>/SKILL.md   (Codex)
+.codex/skills/<name>/SKILL.md    (Codex project-local)
+.agents/skills/<name>/SKILL.md   (legacy Codex compatibility)
 ```
 
 Run after any change:
@@ -38,7 +39,7 @@ Run after any change:
 ./tools/build-skills.sh
 ```
 
-The build wipes and regenerates both skill trees, so renamed/removed skills don't linger.
+The build wipes and regenerates all generated skill trees, so renamed/removed skills do not linger.
 
 ### Current skills
 

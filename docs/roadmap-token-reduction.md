@@ -162,6 +162,62 @@ Initial budgets:
 This phase prevents `AGENTS.md` and `CLAUDE.md` from becoming large permanent
 token sinks.
 
+## v0.2.0 - Token Reduction MVP
+
+**Goal**
+
+Prove the roadmap with one real MQ task before building every later phase.
+
+The MVP flow is:
+
+```text
+mqobsidian memory/context
+  -> context-pack.v1
+  -> .mq/context/task-pack.md
+  -> Codex / Claude Code reads only the pack
+```
+
+**MVP task**
+
+Use one concrete task first:
+
+```text
+fix mq-mcp brain writer paths
+```
+
+The generated pack should identify only the relevant repos, docs, and boundaries:
+
+* `mq-mcp` brain writer paths
+* `mq-agent` vault structure docs
+* `mqobsidian` schemas and context-pack format
+
+It should explicitly avoid broad first reads such as full READMEs, old release
+notes, and unrelated UMS docs.
+
+**Command**
+
+```bash
+python3 scripts/generate-context-pack.py \
+  --task "fix mq-mcp brain writer paths" \
+  --repo mq-mcp \
+  --target codex \
+  --out .mq/context/task-pack.md
+```
+
+**Acceptance criteria**
+
+* [ ] The generator can write `.mq/context/task-pack.md`.
+* [ ] The pack stays under the task-pack line budget.
+* [ ] The pack lists relevant repos, files, decisions, notes, and do-not-read
+  surfaces.
+* [ ] A Codex or Claude Code run can use the pack without broad repo reads.
+* [ ] Manual notes compare behavior with and without the pack.
+
+**Do not build yet**
+
+Do not attempt all repo cards, generated `AGENTS.md`, or full `mq-agent`
+integration until this single-task loop proves useful.
+
 ## Phase 2 - MQ Context Cards
 
 **Version target**

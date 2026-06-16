@@ -19,6 +19,58 @@ def bullet_lines(items: list[str], fallback: str) -> str:
     return "\n".join(f"* {item}" for item in items)
 
 
+def apply_task_defaults(
+    task: str,
+    repo: str | None,
+    relevant_repos: list[str],
+    relevant_files: list[str],
+    relevant_decisions: list[str],
+    notes: list[str],
+    do_not_read: list[str],
+) -> tuple[list[str], list[str], list[str], list[str], list[str]]:
+    """Add the first MVP defaults while keeping explicit CLI input additive."""
+    task_key = task.lower()
+    repo_key = (repo or "").lower()
+
+    if repo and repo not in relevant_repos:
+        relevant_repos.insert(0, repo)
+
+    if "brain writer paths" in task_key and repo_key in {"", "mq-mcp"}:
+        for item in ["mq-mcp", "mqobsidian", "mq-agent"]:
+            if item not in relevant_repos:
+                relevant_repos.append(item)
+        for item in [
+            "mqobsidian/schemas/repo-review.v1.json",
+            "mqobsidian/schemas/learn-record.v1.json",
+            "mq-agent/docs/VAULT_STRUCTURE.md",
+            "mq-mcp runtime memory writer tools",
+        ]:
+            if item not in relevant_files:
+                relevant_files.append(item)
+        for item in [
+            "Durable review memory should use `memory/reviews/`.",
+            "Durable learn memory should use `memory/learn/`.",
+            "Legacy root-level `reviews/` and `learn/` paths should remain readable during migration.",
+        ]:
+            if item not in relevant_decisions:
+                relevant_decisions.append(item)
+        for item in [
+            "Keep mq-mcp as the writer/runtime owner.",
+            "Use mqobsidian schemas as durable-memory contracts, not live execution logic.",
+        ]:
+            if item not in notes:
+                notes.append(item)
+        for item in [
+            "full README files",
+            "old release notes",
+            "unrelated UMS docs",
+        ]:
+            if item not in do_not_read:
+                do_not_read.append(item)
+
+    return relevant_repos, relevant_files, relevant_decisions, notes, do_not_read
+
+
 def render_pack(
     task: str,
     target: str,
@@ -67,16 +119,17 @@ summary: {summary}
 
 def parse_args() -> ArgumentParser:
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument("task", help="Short task description")
+    parser.add_argument("task", nargs="?", help="Short task description")
+    parser.add_argument("--task", dest="task_option", help="Short task description")
     parser.add_argument("--target", choices=["codex", "claude", "both"], default="both")
     parser.add_argument("--repo", help="Primary repo name for the task")
-    parser.add_argument("--summary", required=True, help="One-line summary of the minimum context needed")
+    parser.add_argument("--summary", help="One-line summary of the minimum context needed")
     parser.add_argument("--relevant-repo", action="append", default=[], help="Relevant repo name")
     parser.add_argument("--relevant-file", action="append", default=[], help="Relevant file or doc path")
     parser.add_argument("--relevant-decision", action="append", default=[], help="Relevant decision or rule")
     parser.add_argument("--note", action="append", default=[], help="Short operator note")
     parser.add_argument("--do-not-read", action="append", default=[], help="Files or surfaces to avoid at first")
-    parser.add_argument("--output", type=Path, help="Write the pack to this path instead of stdout")
+    parser.add_argument("--output", "--out", type=Path, help="Write the pack to this path instead of stdout")
     return parser
 
 
@@ -84,16 +137,31 @@ def main() -> int:
     parser = parse_args()
     args = parser.parse_args()
 
-    content = render_pack(
-        task=args.task,
-        target=args.target,
+    task = args.task_option or args.task
+    if not task:
+        parser.error("provide a task argument or --task")
+    summary = args.summary or f"Minimum context needed for: {task}"
+
+    relevant_repos, relevant_files, relevant_decisions, notes, do_not_read = apply_task_defaults(
+        task=task,
         repo=args.repo,
-        summary=args.summary,
         relevant_repos=args.relevant_repo,
         relevant_files=args.relevant_file,
         relevant_decisions=args.relevant_decision,
         notes=args.note,
         do_not_read=args.do_not_read,
+    )
+
+    content = render_pack(
+        task=task,
+        target=args.target,
+        repo=args.repo,
+        summary=summary,
+        relevant_repos=relevant_repos,
+        relevant_files=relevant_files,
+        relevant_decisions=relevant_decisions,
+        notes=notes,
+        do_not_read=do_not_read,
     )
 
     if args.output:
