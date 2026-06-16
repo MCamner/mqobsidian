@@ -25,6 +25,18 @@ The responsibility split is:
 * `mq-ums` provides enterprise endpoint signals
 * `mqobsidian` keeps the durable memory layer
 
+## Example memory flow
+
+```text
+mq-agent stack truth-export
+  -> schemas/stack-truth.v1.json
+  -> templates/stack-truth.md
+  -> mqobsidian memory note
+```
+
+This repo defines the contracts and note formats used when MQ tools export
+durable architecture memory.
+
 ## What belongs here
 
 Safe to publish:
