@@ -23,3 +23,6 @@ jobs:
 
       - name: Check for sensitive content
         run: python3 scripts/check-sensitive-content.py
+
+      - name: Check token budget
+        run: python3 scripts/check-token-budget.py

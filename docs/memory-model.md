@@ -14,6 +14,8 @@ This repo models MQ memory as structured, reviewable layers.
   Current or recent stack status snapshots.
 * `endpoint-truth.v1`
   Enterprise endpoint or UMS readiness snapshots.
+* `context-pack.v1`
+  Small task-scoped context bundles for Codex and Claude Code.
 
 ## Rules
 
@@ -22,6 +24,8 @@ This repo models MQ memory as structured, reviewable layers.
 * Sensitive details must be removed or replaced before export.
 * Runtime truth stays in the source repo or tool; mqobsidian stores the memory
   of it, not ownership of it.
+* Root instruction files should stay short; deeper context belongs in reusable
+  cards or task packs.
 
 ## Lifecycle
 

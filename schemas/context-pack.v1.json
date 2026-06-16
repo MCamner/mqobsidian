@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "context-pack.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "target",
+    "task",
+    "generated_at",
+    "summary"
+  ],
+  "properties": {
+    "schema": {
+      "const": "context-pack.v1"
+    },
+    "target": {
+      "type": "string",
+      "enum": ["codex", "claude", "both"]
+    },
+    "task": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repo": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "relevant_repos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relevant_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relevant_decisions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "do_not_read": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

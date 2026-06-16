@@ -20,6 +20,7 @@ def main() -> int:
         SCHEMAS / "learn-record.v1.json",
         SCHEMAS / "decision-record.v1.json",
         SCHEMAS / "endpoint-truth.v1.json",
+        SCHEMAS / "context-pack.v1.json",
     ]
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
     if missing:

@@ -39,6 +39,20 @@ mq-agent stack truth-export
 This repo defines the contracts and note formats used when MQ tools export
 durable architecture memory.
 
+## Example context flow
+
+```text
+user task
+  -> mq-agent memory query
+  -> select relevant notes
+  -> context-pack.v1
+  -> Codex or Claude reads only the task pack
+```
+
+The next layer for `mqobsidian` is context compression: short, durable context
+packs that replace broad repo or vault reads when a task only needs a focused
+slice of MQ knowledge.
+
 ## What belongs here
 
 Safe to publish:
@@ -68,7 +82,7 @@ docs/       architecture, memory model, and integration docs
 schemas/    JSON contracts for truth, review, learn, and decision exports
 templates/  reusable Markdown note/export templates
 examples/   sanitized example exports
-scripts/    validation and sensitive-content checks
+scripts/    validation, context-pack generation, and safety checks
 ```
 
 ## Current focus
@@ -79,6 +93,7 @@ The first public-safe scope is:
 * define portable schemas
 * provide sanitized examples
 * document how MQ repos export into the memory layer
+* add context-pack scaffolding for lower-token AI workflows
 
 ## Integration surfaces
 
@@ -87,6 +102,7 @@ See:
 * [docs/architecture.md](docs/architecture.md)
 * [docs/memory-model.md](docs/memory-model.md)
 * [docs/truth-export.md](docs/truth-export.md)
+* [docs/context-budget.md](docs/context-budget.md)
 * [docs/mq-agent-integration.md](docs/mq-agent-integration.md)
 * [docs/mq-mcp-integration.md](docs/mq-mcp-integration.md)
 * [docs/repo-signal-integration.md](docs/repo-signal-integration.md)
@@ -99,6 +115,7 @@ Run the public-safe checks with:
 ```bash
 python3 scripts/validate-export.py
 python3 scripts/check-sensitive-content.py
+python3 scripts/check-token-budget.py
 ```
 
 ## License
