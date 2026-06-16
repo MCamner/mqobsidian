@@ -13,6 +13,7 @@ BUDGETS = {
     "README.md": 160,
     "docs/context-budget.md": 120,
     "templates/context-pack.md": 80,
+    "templates/context-card.md": 60,
     "examples/sanitized-context-pack.md": 120,
 }
 
@@ -20,7 +21,9 @@ OPTIONAL_BUDGETS = {
     "AGENTS.md": 120,
     "CLAUDE.md": 120,
     ".mq/context/repo-card.md": 60,
-    ".mq/context/current-blockers.md": 40,
+    ".mq/context/active-contract.md": 80,
+    ".mq/context/current-blockers.md": 80,
+    ".mq/context/integration-map.md": 120,
     ".mq/context/task-pack.md": 200,
 }
 

@@ -10,26 +10,34 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
+TEMPLATES = ROOT / "templates"
 EXAMPLES = ROOT / "examples"
 
 
 def main() -> int:
-    required = [
+    required_schemas = [
         SCHEMAS / "stack-truth.v1.json",
         SCHEMAS / "repo-review.v1.json",
         SCHEMAS / "learn-record.v1.json",
         SCHEMAS / "decision-record.v1.json",
         SCHEMAS / "endpoint-truth.v1.json",
         SCHEMAS / "context-pack.v1.json",
+        SCHEMAS / "context-card.v1.json",
+        SCHEMAS / "repo-memory-index.v1.json",
     ]
+    required_templates = [
+        TEMPLATES / "context-pack.md",
+        TEMPLATES / "context-card.md",
+    ]
+    required = required_schemas + required_templates
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
     if missing:
-        print("missing schema file(s):")
+        print("missing required export file(s):")
         for item in missing:
             print(f"  - {item}")
         return 1
 
-    for path in required:
+    for path in required_schemas:
         json.loads(path.read_text(encoding="utf-8"))
 
     example_files = sorted(EXAMPLES.glob("*.md"))

@@ -111,7 +111,7 @@ CLAUDE.md
 The result should be a small, relevant context layer that reduces repeated
 token cost and improves consistency across Codex and Claude Code sessions.
 
-## Phase 1 - Context budget foundation
+## Phase 1 - Context budget foundation (done)
 
 **Version target**
 
@@ -151,11 +151,11 @@ Initial budgets:
 
 **Acceptance criteria**
 
-* `scripts/check-token-budget.py` exists.
-* CI fails if generated context files exceed budget.
-* `docs/context-budget.md` explains why context should be compressed.
-* `examples/sanitized-context-pack.md` shows a realistic small pack.
-* No generated context file imports a full README by default.
+* [x] `scripts/check-token-budget.py` exists.
+* [x] CI fails if generated context files exceed budget.
+* [x] `docs/context-budget.md` explains why context should be compressed.
+* [x] `examples/sanitized-context-pack.md` shows a realistic small pack.
+* [x] No generated context file imports a full README by default.
 
 **Token reduction value**
 

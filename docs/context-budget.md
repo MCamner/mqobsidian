@@ -10,7 +10,9 @@ surfaces:
 * `AGENTS.md` <= 120 lines
 * `CLAUDE.md` <= 120 lines
 * `.mq/context/repo-card.md` <= 60 lines
-* `.mq/context/current-blockers.md` <= 40 lines
+* `.mq/context/active-contract.md` <= 80 lines
+* `.mq/context/current-blockers.md` <= 80 lines
+* `.mq/context/integration-map.md` <= 120 lines
 * `.mq/context/task-pack.md` <= 200 lines
 * `context-pack.md` summary blocks should stay focused and avoid long prose
 
