@@ -252,7 +252,8 @@ Create compact memory cards for each MQ repo.
 Phase 2 is started, not complete. The first public-safe cards are
 `memory/context-cards/mqobsidian-card.md`,
 `memory/context-cards/mq-agent-card.md`, and
-`memory/context-cards/mq-mcp-card.md`. `validate-export.py` now checks
+`memory/context-cards/mq-mcp-card.md`, plus
+`memory/context-cards/repo-signal-card.md`. `validate-export.py` now checks
 context-card frontmatter plus required card sections. Keep adding cards one at
 a time from verified repo boundaries.
 
@@ -348,6 +349,14 @@ Agents no longer need to infer repo boundaries from full README files.
 **Goal**
 
 Generate small instruction entrypoints for Codex and Claude Code.
+
+**Seed status — 2026-06-17**
+
+Phase 3 is started, not complete. `templates/AGENTS.md`,
+`templates/CLAUDE.md`, `scripts/generate-agents-md.py`, and
+`scripts/generate-claude-md.py` now exist. The generator seed only creates small
+MQ memory entrypoints; target repo rollout remains manual until per-repo context
+exports are stable.
 
 **Add files**
 

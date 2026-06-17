@@ -15,6 +15,8 @@ BUDGETS = {
     "docs/context-budget.md": 120,
     "templates/context-pack.md": 80,
     "templates/context-card.md": 60,
+    "templates/AGENTS.md": 120,
+    "templates/CLAUDE.md": 120,
     "examples/sanitized-context-pack.md": 120,
 }
 

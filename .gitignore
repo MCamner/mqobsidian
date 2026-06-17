@@ -6,6 +6,8 @@
 .mcp.json
 AGENTS.md
 CLAUDE.md
+!templates/AGENTS.md
+!templates/CLAUDE.md
 VAULT_INDEX.md
 Prompt-OS/
 
@@ -29,6 +31,9 @@ systems/*
 !systems/mqobsidian/
 !systems/mqobsidian/hot.md
 !systems/mqobsidian/index.md
+!systems/repo-signal/
+!systems/repo-signal/hot.md
+!systems/repo-signal/index.md
 learn/
 memory/*
 !memory/context-cards/
@@ -39,6 +44,8 @@ decisions/
 tools/
 
 *.log
+__pycache__/
+*.pyc
 *.sqlite
 *.db
 *.bak

@@ -142,6 +142,8 @@ def main() -> int:
     required_templates = [
         TEMPLATES / "context-pack.md",
         TEMPLATES / "context-card.md",
+        TEMPLATES / "AGENTS.md",
+        TEMPLATES / "CLAUDE.md",
     ]
     required = required_schemas + required_templates
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
