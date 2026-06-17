@@ -247,6 +247,15 @@ integration until this single-task loop proves useful.
 
 Create compact memory cards for each MQ repo.
 
+**Seed status — 2026-06-17**
+
+Phase 2 is started, not complete. The first public-safe cards are
+`memory/context-cards/mqobsidian-card.md`,
+`memory/context-cards/mq-agent-card.md`, and
+`memory/context-cards/mq-mcp-card.md`. `validate-export.py` now checks
+context-card frontmatter plus required card sections. Keep adding cards one at
+a time from verified repo boundaries.
+
 **Add structure**
 
 ```text

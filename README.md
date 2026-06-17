@@ -1,6 +1,7 @@
 # mqobsidian
 
 [![Public Safe Check](https://github.com/MCamner/mqobsidian/actions/workflows/public-safe-check.yml/badge.svg)](https://github.com/MCamner/mqobsidian/actions/workflows/public-safe-check.yml)
+[![Version](https://img.shields.io/badge/version-0.2.1-blue)](CHANGELOG.md)
 
 Architecture memory layer for MQ-stack truth exports, repo reviews, decisions,
 learning records, and operational knowledge.

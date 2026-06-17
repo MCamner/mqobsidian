@@ -25,9 +25,14 @@ bases/
 skills/
 skills-src/
 summaries/
-systems/
+systems/*
+!systems/mqobsidian/
+!systems/mqobsidian/hot.md
+!systems/mqobsidian/index.md
 learn/
-memory/
+memory/*
+!memory/context-cards/
+!memory/context-cards/*.md
 mq-stack/
 roadmap/
 decisions/
