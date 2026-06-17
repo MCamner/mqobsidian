@@ -206,12 +206,31 @@ python3 scripts/generate-context-pack.py \
 
 **Acceptance criteria**
 
-* [ ] The generator can write `.mq/context/task-pack.md`.
-* [ ] The pack stays under the task-pack line budget.
-* [ ] The pack lists relevant repos, files, decisions, notes, and do-not-read
+* [x] The generator can write `.mq/context/task-pack.md`.
+* [x] The pack stays under the task-pack line budget.
+* [x] The pack lists relevant repos, files, decisions, notes, and do-not-read
   surfaces.
-* [ ] A Codex or Claude Code run can use the pack without broad repo reads.
-* [ ] Manual notes compare behavior with and without the pack.
+* [x] A Codex or Claude Code run can use the pack without broad repo reads.
+* [x] Manual notes compare behavior with and without the pack.
+
+**MVP proof note — 2026-06-17**
+
+The first real run used `.mq/context/task-pack.md` as the first read for
+`fix mq-mcp brain writer paths`. It was enough to avoid full README, release
+note, and unrelated UMS reads. The pack initially named "mq-mcp runtime memory
+writer tools" too vaguely, so the generator was tightened to list the exact
+writer, wrapper, test, and contract-doc files. The actual mq-mcp fix moved
+review writes to `memory/reviews/`, learn writes and verified promotions to
+`memory/learn/`, and kept legacy `learn/` readable during promotion.
+
+Validation:
+
+```bash
+python3 scripts/check-token-budget.py
+python3 scripts/validate-export.py
+python3 scripts/check-sensitive-content.py
+uv run pytest tests/test_obsidian_writer.py tests/test_tool_contracts.py tests/test_orchestration_boundary_docs.py
+```
 
 **Do not build yet**
 
@@ -321,14 +340,30 @@ Agents no longer need to infer repo boundaries from full README files.
 
 Generate small instruction entrypoints for Codex and Claude Code.
 
-**Add scripts**
+**Add files**
 
 ```text
+templates/agent-memory-block.md
 scripts/generate-agents-md.py
 scripts/generate-claude-md.py
 templates/AGENTS.md
 templates/CLAUDE.md
 ```
+
+`templates/agent-memory-block.md` is the manual rollout bridge before full
+generation exists. Add it to target repos as an additive block, not as a
+replacement for repo-specific build, test, safety, or release rules.
+
+Manual rollout seed — 2026-06-17:
+
+* `mq-agent`
+* `mq-mcp`
+* `mq-image-analyze`
+* `mq-hal`
+* `macos-scripts`
+* `mcamner-journal`
+* `repo-signal`
+* `mq-ums`
 
 **Target `AGENTS.md`**
 
@@ -380,6 +415,8 @@ Do not expand scope unless the task requires it.
 
 **Acceptance criteria**
 
+* `templates/agent-memory-block.md` exists and starts read order with
+  `.mq/context/task-pack.md`.
 * `AGENTS.md` can be generated for every MQ repo.
 * `CLAUDE.md` can import or mirror the same rules without duplication.
 * Generated files stay inside the token budget.

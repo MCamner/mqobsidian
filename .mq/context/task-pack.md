@@ -2,7 +2,7 @@
 schema: context-pack.v1
 target: codex
 task: fix mq-mcp brain writer paths
-generated_at: 2026-06-16T18:13:16+00:00
+generated_at: 2026-06-16T22:19:40+00:00
 repo: mq-mcp
 summary: Minimum context needed for: fix mq-mcp brain writer paths
 ---
@@ -20,7 +20,12 @@ summary: Minimum context needed for: fix mq-mcp brain writer paths
 * mqobsidian/schemas/repo-review.v1.json
 * mqobsidian/schemas/learn-record.v1.json
 * mq-agent/docs/VAULT_STRUCTURE.md
-* mq-mcp runtime memory writer tools
+* mq-mcp/mq-mcp/runtime/memory/obsidian_writer.py
+* mq-mcp/mq-mcp/server.py brain_* wrappers
+* mq-mcp/tests/test_obsidian_writer.py
+* mq-mcp/docs/TOOL_SAFETY.md
+* mq-mcp/docs/ORCHESTRATION_CONTRACT.md
+* mq-mcp/docs/tool_contracts.json
 
 ## Relevant decisions
 

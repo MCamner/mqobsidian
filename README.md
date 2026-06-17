@@ -76,6 +76,12 @@ python3 scripts/generate-context-pack.py \
 
 See [docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md).
 
+For MQ repos where Codex or Claude Code should use this memory layer, add the
+small reusable block from
+[templates/agent-memory-block.md](templates/agent-memory-block.md) to
+`AGENTS.md` and `CLAUDE.md`. Keep it additive: repo-specific build, test,
+safety, and release rules still live in the target repo.
+
 ## What belongs here
 
 Safe to publish:

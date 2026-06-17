@@ -43,7 +43,12 @@ def apply_task_defaults(
             "mqobsidian/schemas/repo-review.v1.json",
             "mqobsidian/schemas/learn-record.v1.json",
             "mq-agent/docs/VAULT_STRUCTURE.md",
-            "mq-mcp runtime memory writer tools",
+            "mq-mcp/mq-mcp/runtime/memory/obsidian_writer.py",
+            "mq-mcp/mq-mcp/server.py brain_* wrappers",
+            "mq-mcp/tests/test_obsidian_writer.py",
+            "mq-mcp/docs/TOOL_SAFETY.md",
+            "mq-mcp/docs/ORCHESTRATION_CONTRACT.md",
+            "mq-mcp/docs/tool_contracts.json",
         ]:
             if item not in relevant_files:
                 relevant_files.append(item)
