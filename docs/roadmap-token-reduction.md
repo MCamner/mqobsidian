@@ -257,6 +257,15 @@ Phase 2 is started, not complete. The first public-safe cards are
 context-card frontmatter plus required card sections. Keep adding cards one at
 a time from verified repo boundaries.
 
+**Effect check — 2026-06-18**
+
+`scripts/measure-context-effect.py` compares the task pack plus available
+context cards against a broad first-read baseline of README, changelog, roadmap,
+and roadmap docs in the relevant repos. The first measurement for the
+`fix mq-mcp brain writer paths` task shows 213 compact context lines versus
+4497 broad baseline lines, a 95.3% first-read reduction. See
+`docs/context-effect.md`.
+
 **Add structure**
 
 ```text
