@@ -45,6 +45,7 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - När ska pack-generation flyttas från vault-script till `mq-agent` command surface?
 
 ## Recent changes
+- 2026-06-18: Wiki freshness för MQ-stackens GitHub Wikis fångades i [[../../memory/stack-truth/2026-06-18-mq-wiki-status]].
 - 2026-06-17: `systems/mqobsidian/` skapades för att ge agent-view-kortet en riktig systemkälla.
 - 2026-06-17: Token-reduction MVP är dokumenterad i [[../../docs/roadmap-token-reduction]].
 

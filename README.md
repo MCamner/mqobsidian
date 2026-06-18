@@ -134,6 +134,7 @@ See:
 * [docs/truth-export.md](docs/truth-export.md)
 * [docs/context-budget.md](docs/context-budget.md)
 * [docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md)
+* [docs/wiki/MQ-Wiki-Status.md](docs/wiki/MQ-Wiki-Status.md)
 * [docs/mq-agent-integration.md](docs/mq-agent-integration.md)
 * [docs/mq-mcp-integration.md](docs/mq-mcp-integration.md)
 * [docs/repo-signal-integration.md](docs/repo-signal-integration.md)
