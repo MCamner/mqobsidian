@@ -263,7 +263,7 @@ a time from verified repo boundaries.
 context cards against a broad first-read baseline of README, changelog, roadmap,
 and roadmap docs in the relevant repos. The first measurement for the
 `fix mq-mcp brain writer paths` task shows 213 compact context lines versus
-4497 broad baseline lines, a 95.3% first-read reduction. See
+4460 broad baseline lines, a 95.2% first-read reduction. See
 `docs/context-effect.md`.
 
 **Add structure**
