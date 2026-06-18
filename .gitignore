@@ -8,6 +8,10 @@ AGENTS.md
 CLAUDE.md
 !templates/AGENTS.md
 !templates/CLAUDE.md
+!examples/generated-agent-entrypoints/
+!examples/generated-agent-entrypoints/**/
+!examples/generated-agent-entrypoints/**/AGENTS.md
+!examples/generated-agent-entrypoints/**/CLAUDE.md
 VAULT_INDEX.md
 Prompt-OS/
 

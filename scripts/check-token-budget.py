@@ -35,6 +35,8 @@ GLOB_BUDGETS = {
     "systems/*/index.md": 120,
     "memory/context-cards/*.md": 60,
     "memory/learn/agent/*.md": 120,
+    "examples/generated-agent-entrypoints/*/AGENTS.md": 120,
+    "examples/generated-agent-entrypoints/*/CLAUDE.md": 120,
 }
 
 

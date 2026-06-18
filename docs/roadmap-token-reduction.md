@@ -271,7 +271,7 @@ from verified repo boundaries rather than expanding them into mini-READMEs.
 context cards against a broad first-read baseline of README, changelog, roadmap,
 and roadmap docs in the relevant repos. The first measurement for the
 `fix mq-mcp brain writer paths` task shows 213 compact context lines versus
-4111 broad baseline lines, a 94.8% first-read reduction. See
+4113 broad baseline lines, a 94.8% first-read reduction. See
 `docs/context-effect.md`.
 
 **Add structure**
@@ -374,6 +374,13 @@ Phase 3 is started, not complete. `templates/AGENTS.md`,
 `scripts/generate-claude-md.py` now exist. The generator seed only creates small
 MQ memory entrypoints; target repo rollout remains manual until per-repo context
 exports are stable.
+
+**Generator status — 2026-06-19**
+
+The generators can now write entrypoints for all core MQ repos with `--all` and
+`--output-dir`, using the shared repo list in `scripts/mq_repos.py`. This proves
+the "generate for every MQ repo" acceptance criterion without mutating sibling
+repos before per-repo `.mq/context/` exports are stable.
 
 **Add files**
 

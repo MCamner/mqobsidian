@@ -29,6 +29,8 @@ python3 scripts/generate-context-pack.py \
   --out .mq/context/task-pack.md
 python3 scripts/check-token-budget.py
 python3 scripts/measure-context-effect.py
+python3 scripts/generate-agents-md.py --all --output-dir examples/generated-agent-entrypoints
+python3 scripts/generate-claude-md.py --all --output-dir examples/generated-agent-entrypoints
 ```
 
 ## Stack Role
@@ -71,7 +73,7 @@ Current measured effect:
 
 ```text
 context pack + cards: 213 lines
-broad first-read baseline: 4111 lines
+broad first-read baseline: 4113 lines
 reduction: 94.8%
 ```
 
