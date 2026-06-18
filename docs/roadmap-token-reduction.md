@@ -249,13 +249,21 @@ Create compact memory cards for each MQ repo.
 
 **Seed status — 2026-06-17**
 
-Phase 2 is started, not complete. The first public-safe cards are
+Phase 2 is mostly seeded, not complete. The first public-safe cards are
 `memory/context-cards/mqobsidian-card.md`,
 `memory/context-cards/mq-agent-card.md`, and
 `memory/context-cards/mq-mcp-card.md`, plus
-`memory/context-cards/repo-signal-card.md`. `validate-export.py` now checks
-context-card frontmatter plus required card sections. Keep adding cards one at
-a time from verified repo boundaries.
+`memory/context-cards/repo-signal-card.md`. The next batch added
+`memory/context-cards/mq-hal-card.md`,
+`memory/context-cards/mq-ums-card.md`,
+`memory/context-cards/mq-image-analyze-card.md`,
+`memory/context-cards/macos-scripts-card.md`,
+`memory/context-cards/mq-stack-overview.md`,
+`memory/context-cards/active-decisions-card.md`,
+`memory/context-cards/current-blockers-card.md`, and
+`memory/context-cards/release-state-card.md`. `validate-export.py` now checks
+context-card frontmatter plus required card sections. Keep tightening cards
+from verified repo boundaries rather than expanding them into mini-READMEs.
 
 **Effect check — 2026-06-18**
 
@@ -263,7 +271,7 @@ a time from verified repo boundaries.
 context cards against a broad first-read baseline of README, changelog, roadmap,
 and roadmap docs in the relevant repos. The first measurement for the
 `fix mq-mcp brain writer paths` task shows 213 compact context lines versus
-4460 broad baseline lines, a 95.2% first-read reduction. See
+4111 broad baseline lines, a 94.8% first-read reduction. See
 `docs/context-effect.md`.
 
 **Add structure**

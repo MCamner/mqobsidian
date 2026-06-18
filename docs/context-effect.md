@@ -28,9 +28,9 @@ Result:
 | Context path | Lines |
 | --- | ---: |
 | Context pack + available cards | 213 |
-| Broad first-read baseline | 4460 |
-| Avoided first-read lines | 4247 |
-| Reduction | 95.2% |
+| Broad first-read baseline | 4111 |
+| Avoided first-read lines | 3898 |
+| Reduction | 94.8% |
 
 ## Interpretation
 
@@ -40,11 +40,12 @@ three repos, an agent can start with one task pack and three compact context
 cards.
 
 This does not prove every future task will get the same reduction. It does prove
-that the current MVP path is useful enough to continue Phase 2.
+that the current MVP path is useful enough to keep tightening Phase 2.
 
 ## Next action
 
-Continue Phase 2 by adding context cards one repo at a time, then rerun:
+Continue Phase 2 by tightening card content from verified repo boundaries, then
+rerun:
 
 ```bash
 python3 scripts/measure-context-effect.py --format markdown

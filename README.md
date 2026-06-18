@@ -71,8 +71,8 @@ Current measured effect:
 
 ```text
 context pack + cards: 213 lines
-broad first-read baseline: 4460 lines
-reduction: 95.2%
+broad first-read baseline: 4111 lines
+reduction: 94.8%
 ```
 
 See [docs/context-effect.md](docs/context-effect.md).
