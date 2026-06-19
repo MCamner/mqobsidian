@@ -4,7 +4,11 @@
 
 ### Added
 
+- Added the first repo-local `.mq/context/` export generated through `mq-agent context export`.
+
 ### Changed
+
+- Updated the Phase 4 roadmap with the verified nine-repo local rollout and safe managed-file cleanup contract.
 
 ### Fixed
 

@@ -478,13 +478,17 @@ Codex and Claude Code start from the same compact instruction layer.
 
 Export small repo-local context snapshots into every MQ repo.
 
-**Seed status — 2026-06-19**
+**Local rollout status — 2026-06-20**
 
-Phase 4 is started, not complete. `scripts/generate-repo-context-export.py`
-can now generate deterministic `.mq/context/` snapshots for all core MQ repos
-under `examples/repo-context-exports/`. This proves the export shape and token
-budgets before writing into sibling repos. The next step is to move
-orchestration into `mq-agent context export`.
+Phase 4 is locally verified, not shipped. `mq-agent context export` now owns
+orchestration from mqobsidian context cards and has written five `.mq/context/`
+files to nine repos. A second run reported all 45 managed files unchanged, and
+all generated files stayed within their line budgets. `--clean` removes only
+the five managed export files, preserving `task-pack.md` and unknown files.
+The mqobsidian export is tracked here; the mq-agent implementation and exports
+in the other repos remain uncommitted. The next step is to land the command
+separately and decide whether the remaining exports are tracked or regenerated
+locally.
 
 **Target layout in each MQ repo**
 

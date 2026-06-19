@@ -4,7 +4,7 @@ system: mqobsidian
 status: active
 max_words: 500
 tags: [hot, cache, active-context]
-updated: 2026-06-17
+updated: 2026-06-20
 owner:
 links_to: [index]
 ---
@@ -18,7 +18,7 @@ Systemets lilla arbetsminne. Bara det viktigaste.
 Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa.
 
 ## Current status
-`mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. Token-reduction MVP är verifierad med `.mq/context/task-pack.md` för `fix mq-mcp brain writer paths`; nästa nytta är bättre agent-routing, små context cards och hård budgetkontroll.
+`mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. `mq-agent context export` är lokalt implementerat och verifierat med 36 tester. Fem budgeterade `.mq/context/`-filer har rullats ut idempotent till nio repo; mqobsidians export är versionshanterad medan command-implementationen och övriga exporter ännu är lokala.
 
 ## Active blockers
 - Inga bekräftade blockers.
@@ -28,12 +28,14 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 - Längre riktning finns i [[../../docs/roadmap-token-reduction]].
 - `mq-agent` ska äga context selection, pack-generation och export.
 - `mqobsidian` ska äga durable notes, schemas, templates och public-safe examples.
+- `--clean` tar nu bara bort exportens fem ägda filer och bevarar `task-pack.md` samt okända filer.
+- Senaste effektmätningen visar 213 kontextrader mot 4114 breda baseline-rader (94,8 % minskning).
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
 
 ## Immediate next actions
 1. Håll [[index]] och denna hot-note små.
-2. Lägg små context cards för återkommande agentfrågor.
-3. Stärk budget- och schema-validering för agent-read surfaces.
+2. Separera och committa `mq-agent context export` från orelaterade lokala mq-agent-ändringar.
+3. Bestäm vilka repo-exporter som ska versionshanteras, sedan mät fler verkliga uppgifter.
 
 ## Critical links
 - [[index]]
