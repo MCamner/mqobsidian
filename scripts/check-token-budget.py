@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import fnmatch
 import sys
 
 
@@ -13,6 +14,9 @@ BUDGETS = {
     "README.md": 160,
     "docs/context-budget.md": 120,
     "templates/context-pack.md": 80,
+    "templates/context-card.md": 60,
+    "templates/AGENTS.md": 120,
+    "templates/CLAUDE.md": 120,
     "examples/sanitized-context-pack.md": 120,
 }
 
@@ -20,8 +24,24 @@ OPTIONAL_BUDGETS = {
     "AGENTS.md": 120,
     "CLAUDE.md": 120,
     ".mq/context/repo-card.md": 60,
-    ".mq/context/current-blockers.md": 40,
+    ".mq/context/active-contract.md": 80,
+    ".mq/context/current-blockers.md": 80,
+    ".mq/context/integration-map.md": 120,
     ".mq/context/task-pack.md": 200,
+}
+
+GLOB_BUDGETS = {
+    "systems/*/hot.md": 80,
+    "systems/*/index.md": 120,
+    "memory/context-cards/*.md": 60,
+    "memory/learn/agent/*.md": 120,
+    "examples/generated-agent-entrypoints/*/AGENTS.md": 120,
+    "examples/generated-agent-entrypoints/*/CLAUDE.md": 120,
+    "examples/repo-context-exports/*/.mq/context/repo-card.md": 60,
+    "examples/repo-context-exports/*/.mq/context/active-contract.md": 80,
+    "examples/repo-context-exports/*/.mq/context/current-blockers.md": 80,
+    "examples/repo-context-exports/*/.mq/context/integration-map.md": 120,
+    "examples/repo-context-exports/*/.mq/context/token-budget.md": 80,
 }
 
 
@@ -37,6 +57,20 @@ def check_budget(rel_path: str, limit: int) -> str | None:
     if count > limit:
         return f"{rel_path}: {count} lines exceeds budget {limit}"
     return None
+
+
+def check_glob_budget(pattern: str, limit: int) -> list[str]:
+    problems: list[str] = []
+    for path in sorted(ROOT.glob(pattern)):
+        if not path.is_file():
+            continue
+        rel_path = str(path.relative_to(ROOT))
+        if any(fnmatch.fnmatch(rel_path, optional) for optional in OPTIONAL_BUDGETS):
+            continue
+        problem = check_budget(rel_path, limit)
+        if problem:
+            problems.append(problem)
+    return problems
 
 
 def main() -> int:
@@ -55,6 +89,9 @@ def main() -> int:
         problem = check_budget(rel_path, limit)
         if problem:
             violations.append(problem)
+
+    for pattern, limit in GLOB_BUDGETS.items():
+        violations.extend(check_glob_budget(pattern, limit))
 
     if violations:
         print("token budget check failed:")

@@ -111,7 +111,7 @@ CLAUDE.md
 The result should be a small, relevant context layer that reduces repeated
 token cost and improves consistency across Codex and Claude Code sessions.
 
-## Phase 1 - Context budget foundation
+## Phase 1 - Context budget foundation (done)
 
 **Version target**
 
@@ -151,16 +151,91 @@ Initial budgets:
 
 **Acceptance criteria**
 
-* `scripts/check-token-budget.py` exists.
-* CI fails if generated context files exceed budget.
-* `docs/context-budget.md` explains why context should be compressed.
-* `examples/sanitized-context-pack.md` shows a realistic small pack.
-* No generated context file imports a full README by default.
+* [x] `scripts/check-token-budget.py` exists.
+* [x] CI fails if generated context files exceed budget.
+* [x] `docs/context-budget.md` explains why context should be compressed.
+* [x] `examples/sanitized-context-pack.md` shows a realistic small pack.
+* [x] No generated context file imports a full README by default.
 
 **Token reduction value**
 
 This phase prevents `AGENTS.md` and `CLAUDE.md` from becoming large permanent
 token sinks.
+
+## v0.2.0 - Token Reduction MVP
+
+**Goal**
+
+Prove the roadmap with one real MQ task before building every later phase.
+
+The MVP flow is:
+
+```text
+mqobsidian memory/context
+  -> context-pack.v1
+  -> .mq/context/task-pack.md
+  -> Codex / Claude Code reads only the pack
+```
+
+**MVP task**
+
+Use one concrete task first:
+
+```text
+fix mq-mcp brain writer paths
+```
+
+The generated pack should identify only the relevant repos, docs, and boundaries:
+
+* `mq-mcp` brain writer paths
+* `mq-agent` vault structure docs
+* `mqobsidian` schemas and context-pack format
+
+It should explicitly avoid broad first reads such as full READMEs, old release
+notes, and unrelated UMS docs.
+
+**Command**
+
+```bash
+python3 scripts/generate-context-pack.py \
+  --task "fix mq-mcp brain writer paths" \
+  --repo mq-mcp \
+  --target codex \
+  --out .mq/context/task-pack.md
+```
+
+**Acceptance criteria**
+
+* [x] The generator can write `.mq/context/task-pack.md`.
+* [x] The pack stays under the task-pack line budget.
+* [x] The pack lists relevant repos, files, decisions, notes, and do-not-read
+  surfaces.
+* [x] A Codex or Claude Code run can use the pack without broad repo reads.
+* [x] Manual notes compare behavior with and without the pack.
+
+**MVP proof note — 2026-06-17**
+
+The first real run used `.mq/context/task-pack.md` as the first read for
+`fix mq-mcp brain writer paths`. It was enough to avoid full README, release
+note, and unrelated UMS reads. The pack initially named "mq-mcp runtime memory
+writer tools" too vaguely, so the generator was tightened to list the exact
+writer, wrapper, test, and contract-doc files. The actual mq-mcp fix moved
+review writes to `memory/reviews/`, learn writes and verified promotions to
+`memory/learn/`, and kept legacy `learn/` readable during promotion.
+
+Validation:
+
+```bash
+python3 scripts/check-token-budget.py
+python3 scripts/validate-export.py
+python3 scripts/check-sensitive-content.py
+uv run pytest tests/test_obsidian_writer.py tests/test_tool_contracts.py tests/test_orchestration_boundary_docs.py
+```
+
+**Do not build yet**
+
+Do not attempt all repo cards, generated `AGENTS.md`, or full `mq-agent`
+integration until this single-task loop proves useful.
 
 ## Phase 2 - MQ Context Cards
 
@@ -171,6 +246,33 @@ token sinks.
 **Goal**
 
 Create compact memory cards for each MQ repo.
+
+**Seed status — 2026-06-17**
+
+Phase 2 is mostly seeded, not complete. The first public-safe cards are
+`memory/context-cards/mqobsidian-card.md`,
+`memory/context-cards/mq-agent-card.md`, and
+`memory/context-cards/mq-mcp-card.md`, plus
+`memory/context-cards/repo-signal-card.md`. The next batch added
+`memory/context-cards/mq-hal-card.md`,
+`memory/context-cards/mq-ums-card.md`,
+`memory/context-cards/mq-image-analyze-card.md`,
+`memory/context-cards/macos-scripts-card.md`,
+`memory/context-cards/mq-stack-overview.md`,
+`memory/context-cards/active-decisions-card.md`,
+`memory/context-cards/current-blockers-card.md`, and
+`memory/context-cards/release-state-card.md`. `validate-export.py` now checks
+context-card frontmatter plus required card sections. Keep tightening cards
+from verified repo boundaries rather than expanding them into mini-READMEs.
+
+**Effect check — 2026-06-18**
+
+`scripts/measure-context-effect.py` compares the task pack plus available
+context cards against a broad first-read baseline of README, changelog, roadmap,
+and roadmap docs in the relevant repos. The first measurement for the
+`fix mq-mcp brain writer paths` task shows 213 compact context lines versus
+4114 broad baseline lines, a 94.8% first-read reduction. See
+`docs/context-effect.md`.
 
 **Add structure**
 
@@ -265,14 +367,45 @@ Agents no longer need to infer repo boundaries from full README files.
 
 Generate small instruction entrypoints for Codex and Claude Code.
 
-**Add scripts**
+**Seed status — 2026-06-17**
+
+Phase 3 is started, not complete. `templates/AGENTS.md`,
+`templates/CLAUDE.md`, `scripts/generate-agents-md.py`, and
+`scripts/generate-claude-md.py` now exist. The generator seed only creates small
+MQ memory entrypoints; target repo rollout remains manual until per-repo context
+exports are stable.
+
+**Generator status — 2026-06-19**
+
+The generators can now write entrypoints for all core MQ repos with `--all` and
+`--output-dir`, using the shared repo list in `scripts/mq_repos.py`. This proves
+the "generate for every MQ repo" acceptance criterion without mutating sibling
+repos before per-repo `.mq/context/` exports are stable.
+
+**Add files**
 
 ```text
+templates/agent-memory-block.md
 scripts/generate-agents-md.py
 scripts/generate-claude-md.py
 templates/AGENTS.md
 templates/CLAUDE.md
 ```
+
+`templates/agent-memory-block.md` is the manual rollout bridge before full
+generation exists. Add it to target repos as an additive block, not as a
+replacement for repo-specific build, test, safety, or release rules.
+
+Manual rollout seed — 2026-06-17:
+
+* `mq-agent`
+* `mq-mcp`
+* `mq-image-analyze`
+* `mq-hal`
+* `macos-scripts`
+* `mcamner-journal`
+* `repo-signal`
+* `mq-ums`
 
 **Target `AGENTS.md`**
 
@@ -324,6 +457,8 @@ Do not expand scope unless the task requires it.
 
 **Acceptance criteria**
 
+* `templates/agent-memory-block.md` exists and starts read order with
+  `.mq/context/task-pack.md`.
 * `AGENTS.md` can be generated for every MQ repo.
 * `CLAUDE.md` can import or mirror the same rules without duplication.
 * Generated files stay inside the token budget.
@@ -342,6 +477,14 @@ Codex and Claude Code start from the same compact instruction layer.
 **Goal**
 
 Export small repo-local context snapshots into every MQ repo.
+
+**Seed status — 2026-06-19**
+
+Phase 4 is started, not complete. `scripts/generate-repo-context-export.py`
+can now generate deterministic `.mq/context/` snapshots for all core MQ repos
+under `examples/repo-context-exports/`. This proves the export shape and token
+budgets before writing into sibling repos. The next step is to move
+orchestration into `mq-agent context export`.
 
 **Target layout in each MQ repo**
 

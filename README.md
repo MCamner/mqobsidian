@@ -1,122 +1,119 @@
 # mqobsidian
 
 [![Public Safe Check](https://github.com/MCamner/mqobsidian/actions/workflows/public-safe-check.yml/badge.svg)](https://github.com/MCamner/mqobsidian/actions/workflows/public-safe-check.yml)
+[![Version](https://img.shields.io/badge/version-0.2.1-blue)](CHANGELOG.md)
 
-Architecture memory layer for MQ-stack truth exports, repo reviews, decisions,
-learning records, and operational knowledge.
+Durable MQ-stack memory and context compression for Codex and Claude Code.
 
-`mqobsidian` is the local-first knowledge layer in the MQ ecosystem. It stores
-durable architectural context, reviewed findings, truth exports, sanitized
-examples, and reusable note templates. It does not execute workflows, route
-commands, or replace `mq-agent` or `mq-mcp`.
+`mqobsidian` stores reviewed architecture memory, truth exports, decisions,
+learn records, schemas, templates, and compact context surfaces. It is the
+memory layer, not the runtime or orchestrator.
 
-## Role
+## Read Order
 
-In the MQ stack:
+For agent work, start small:
+
+1. `.mq/context/task-pack.md`
+2. `memory/learn/agent/mqobsidian.md`
+3. `systems/mqobsidian/hot.md`
+4. `systems/mqobsidian/index.md`
+5. relevant context cards or docs only when the pack is insufficient
+
+## Quick Start
+
+```bash
+python3 scripts/generate-context-pack.py \
+  --task "fix mq-mcp brain writer paths" \
+  --repo mq-mcp \
+  --target codex \
+  --out .mq/context/task-pack.md
+python3 scripts/check-token-budget.py
+python3 scripts/measure-context-effect.py
+python3 scripts/generate-agents-md.py --all --output-dir examples/generated-agent-entrypoints
+python3 scripts/generate-claude-md.py --all --output-dir examples/generated-agent-entrypoints
+python3 scripts/generate-repo-context-export.py --all --clean
+```
+
+## Stack Role
 
 ```text
 signal -> review -> decision -> memory -> next action
 ```
 
-The responsibility split is:
+* `mq-agent` orchestrates workflows and context export.
+* `mq-mcp` executes bounded tools and owns runtime contracts.
+* `repo-signal` scores repo health and readiness.
+* `mq-hal` presents operator-facing summaries.
+* `mqobsidian` stores durable, public-safe memory.
 
-* `mq-agent` orchestrates workflows
-* `mq-mcp` executes bounded tools and owns runtime/review contracts
-* `repo-signal` scores repo health and readiness
-* `mq-hal` presents operator-facing summaries
-* `mq-ums` provides enterprise endpoint signals
-* `mqobsidian` keeps the durable memory layer
+## What This Repo Owns
 
-## Example memory flow
+* memory schemas and note templates
+* public-safe examples and exports
+* context-pack and context-card contracts
+* token-budget checks for agent-readable surfaces
+* compact agent views such as `hot.md`, `index.md`, and context cards
+
+## What This Repo Does Not Own
+
+* live runtime truth
+* workflow orchestration
+* MCP tool execution
+* repo scoring internals
+* source-repo tests, CLI behavior, or release state
+
+## Context Compression
+
+The token-reduction path is:
 
 ```text
-mq-agent stack truth-export
-  -> schemas/stack-truth.v1.json
-  -> templates/stack-truth.md
-  -> mqobsidian memory note
+task -> memory query -> context-pack.v1 -> Codex / Claude Code
 ```
 
-This repo defines the contracts and note formats used when MQ tools export
-durable architecture memory.
-
-## Example context flow
+Current measured effect:
 
 ```text
-user task
-  -> mq-agent memory query
-  -> select relevant notes
-  -> context-pack.v1
-  -> Codex or Claude reads only the task pack
+context pack + cards: 213 lines
+broad first-read baseline: 4114 lines
+reduction: 94.8%
 ```
 
-The next layer for `mqobsidian` is context compression: short, durable context
-packs that replace broad repo or vault reads when a task only needs a focused
-slice of MQ knowledge.
+See [docs/context-effect.md](docs/context-effect.md).
 
-## What belongs here
+## Public-Safe Rules
 
 Safe to publish:
 
 * architecture notes
-* ADRs and decision records
-* truth-export schemas
-* sanitized review examples
-* integration docs
-* reusable Markdown templates
-* validation scripts for public-safe exports
+* ADRs and decisions
+* schemas and templates
+* sanitized reviews, examples, and truth exports
 
 Do not publish:
 
-* customer names
-* server names or internal hostnames
-* IP addresses
-* tokens or API keys
-* real UMS, Citrix, or Intune logs
-* unsanitized review output
+* secrets, tokens, or API keys
+* customer names or internal hostnames
+* IP addresses or raw enterprise logs
 * machine-specific private paths
+* unsanitized review output
 
-## Repo layout
+## Important Docs
 
-```text
-docs/       architecture, memory model, and integration docs
-schemas/    JSON contracts for truth, review, learn, and decision exports
-templates/  reusable Markdown note/export templates
-examples/   sanitized example exports
-scripts/    validation, context-pack generation, and safety checks
-```
-
-## Current focus
-
-The first public-safe scope is:
-
-* explain the memory model
-* define portable schemas
-* provide sanitized examples
-* document how MQ repos export into the memory layer
-* add context-pack scaffolding for lower-token AI workflows
-
-## Integration surfaces
-
-See:
-
-* [docs/architecture.md](docs/architecture.md)
-* [docs/memory-model.md](docs/memory-model.md)
-* [docs/truth-export.md](docs/truth-export.md)
-* [docs/context-budget.md](docs/context-budget.md)
-* [docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md)
-* [docs/mq-agent-integration.md](docs/mq-agent-integration.md)
-* [docs/mq-mcp-integration.md](docs/mq-mcp-integration.md)
-* [docs/repo-signal-integration.md](docs/repo-signal-integration.md)
-* [docs/mq-ums-integration.md](docs/mq-ums-integration.md)
+* [docs/memory-model.md](docs/memory-model.md) — memory layers and ownership
+* [docs/truth-export.md](docs/truth-export.md) — export requirements
+* [docs/context-budget.md](docs/context-budget.md) — line budgets
+* [docs/context-effect.md](docs/context-effect.md) — measured reduction
+* [docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md) — longer roadmap
+* [schemas/context-pack.v1.json](schemas/context-pack.v1.json) — task-pack schema
+* [templates/context-pack.md](templates/context-pack.md) — task-pack template
 
 ## Validation
-
-Run the public-safe checks with:
 
 ```bash
 python3 scripts/validate-export.py
 python3 scripts/check-sensitive-content.py
 python3 scripts/check-token-budget.py
+python3 scripts/measure-context-effect.py
 ```
 
 ## License

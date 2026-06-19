@@ -6,6 +6,17 @@
 .mcp.json
 AGENTS.md
 CLAUDE.md
+!templates/AGENTS.md
+!templates/CLAUDE.md
+!examples/generated-agent-entrypoints/
+!examples/generated-agent-entrypoints/**/
+!examples/generated-agent-entrypoints/**/AGENTS.md
+!examples/generated-agent-entrypoints/**/CLAUDE.md
+!examples/repo-context-exports/
+!examples/repo-context-exports/**/
+!examples/repo-context-exports/**/.mq/
+!examples/repo-context-exports/**/.mq/context/
+!examples/repo-context-exports/**/.mq/context/*.md
 VAULT_INDEX.md
 Prompt-OS/
 
@@ -25,15 +36,25 @@ bases/
 skills/
 skills-src/
 summaries/
-systems/
+systems/*
+!systems/mqobsidian/
+!systems/mqobsidian/hot.md
+!systems/mqobsidian/index.md
+!systems/repo-signal/
+!systems/repo-signal/hot.md
+!systems/repo-signal/index.md
 learn/
-memory/
+memory/*
+!memory/context-cards/
+!memory/context-cards/*.md
 mq-stack/
 roadmap/
 decisions/
 tools/
 
 *.log
+__pycache__/
+*.pyc
 *.sqlite
 *.db
 *.bak
