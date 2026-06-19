@@ -12,6 +12,11 @@ CLAUDE.md
 !examples/generated-agent-entrypoints/**/
 !examples/generated-agent-entrypoints/**/AGENTS.md
 !examples/generated-agent-entrypoints/**/CLAUDE.md
+!examples/repo-context-exports/
+!examples/repo-context-exports/**/
+!examples/repo-context-exports/**/.mq/
+!examples/repo-context-exports/**/.mq/context/
+!examples/repo-context-exports/**/.mq/context/*.md
 VAULT_INDEX.md
 Prompt-OS/
 

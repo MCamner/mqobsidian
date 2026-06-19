@@ -37,6 +37,11 @@ GLOB_BUDGETS = {
     "memory/learn/agent/*.md": 120,
     "examples/generated-agent-entrypoints/*/AGENTS.md": 120,
     "examples/generated-agent-entrypoints/*/CLAUDE.md": 120,
+    "examples/repo-context-exports/*/.mq/context/repo-card.md": 60,
+    "examples/repo-context-exports/*/.mq/context/active-contract.md": 80,
+    "examples/repo-context-exports/*/.mq/context/current-blockers.md": 80,
+    "examples/repo-context-exports/*/.mq/context/integration-map.md": 120,
+    "examples/repo-context-exports/*/.mq/context/token-budget.md": 80,
 }
 
 

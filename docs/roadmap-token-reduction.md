@@ -271,7 +271,7 @@ from verified repo boundaries rather than expanding them into mini-READMEs.
 context cards against a broad first-read baseline of README, changelog, roadmap,
 and roadmap docs in the relevant repos. The first measurement for the
 `fix mq-mcp brain writer paths` task shows 213 compact context lines versus
-4113 broad baseline lines, a 94.8% first-read reduction. See
+4114 broad baseline lines, a 94.8% first-read reduction. See
 `docs/context-effect.md`.
 
 **Add structure**
@@ -477,6 +477,14 @@ Codex and Claude Code start from the same compact instruction layer.
 **Goal**
 
 Export small repo-local context snapshots into every MQ repo.
+
+**Seed status — 2026-06-19**
+
+Phase 4 is started, not complete. `scripts/generate-repo-context-export.py`
+can now generate deterministic `.mq/context/` snapshots for all core MQ repos
+under `examples/repo-context-exports/`. This proves the export shape and token
+budgets before writing into sibling repos. The next step is to move
+orchestration into `mq-agent context export`.
 
 **Target layout in each MQ repo**
 
