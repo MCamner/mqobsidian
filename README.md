@@ -102,6 +102,7 @@ Do not publish:
 * [docs/memory-model.md](docs/memory-model.md) — memory layers and ownership
 * [docs/truth-export.md](docs/truth-export.md) — export requirements
 * [docs/context-budget.md](docs/context-budget.md) — line budgets
+* [docs/context-export-contract.md](docs/context-export-contract.md) — context-export ownership and budget source
 * [docs/context-effect.md](docs/context-effect.md) — measured reduction
 * [docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md) — longer roadmap
 * [schemas/context-pack.v1.json](schemas/context-pack.v1.json) — task-pack schema

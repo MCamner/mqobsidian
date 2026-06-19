@@ -1,0 +1,19 @@
+{
+  "schema": "context-budget.v1",
+  "description": "Single cross-repo source of truth for .mq/context line budgets. Owned by mqobsidian; consumed by mqobsidian scripts and mq-agent context export. See docs/context-export-contract.md.",
+  "budgets": {
+    "repo-card.md": 60,
+    "active-contract.md": 80,
+    "current-blockers.md": 80,
+    "integration-map.md": 120,
+    "token-budget.md": 80,
+    "task-pack.md": 200
+  },
+  "rendered_order": [
+    "repo-card.md",
+    "active-contract.md",
+    "current-blockers.md",
+    "integration-map.md",
+    "task-pack.md"
+  ]
+}
