@@ -8,6 +8,7 @@ from pathlib import Path
 import shutil
 import sys
 
+from context_budgets import CONTEXT_BUDGETS, RENDERED_BUDGET_ORDER
 from mq_repos import CORE_MQ_REPOS
 
 
@@ -124,17 +125,17 @@ def render_current_blockers(repo: str) -> str:
 
 
 def render_token_budget(repo: str) -> str:
+    rows = "\n".join(
+        f"| `{name}` | {CONTEXT_BUDGETS[name]} lines |"
+        for name in RENDERED_BUDGET_ORDER
+    )
     return f"""# Token Budget: {repo}
 
 ## Generated Context Budgets
 
 | File | Budget |
 | --- | ---: |
-| `repo-card.md` | 60 lines |
-| `active-contract.md` | 80 lines |
-| `current-blockers.md` | 80 lines |
-| `integration-map.md` | 120 lines |
-| `task-pack.md` | 200 lines |
+{rows}
 
 ## Rule
 
