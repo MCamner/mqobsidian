@@ -9,6 +9,7 @@
 ### Changed
 
 - Updated the Phase 4 roadmap with the verified nine-repo local rollout and safe managed-file cleanup contract.
+- Made `.mq/context` line budgets a single source of truth (`scripts/context_budgets.py`), read by both the export generator and the token-budget checker instead of three hardcoded copies.
 
 ### Fixed
 

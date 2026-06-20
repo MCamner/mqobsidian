@@ -7,6 +7,12 @@ from pathlib import Path
 import fnmatch
 import sys
 
+from context_budgets import (
+    CONTEXT_BUDGETS,
+    EXPORTED_CONTEXT_FILES,
+    LOCAL_CONTEXT_FILES,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -23,11 +29,7 @@ BUDGETS = {
 OPTIONAL_BUDGETS = {
     "AGENTS.md": 120,
     "CLAUDE.md": 120,
-    ".mq/context/repo-card.md": 60,
-    ".mq/context/active-contract.md": 80,
-    ".mq/context/current-blockers.md": 80,
-    ".mq/context/integration-map.md": 120,
-    ".mq/context/task-pack.md": 200,
+    **{f".mq/context/{name}": CONTEXT_BUDGETS[name] for name in LOCAL_CONTEXT_FILES},
 }
 
 GLOB_BUDGETS = {
@@ -37,11 +39,10 @@ GLOB_BUDGETS = {
     "memory/learn/agent/*.md": 120,
     "examples/generated-agent-entrypoints/*/AGENTS.md": 120,
     "examples/generated-agent-entrypoints/*/CLAUDE.md": 120,
-    "examples/repo-context-exports/*/.mq/context/repo-card.md": 60,
-    "examples/repo-context-exports/*/.mq/context/active-contract.md": 80,
-    "examples/repo-context-exports/*/.mq/context/current-blockers.md": 80,
-    "examples/repo-context-exports/*/.mq/context/integration-map.md": 120,
-    "examples/repo-context-exports/*/.mq/context/token-budget.md": 80,
+    **{
+        f"examples/repo-context-exports/*/.mq/context/{name}": CONTEXT_BUDGETS[name]
+        for name in EXPORTED_CONTEXT_FILES
+    },
 }
 
 
