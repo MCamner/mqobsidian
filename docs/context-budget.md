@@ -9,11 +9,10 @@ surfaces:
 
 * `AGENTS.md` <= 120 lines
 * `CLAUDE.md` <= 120 lines
-* `.mq/context/repo-card.md` <= 60 lines
-* `.mq/context/active-contract.md` <= 80 lines
-* `.mq/context/current-blockers.md` <= 80 lines
-* `.mq/context/integration-map.md` <= 120 lines
-* `.mq/context/task-pack.md` <= 200 lines
+* `.mq/context/*` files follow the budgets in
+  [`.mq/context-budgets.json`](../.mq/context-budgets.json), the single source of
+  truth (see [context-export-contract.md](context-export-contract.md)) — do not
+  restate the numbers here
 * `context-pack.md` summary blocks should stay focused and avoid long prose
 
 These are governance limits, not exact tokenizer measurements. They are meant

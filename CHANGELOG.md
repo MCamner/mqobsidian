@@ -5,6 +5,7 @@
 ### Added
 
 - Added the first repo-local `.mq/context/` export generated through `mq-agent context export`.
+- Published `.mq/context-budgets.json` as the cross-repo context-export budget contract, with `docs/context-export-contract.md` declaring mqobsidian as owner and mq-agent as the designated consumer.
 
 ### Changed
 
