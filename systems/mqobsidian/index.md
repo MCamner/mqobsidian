@@ -14,12 +14,12 @@ links_to: [hot]
 Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade kontextyta.
 
 ## Current state
-`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`. `mq-agent context export` är lokalt implementerat och har rullat ut fem idempotenta, budgeterade context-filer till nio repo. Mqobsidians export är versionshanterad; command-implementationen och övriga exporter är ännu lokala.
+`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`. `mq-agent context export` är mergat till `main`; fem idempotenta, budgeterade context-filer har rullats ut till nio repo. Mqobsidians exempel-export är versionshanterad medan övriga repo-exporter ännu är lokala.
 
 ## Current priorities
 1. Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
-2. Landa `mq-agent context export` som en avgränsad ändring utan att blanda in pågående cockpit-arbete.
-3. Besluta versionshantering för exporter och samla fler effektmätningar.
+2. Bestäm versionshantering kontra lokal regenerering för repo-exporter.
+3. Samla fler effektmätningar från verkliga uppgifter.
 
 ## Key links
 - [[hot]]
@@ -45,8 +45,9 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - Vilka verkliga uppgifter ska ingå i nästa mätbatch?
 
 ## Recent changes
+- 2026-06-20: `mq-agent context export` landade isolerat i mq-agent PR #92; mqobsidian förblir ägare för cards, budgetkontrakt och public-safe exempel.
 - 2026-06-20: Rullade lokalt ut fem `.mq/context/`-filer till nio repo; andra körningen gav 45 oförändrade filer och alla låg inom budget.
-- 2026-06-20: Verifierade exportstruktur, tokenbudget och 94,8 % first-read-reduktion; nästa ägarskapssteg är `mq-agent context export`.
+- 2026-06-20: Verifierade exportstruktur, tokenbudget och 94,8 % first-read-reduktion inför mq-agents context-export-implementation.
 - 2026-06-18: Wiki freshness för MQ-stackens GitHub Wikis fångades i [[../../memory/stack-truth/2026-06-18-mq-wiki-status]].
 - 2026-06-17: `systems/mqobsidian/` skapades för att ge agent-view-kortet en riktig systemkälla.
 - 2026-06-17: Token-reduction MVP är dokumenterad i [[../../docs/roadmap-token-reduction]].
