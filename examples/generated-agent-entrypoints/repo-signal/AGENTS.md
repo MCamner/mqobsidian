@@ -12,9 +12,9 @@ For work related to `repo-signal`:
 1. Read `.mq/context/task-pack.md` if it exists and matches the task.
 2. Read `.mq/context/repo-card.md` if it exists.
 3. Read `.mq/context/integration-map.md` if it exists.
-4. Read `~/mqobsidian/memory/learn/agent/repo-signal.md` if it exists.
-5. Read `~/mqobsidian/systems/repo-signal/hot.md` if it exists.
-6. Read `~/mqobsidian/systems/repo-signal/index.md` if it exists.
+4. Read `$MQ_OBSIDIAN_DIR/memory/learn/agent/repo-signal.md` if it exists.
+5. Read `$MQ_OBSIDIAN_DIR/systems/repo-signal/hot.md` if it exists.
+6. Read `$MQ_OBSIDIAN_DIR/systems/repo-signal/index.md` if it exists.
 
 Stop reading as soon as the task is grounded.
 

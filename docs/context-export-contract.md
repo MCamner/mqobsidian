@@ -38,6 +38,24 @@ fall back to documented defaults when the vault predates the contract. Until tha
 companion change is merged on `mq-agent`, its export keeps its own budget table;
 the fallback means neither side breaks while the two land independently.
 
+## Ownership of generated agent surfaces
+
+`mqobsidian` owns the **contract, schemas, templates, generators, and examples**.
+It does **not** own the generated files once they are committed inside another
+repo.
+
+Each target repo owns its committed agent surfaces:
+
+* `AGENTS.md`
+* `CLAUDE.md`
+* `.mq/context/*`
+
+`mqobsidian` may generate or validate those files, but the target repo owns their
+freshness, CI checks, and publication. Generated output must stay
+machine-independent: embed `$MQ_OBSIDIAN_DIR` (resolved by the reader), never a
+resolved absolute path. `scripts/generate-agents-md.py` defaults to that
+placeholder; pass `--vault-path` only for a throwaway local copy.
+
 ## Changing a budget
 
 Edit `.mq/context-budgets.json` only. Regenerate exports and run

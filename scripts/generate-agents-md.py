@@ -5,7 +5,6 @@ from __future__ import annotations
 
 from argparse import ArgumentParser
 from pathlib import Path
-import os
 import sys
 
 from mq_repos import CORE_MQ_REPOS
@@ -25,8 +24,13 @@ def parse_args() -> ArgumentParser:
     parser.add_argument("--all", action="store_true", help="Generate AGENTS.md for all core MQ repos")
     parser.add_argument(
         "--vault-path",
-        default=os.environ.get("MQ_OBSIDIAN_DIR", "~/mqobsidian"),
-        help="mqobsidian vault path to embed in read-order instructions",
+        default="$MQ_OBSIDIAN_DIR",
+        help=(
+            "mqobsidian vault path to embed in read-order instructions. "
+            "Defaults to the portable '$MQ_OBSIDIAN_DIR' placeholder so generated, "
+            "committed output stays machine-independent; pass an absolute path only "
+            "for a throwaway local copy."
+        ),
     )
     parser.add_argument("--template", type=Path, default=DEFAULT_TEMPLATE)
     parser.add_argument("--output", "--out", type=Path, help="Write to this path instead of stdout")

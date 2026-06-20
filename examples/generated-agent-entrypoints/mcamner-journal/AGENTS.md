@@ -12,9 +12,9 @@ For work related to `mcamner-journal`:
 1. Read `.mq/context/task-pack.md` if it exists and matches the task.
 2. Read `.mq/context/repo-card.md` if it exists.
 3. Read `.mq/context/integration-map.md` if it exists.
-4. Read `~/mqobsidian/memory/learn/agent/mcamner-journal.md` if it exists.
-5. Read `~/mqobsidian/systems/mcamner-journal/hot.md` if it exists.
-6. Read `~/mqobsidian/systems/mcamner-journal/index.md` if it exists.
+4. Read `$MQ_OBSIDIAN_DIR/memory/learn/agent/mcamner-journal.md` if it exists.
+5. Read `$MQ_OBSIDIAN_DIR/systems/mcamner-journal/hot.md` if it exists.
+6. Read `$MQ_OBSIDIAN_DIR/systems/mcamner-journal/index.md` if it exists.
 
 Stop reading as soon as the task is grounded.
 

@@ -53,7 +53,7 @@ The build wipes and regenerates all generated skill trees, so renamed/removed sk
 ## MCP — only mq-mcp is a real server
 
 - **mq-mcp** ✅ wired in `.mcp.json` and `.codex/config.toml` with the real command:
-  `uv --directory /Users/mansys/mq-mcp/mq-mcp run mcp run server.py`
+  `uv --directory <path-to-mq-mcp>/mq-mcp run mcp run server.py`
 - **repo-signal** — a CLI, not an MCP server. Its functions are already exposed through mq-mcp (`repo_signal_*` tools). Kept as a disabled placeholder.
 - **mqobsidian** — no MCP server exists (the vault is plain Markdown). Disabled placeholder.
 
