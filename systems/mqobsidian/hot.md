@@ -18,7 +18,7 @@ Systemets lilla arbetsminne. Bara det viktigaste.
 Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa.
 
 ## Current status
-`mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. `mq-agent context export` är lokalt implementerat och verifierat med 36 tester. Fem budgeterade `.mq/context/`-filer har rullats ut idempotent till nio repo; mqobsidians export är versionshanterad medan command-implementationen och övriga exporter ännu är lokala.
+`mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. Budgetkontraktet för context-export och CI-vakten mot stale exempel är mergade till `main`. `mq-agent context export` är lokalt implementerat och verifierat med 36 tester. Fem budgeterade `.mq/context/`-filer har rullats ut idempotent till nio repo; command-implementationen och övriga repo-exporter är ännu lokala.
 
 ## Active blockers
 - Inga bekräftade blockers.
@@ -28,13 +28,14 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 - Längre riktning finns i [[../../docs/roadmap-token-reduction]].
 - `mq-agent` ska äga context selection, pack-generation och export.
 - `mqobsidian` ska äga durable notes, schemas, templates och public-safe examples.
+- `.mq/context-budgets.json` är publicerad budgetkälla och CI regenererar exemplen för att upptäcka drift.
 - `--clean` tar nu bara bort exportens fem ägda filer och bevarar `task-pack.md` samt okända filer.
 - Senaste effektmätningen visar 213 kontextrader mot 4114 breda baseline-rader (94,8 % minskning).
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
 
 ## Immediate next actions
 1. Håll [[index]] och denna hot-note små.
-2. Separera och committa `mq-agent context export` från orelaterade lokala mq-agent-ändringar.
+2. Landa `mq-agent context export` som en avgränsad ändring utan orelaterat cockpit-arbete.
 3. Bestäm vilka repo-exporter som ska versionshanteras, sedan mät fler verkliga uppgifter.
 
 ## Critical links
