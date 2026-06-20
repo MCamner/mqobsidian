@@ -26,3 +26,12 @@ jobs:
 
       - name: Check token budget
         run: python3 scripts/check-token-budget.py
+
+      - name: Check context exports are regenerated
+        run: |
+          python3 scripts/generate-repo-context-export.py --all
+          if ! git diff --quiet -- examples/repo-context-exports; then
+            echo "::error::examples/repo-context-exports is stale. Run: python3 scripts/generate-repo-context-export.py --all"
+            git diff -- examples/repo-context-exports
+            exit 1
+          fi
