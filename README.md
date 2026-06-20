@@ -19,6 +19,9 @@ For agent work, start small:
 4. `systems/mqobsidian/index.md`
 5. relevant context cards or docs only when the pack is insufficient
 
+Read the smallest surface that answers the task and stop there — see
+[docs/read-discipline.md](docs/read-discipline.md).
+
 ## Quick Start
 
 ```bash
@@ -99,6 +102,7 @@ Do not publish:
 
 ## Important Docs
 
+* [docs/read-discipline.md](docs/read-discipline.md) — read order, smallest-useful-surface, source-of-truth map
 * [docs/memory-model.md](docs/memory-model.md) — memory layers and ownership
 * [docs/truth-export.md](docs/truth-export.md) — export requirements
 * [docs/context-budget.md](docs/context-budget.md) — line budgets
