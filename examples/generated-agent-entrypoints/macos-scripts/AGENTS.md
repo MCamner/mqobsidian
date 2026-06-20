@@ -12,9 +12,9 @@ For work related to `macos-scripts`:
 1. Read `.mq/context/task-pack.md` if it exists and matches the task.
 2. Read `.mq/context/repo-card.md` if it exists.
 3. Read `.mq/context/integration-map.md` if it exists.
-4. Read `~/mqobsidian/memory/learn/agent/macos-scripts.md` if it exists.
-5. Read `~/mqobsidian/systems/macos-scripts/hot.md` if it exists.
-6. Read `~/mqobsidian/systems/macos-scripts/index.md` if it exists.
+4. Read `$MQ_OBSIDIAN_DIR/memory/learn/agent/macos-scripts.md` if it exists.
+5. Read `$MQ_OBSIDIAN_DIR/systems/macos-scripts/hot.md` if it exists.
+6. Read `$MQ_OBSIDIAN_DIR/systems/macos-scripts/index.md` if it exists.
 
 Stop reading as soon as the task is grounded.
 
