@@ -385,16 +385,17 @@ repos before per-repo `.mq/context/` exports are stable.
 **Add files**
 
 ```text
-templates/agent-memory-block.md
 scripts/generate-agents-md.py
 scripts/generate-claude-md.py
 templates/AGENTS.md
 templates/CLAUDE.md
 ```
 
-`templates/agent-memory-block.md` is the manual rollout bridge before full
-generation exists. Add it to target repos as an additive block, not as a
-replacement for repo-specific build, test, safety, or release rules.
+Generation is the rollout path: `generate-agents-md.py` / `generate-claude-md.py`
+render portable `AGENTS.md` / `CLAUDE.md` from `templates/AGENTS.md` / `CLAUDE.md`
+as additive blocks, not as a replacement for repo-specific build, test, safety, or
+release rules. (An earlier `templates/agent-memory-block.md` manual bridge was
+retired once generation landed.)
 
 Manual rollout seed — 2026-06-17:
 
@@ -457,8 +458,7 @@ Do not expand scope unless the task requires it.
 
 **Acceptance criteria**
 
-* `templates/agent-memory-block.md` exists and starts read order with
-  `.mq/context/task-pack.md`.
+* Generated `AGENTS.md` starts its read order with `.mq/context/task-pack.md`.
 * `AGENTS.md` can be generated for every MQ repo.
 * `CLAUDE.md` can import or mirror the same rules without duplication.
 * Generated files stay inside the token budget.

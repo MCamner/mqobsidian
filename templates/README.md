@@ -7,7 +7,6 @@ Detta paket innehåller fem färdiga mallar för `mqobsidian`:
 - `skill-template.md`
 - `index-template.md`
 - `hot-template.md`
-- `agent-memory-block.md`
 
 ## Rekommenderad placering i vaulten
 
@@ -18,8 +17,7 @@ mqobsidian/
 │  ├─ research-node-template.md
 │  ├─ skill-template.md
 │  ├─ index-template.md
-│  ├─ hot-template.md
-│  └─ agent-memory-block.md
+│  └─ hot-template.md
 ├─ 02_summaries/
 ├─ 03_systems/
 ├─ 04_skills/
@@ -43,7 +41,7 @@ Paketet följer samma kärnlogik som roadmapen:
 2. Skapa en första `hot.md` för varje kärnsystem
 3. Skapa en `index.md` per system
 4. Börja skriva nya notes utifrån summary/research/skill-mallarna
-5. Lägg `agent-memory-block.md` i MQ-repons `AGENTS.md`/`CLAUDE.md` när de ska läsa mqobsidian först
+5. Generera `AGENTS.md`/`CLAUDE.md` per MQ-repo med `scripts/generate-agents-md.py` / `generate-claude-md.py` (de använder `templates/AGENTS.md` / `CLAUDE.md`)
 
 ## Förslag på första notes
 
