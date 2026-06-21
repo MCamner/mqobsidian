@@ -697,28 +697,34 @@ CodeGraph indexes local source, but `.codegraph/` must remain local.
 
 Acceptance:
 
-* [ ] `.codegraph/` is ignored.
-* [ ] No CodeGraph DB files are exported to examples.
-* [ ] No local machine paths are added to docs.
-* [ ] `python3 scripts/check-sensitive-content.py` passes.
+* [x] `.codegraph/` is ignored.
+* [x] No CodeGraph DB files are exported to examples.
+* [x] No local machine paths are added to docs.
+* [x] `python3 scripts/check-sensitive-content.py` passes.
 
 ### Definition of done
 
 Phase 4.5 is done when:
 
-* [ ] CodeGraph install is documented for macOS/Linux, npm, and Windows.
-* [ ] Claude Code, Cursor, and Codex wiring is documented.
-* [ ] `docs/integrations/codegraph.md` exists.
-* [ ] `memory/context-cards/codegraph-card.md` exists.
-* [ ] `templates/codegraph-agent-hints.md` exists.
-* [ ] `scripts/init-codegraph-stack.sh` exists.
-* [ ] `scripts/check-codegraph-stack.sh` exists.
-* [ ] `.codegraph/` is ignored in each initialized MQ repo.
-* [ ] Generated entrypoints mention CodeGraph only as a compact optional path.
-* [ ] Task packs can recommend CodeGraph without breaking `context-pack.v1`.
-* [ ] Token-budget and public-safe checks pass.
-* [ ] At least one real MQ task is measured with: context pack only,
+* [x] CodeGraph install is documented for macOS/Linux, npm, and Windows.
+* [x] Claude Code, Cursor, and Codex wiring is documented.
+* [x] `docs/integrations/codegraph.md` exists.
+* [x] `memory/context-cards/codegraph-card.md` exists.
+* [x] `templates/codegraph-agent-hints.md` exists.
+* [x] `scripts/init-codegraph-stack.sh` exists.
+* [x] `scripts/check-codegraph-stack.sh` exists.
+* [x] `.codegraph/` is ignored in each initialized MQ repo.
+* [x] Generated entrypoints mention CodeGraph only as a compact optional path.
+* [x] Task packs can recommend CodeGraph without breaking `context-pack.v1`.
+* [x] Token-budget and public-safe checks pass.
+* [x] At least one real MQ task is measured with: context pack only,
   context pack + CodeGraph, and broad source scan baseline.
+
+**Status — 2026-06-21:** CodeGraph installed and indexed in `mqobsidian`
+(11 files, 116 nodes); measurement recorded in `docs/context-effect.md`
+(42 lines via `codegraph node` vs 267 for a broad source scan, ~84% fewer).
+`.codegraph/` confirmed git-ignored. Remaining first tasks below are still
+open pending per-repo `codegraph init` on the other MQ repos.
 
 ### Measurement
 
