@@ -80,6 +80,39 @@ query — which is exactly what `apply_codegraph_defaults` now nudges agents tow
 `.codegraph/` stays local and git-ignored (self-ignored via
 `.codegraph/.gitignore`); none of it is committed or exported.
 
+## Cross-repo measurement — `fix mq-mcp brain writer paths` (Phase 4.5)
+
+The first "minimum first task" from the roadmap, now that the whole stack is
+indexed (`mq-mcp` = 74 files / 1,584 nodes). This is the real MVP task the
+context pack was built for, re-measured with CodeGraph on the source side.
+
+```text
+Task:                fix mq-mcp brain writer paths
+Repo:                mq-mcp (+ mqobsidian schemas, mq-agent vault docs)
+With context pack:   pack names exact writer/wrapper/test/contract files (orientation)
+With pack + CodeGraph: codegraph node learning_store_path + store_learn_record
+Files read:          0 full files (verbatim symbol source returned inline)
+Grep/find avoided:   broad read of server.py (5,524 lines) to find brain_* wrappers
+Tool calls avoided:  multi-file Read pass across learn_engine/obsidian_writer/server
+Result:              68 lines vs 6,922-line broad baseline (~99% fewer)
+```
+
+| Context path | First-read lines | What it yields |
+| --- | ---: | --- |
+| Context pack only | 213 | Which repos/files/decisions — no call structure |
+| Pack + CodeGraph (2 `codegraph node`) | 68 | Verbatim writer source + exact callers + a no-tests warning |
+| Broad source-scan baseline | 6,922 | `learn_engine.py` + `obsidian_writer.py` + `server.py` read in full |
+
+CodeGraph returned the writer path in **68 lines vs 6,922** (~99% fewer) and
+surfaced edges grep cannot — `learning_store_path` is `Called by ← record_learning,
+load_learnings`; `store_learn_record` `Calls → validate_learn_record, make_learning,
+record_learning` — plus a `⚠️ no covering tests found` blast-radius flag on the
+writer-path symbol, exactly the safety signal you want before moving a write path.
+
+This confirms the cross-repo payoff: the pack still does orientation (which repos,
+which files, the `memory/reviews/` vs `memory/learn/` decision), and CodeGraph
+collapses the source-discovery step from thousands of lines to tens.
+
 ## Next action
 
 Continue Phase 2 by tightening card content from verified repo boundaries, then
