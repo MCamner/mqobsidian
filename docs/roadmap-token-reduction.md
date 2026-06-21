@@ -636,10 +636,12 @@ Acceptance:
 ```text
 docs/integrations/codegraph.md
 memory/context-cards/codegraph-card.md
-templates/codegraph-agent-hints.md
 scripts/init-codegraph-stack.sh
 scripts/check-codegraph-stack.sh
 ```
+
+The CodeGraph agent hint lives inline in `templates/AGENTS.md` (see below) and
+flows through the generators, so it needs no separate template file.
 
 Install, agent-wiring, per-repo init, and query-pattern detail live in
 `docs/integrations/codegraph.md` so this roadmap stays a plan, not a manual.
@@ -648,8 +650,8 @@ Install, agent-wiring, per-repo init, and query-pattern detail live in
 
 Update templates only (`templates/AGENTS.md`, `templates/CLAUDE.md`,
 `scripts/generate-agents-md.py`, `scripts/generate-claude-md.py`), not every
-repo manually. Add a short optional source-intelligence section sourced from
-`templates/codegraph-agent-hints.md`.
+repo manually. Add a short optional source-intelligence section inline in
+`templates/AGENTS.md` so the generators carry it without a separate file.
 
 **Status — 2026-06-21**
 
@@ -710,7 +712,7 @@ Phase 4.5 is done when:
 * [x] Claude Code, Cursor, and Codex wiring is documented.
 * [x] `docs/integrations/codegraph.md` exists.
 * [x] `memory/context-cards/codegraph-card.md` exists.
-* [x] `templates/codegraph-agent-hints.md` exists.
+* [x] CodeGraph agent hint lives inline in `templates/AGENTS.md`.
 * [x] `scripts/init-codegraph-stack.sh` exists.
 * [x] `scripts/check-codegraph-stack.sh` exists.
 * [x] `.codegraph/` is ignored in each initialized MQ repo.
