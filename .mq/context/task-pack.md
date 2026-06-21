@@ -2,7 +2,7 @@
 schema: context-pack.v1
 target: codex
 task: fix mq-mcp brain writer paths
-generated_at: 2026-06-16T22:19:40+00:00
+generated_at: 2026-06-21T00:22:28+00:00
 repo: mq-mcp
 summary: Minimum context needed for: fix mq-mcp brain writer paths
 ---

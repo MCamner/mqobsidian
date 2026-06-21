@@ -534,6 +534,231 @@ mqobsidian/memory/learn/
 
 Agents get local, compressed context without reading the whole stack.
 
+## Phase 4.5 - CodeGraph Source Intelligence Layer
+
+**Version target**
+
+`mqobsidian v0.5.x` + local MQ-stack setup
+
+**Goal**
+
+Add CodeGraph as an optional local source-code intelligence layer for the MQ
+stack.
+
+`mqobsidian` remains the durable memory and context-contract layer. CodeGraph
+owns local source-code indexing, symbol search, call graphs, callers/callees,
+impact analysis, and source-level exploration.
+
+The purpose is to reduce another token sink — the agent grep/read/discover loop —
+and replace it with:
+
+```text
+task-pack -> CodeGraph query -> focused source edit
+```
+
+### Design boundary
+
+`mqobsidian` does **not** become a code graph engine. It should not implement:
+
+* tree-sitter parsing
+* symbol extraction
+* call graph generation
+* source-code full-text search
+* impact/blast-radius analysis
+* MCP source-code intelligence tools
+
+Those responsibilities belong to CodeGraph. `mqobsidian` should own:
+
+* documented integration rules
+* CodeGraph read-order hints for agents
+* optional context-card guidance
+* install/check scripts for the MQ stack
+* generated task-pack hints that say when to use CodeGraph before broad reads
+
+### Target architecture
+
+```text
+Codex / Claude Code / Cursor
+        |
+        v
+AGENTS.md / CLAUDE.md
+        |
+        v
+.mq/context/task-pack.md
+        |
+        +--> mqobsidian durable memory
+        |
+        +--> CodeGraph local source intelligence
+                 |
+                 v
+             .codegraph/codegraph.db
+                 |
+                 v
+             source repos
+```
+
+```text
+mqobsidian = what the agent should read first
+CodeGraph  = what the agent should ask when it needs to understand the code
+mq-agent   = exports/packs the right context
+mq-mcp     = runtime and safety contracts
+```
+
+### Target repos to index
+
+Initial MQ-stack target repos:
+
+* `mqobsidian`
+* `mq-agent`
+* `mq-mcp`
+* `mq-hal`
+* `repo-signal`
+* `mq-ums`
+* `mq-image-analyze`
+* `macos-scripts` / `mqlaunch` if present locally
+
+### Git ignore rule
+
+Each repo should ignore local CodeGraph indexes:
+
+```gitignore
+.codegraph/
+```
+
+Acceptance:
+
+* [ ] `.codegraph/` is ignored in every indexed MQ repo.
+* [ ] No `.codegraph/` database is committed.
+* [ ] Public-safe checks still pass after adding ignore rules.
+
+### Add files to mqobsidian
+
+```text
+docs/integrations/codegraph.md
+memory/context-cards/codegraph-card.md
+templates/codegraph-agent-hints.md
+scripts/init-codegraph-stack.sh
+scripts/check-codegraph-stack.sh
+```
+
+Install, agent-wiring, per-repo init, and query-pattern detail live in
+`docs/integrations/codegraph.md` so this roadmap stays a plan, not a manual.
+
+### Update generated `AGENTS.md` / `CLAUDE.md`
+
+Update templates only (`templates/AGENTS.md`, `templates/CLAUDE.md`,
+`scripts/generate-agents-md.py`, `scripts/generate-claude-md.py`), not every
+repo manually. Add a short optional source-intelligence section sourced from
+`templates/codegraph-agent-hints.md`.
+
+**Status — 2026-06-21**
+
+Done. `templates/AGENTS.md` gained a 6-line `## Source Intelligence` section;
+the generators substitute the template verbatim, so all nine example
+entrypoints under `examples/generated-agent-entrypoints/` were regenerated.
+`templates/CLAUDE.md` is unchanged — generated `CLAUDE.md` imports `@AGENTS.md`,
+so it inherits the section without duplication. Read order is unchanged
+(`.mq/context/task-pack.md` first); budget and export checks pass.
+
+Acceptance:
+
+* [x] Generated `AGENTS.md` still starts with `.mq/context/task-pack.md`.
+* [x] Generated `CLAUDE.md` still imports or mirrors the same compact read order.
+* [x] Generated files stay under token budget.
+* [x] CodeGraph text does not turn entrypoints into long docs.
+* [x] `python3 scripts/check-token-budget.py` passes.
+
+### Update task-pack generation
+
+Task packs should optionally include CodeGraph guidance when the task is
+source-code-heavy. For now, do **not** break `context-pack.v1`; use existing
+`notes`, `relevant_files`, and `do_not_read` fields. Later, consider
+`context-pack.v1.1` with an optional `codegraph_queries` array.
+
+**Status — 2026-06-21**
+
+Done. `scripts/generate-context-pack.py` appends CodeGraph guidance to the
+existing `notes` field — no schema change. A keyword heuristic
+(`task_is_source_heavy`) triggers on source-structure tasks (callers, impact,
+refactor, rename, trace, symbol, fix, …) and is suppressed for doc-shaped tasks
+(readme, roadmap, release note, changelog, …). A `--codegraph {auto,on,off}`
+flag overrides the heuristic. The note is repo-aware when a repo is known.
+
+Acceptance:
+
+* [x] No breaking change to `context-pack.v1`.
+* [x] Source-heavy packs can suggest CodeGraph queries.
+* [x] Non-source tasks do not mention CodeGraph unnecessarily.
+* [x] `python3 scripts/validate-export.py` passes.
+
+### Public-safe rules
+
+CodeGraph indexes local source, but `.codegraph/` must remain local.
+
+Acceptance:
+
+* [x] `.codegraph/` is ignored.
+* [x] No CodeGraph DB files are exported to examples.
+* [x] No local machine paths are added to docs.
+* [x] `python3 scripts/check-sensitive-content.py` passes.
+
+### Definition of done
+
+Phase 4.5 is done when:
+
+* [x] CodeGraph install is documented for macOS/Linux, npm, and Windows.
+* [x] Claude Code, Cursor, and Codex wiring is documented.
+* [x] `docs/integrations/codegraph.md` exists.
+* [x] `memory/context-cards/codegraph-card.md` exists.
+* [x] `templates/codegraph-agent-hints.md` exists.
+* [x] `scripts/init-codegraph-stack.sh` exists.
+* [x] `scripts/check-codegraph-stack.sh` exists.
+* [x] `.codegraph/` is ignored in each initialized MQ repo.
+* [x] Generated entrypoints mention CodeGraph only as a compact optional path.
+* [x] Task packs can recommend CodeGraph without breaking `context-pack.v1`.
+* [x] Token-budget and public-safe checks pass.
+* [x] At least one real MQ task is measured with: context pack only,
+  context pack + CodeGraph, and broad source scan baseline.
+
+**Status — 2026-06-21:** CodeGraph installed and indexed in `mqobsidian`
+(11 files, 116 nodes); measurement recorded in `docs/context-effect.md`
+(42 lines via `codegraph node` vs 267 for a broad source scan, ~84% fewer).
+`.codegraph/` confirmed git-ignored. Remaining first tasks below are still
+open pending per-repo `codegraph init` on the other MQ repos.
+
+### Measurement
+
+Add to `docs/context-effect.md` or a future `docs/token-reduction-metrics.md`:
+
+```text
+Task:
+Repo:
+Without context pack:
+With context pack:
+With context pack + CodeGraph:
+Files read:
+Grep/find calls avoided:
+Tool calls avoided:
+Agent drift observed:
+Result:
+```
+
+Minimum first tasks to measure:
+
+* [ ] `fix mq-mcp brain writer paths`
+* [ ] `add endpoint-truth export to mq-ums`
+* [ ] `connect repo-signal review export to mqobsidian`
+* [ ] `update mq-agent context export`
+* [ ] `generate AGENTS.md / CLAUDE.md for all MQ repos`
+
+**Token reduction value**
+
+This phase reduces token usage at the source-code discovery layer. Before, a
+task pack still leaves the agent to grep and read many files; after, the agent
+runs a focused CodeGraph source query before a focused file read/edit. The
+combination should reduce both broad memory reads and broad source-discovery
+reads.
+
 ## Phase 5 - Task-specific context packs
 
 **Version target**
@@ -897,18 +1122,19 @@ This turns the idea into measurable architecture value.
 
 ## Roadmap summary
 
-| Phase | Name                        | Main output                  |
-| ----: | --------------------------- | ---------------------------- |
-|     1 | Context budget foundation   | token budget docs and checks |
-|     2 | MQ Context Cards            | short cards per repo         |
-|     3 | Generated AGENTS / CLAUDE   | thin agent entrypoints       |
-|     4 | Per-repo `.mq/context/`     | local context snapshots      |
-|     5 | Task-specific context packs | main token-saving feature    |
-|     6 | Local memory query first    | retrieval before AI context  |
-|     7 | Repo responsibility map     | less duplicated explanation  |
-|     8 | CI token gates              | enforce small context        |
-|     9 | Cross-repo integration      | real MQ-stack function       |
-|    10 | Measurement                 | prove reduction              |
+| Phase | Name                          | Main output                           |
+| ----: | ----------------------------- | ------------------------------------- |
+|     1 | Context budget foundation     | token budget docs and checks          |
+|     2 | MQ Context Cards              | short cards per repo                  |
+|     3 | Generated AGENTS / CLAUDE     | thin agent entrypoints                |
+|     4 | Per-repo `.mq/context/`       | local context snapshots               |
+|   4.5 | CodeGraph Source Intelligence | optional local codegraph acceleration |
+|     5 | Task-specific context packs   | main token-saving feature             |
+|     6 | Local memory query first      | retrieval before AI context           |
+|     7 | Repo responsibility map       | less duplicated explanation           |
+|     8 | CI token gates                | enforce small context                 |
+|     9 | Cross-repo integration        | real MQ-stack function                |
+|    10 | Measurement                   | prove reduction                       |
 
 ## Definition of done
 
@@ -925,6 +1151,11 @@ This turns the idea into measurable architecture value.
 * every MQ repo has a short repo card
 * memory is queried before large docs are read
 * token reduction is measured on real MQ tasks
+* CodeGraph is documented as an optional local source-intelligence layer
+* `.codegraph/` is ignored and never exported as durable memory
+* generated agent entrypoints tell agents when to use mqobsidian vs CodeGraph
+* source-heavy task packs can recommend CodeGraph before broad grep/read loops
+* token reduction is measured separately for memory reads and source discovery reads
 
 At that point, `mqobsidian` is no longer just an Obsidian-compatible note
 layer.

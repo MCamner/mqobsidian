@@ -19,6 +19,76 @@ def bullet_lines(items: list[str], fallback: str) -> str:
     return "\n".join(f"* {item}" for item in items)
 
 
+# Signals that a task is about source-code structure, where CodeGraph
+# (callers/callees, impact, code-flow, symbol search) beats broad grep/read.
+CODEGRAPH_TASK_HINTS = (
+    "caller",
+    "callee",
+    "impact",
+    "blast radius",
+    "call graph",
+    "code flow",
+    "code-flow",
+    "refactor",
+    "rename",
+    "trace",
+    "symbol",
+    "where is",
+    "implement",
+    "writer path",
+    "wire ",
+    "fix ",
+)
+
+# Doc-shaped tasks never need CodeGraph; suppress even if a hint also matches so
+# non-source packs stay clean.
+CODEGRAPH_TASK_SUPPRESS = (
+    "readme",
+    "roadmap",
+    "release note",
+    "changelog",
+    "docstring",
+    "doc ",
+    "docs ",
+    "docs/",
+)
+
+
+def task_is_source_heavy(task: str) -> bool:
+    key = task.lower()
+    if any(token in key for token in CODEGRAPH_TASK_SUPPRESS):
+        return False
+    return any(token in key for token in CODEGRAPH_TASK_HINTS)
+
+
+def apply_codegraph_defaults(
+    task: str,
+    repo: str | None,
+    relevant_repos: list[str],
+    notes: list[str],
+    mode: str,
+) -> list[str]:
+    """Append optional CodeGraph guidance to `notes` without touching the schema.
+
+    `mode` is auto (heuristic), on (force), or off (suppress). Guidance lands in
+    the existing `notes` field so `context-pack.v1` is unchanged.
+    """
+    if mode == "off":
+        return notes
+    if mode == "auto" and not task_is_source_heavy(task):
+        return notes
+
+    target_repo = repo or (relevant_repos[0] if relevant_repos else None)
+    where = f" in `{target_repo}`" if target_repo else ""
+    for item in [
+        f"If `.codegraph/` exists{where}, ask CodeGraph for callers/impact before broad grep.",
+        "Use CodeGraph for source structure only; use mqobsidian for durable memory and repo boundaries.",
+    ]:
+        if item not in notes:
+            notes.append(item)
+    return notes
+
+
 def apply_task_defaults(
     task: str,
     repo: str | None,
@@ -134,6 +204,12 @@ def parse_args() -> ArgumentParser:
     parser.add_argument("--relevant-decision", action="append", default=[], help="Relevant decision or rule")
     parser.add_argument("--note", action="append", default=[], help="Short operator note")
     parser.add_argument("--do-not-read", action="append", default=[], help="Files or surfaces to avoid at first")
+    parser.add_argument(
+        "--codegraph",
+        choices=["auto", "on", "off"],
+        default="auto",
+        help="Add CodeGraph guidance to notes: auto (source-heavy tasks only), on, or off",
+    )
     parser.add_argument("--output", "--out", type=Path, help="Write the pack to this path instead of stdout")
     return parser
 
@@ -155,6 +231,14 @@ def main() -> int:
         relevant_decisions=args.relevant_decision,
         notes=args.note,
         do_not_read=args.do_not_read,
+    )
+
+    notes = apply_codegraph_defaults(
+        task=task,
+        repo=args.repo,
+        relevant_repos=relevant_repos,
+        notes=notes,
+        mode=args.codegraph,
     )
 
     content = render_pack(
