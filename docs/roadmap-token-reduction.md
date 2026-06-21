@@ -723,8 +723,10 @@ Phase 4.5 is done when:
 **Status — 2026-06-21:** CodeGraph installed and indexed in `mqobsidian`
 (11 files, 116 nodes); measurement recorded in `docs/context-effect.md`
 (42 lines via `codegraph node` vs 267 for a broad source scan, ~84% fewer).
-`.codegraph/` confirmed git-ignored. Remaining first tasks below are still
-open pending per-repo `codegraph init` on the other MQ repos.
+`.codegraph/` confirmed git-ignored. Whole stack since indexed (mq-agent,
+mq-mcp, mq-hal, repo-signal, mq-ums, mq-image-analyze, macos-scripts); the
+first cross-repo task below (`fix mq-mcp brain writer paths`) is now measured
+at ~99% fewer source-discovery lines (68 vs 6,922).
 
 ### Measurement
 
@@ -745,7 +747,8 @@ Result:
 
 Minimum first tasks to measure:
 
-* [ ] `fix mq-mcp brain writer paths`
+* [x] `fix mq-mcp brain writer paths` — measured cross-repo (68 vs 6,922 lines,
+  ~99% fewer); see `docs/context-effect.md`.
 * [ ] `add endpoint-truth export to mq-ums`
 * [ ] `connect repo-signal review export to mqobsidian`
 * [ ] `update mq-agent context export`
