@@ -9,6 +9,7 @@ repos=(
   "$HOME/repo-signal"
   "$HOME/mq-ums"
   "$HOME/mq-image-analyze"
+  "$HOME/macos-scripts"
 )
 
 if ! command -v codegraph >/dev/null 2>&1; then
