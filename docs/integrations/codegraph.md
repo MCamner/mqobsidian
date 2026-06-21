@@ -180,7 +180,7 @@ Suggested query patterns for MQ tasks:
 ```bash
 codegraph explore "how does context export work"
 codegraph explore "how does brain_record_learning write memory"
-codegraph search "generate_context_pack"
+codegraph query "generate_context_pack"
 codegraph callers "generate_context_pack"
 codegraph impact "context_pack"
 codegraph node scripts/generate-context-pack.py
