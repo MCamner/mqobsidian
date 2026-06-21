@@ -651,13 +651,22 @@ Update templates only (`templates/AGENTS.md`, `templates/CLAUDE.md`,
 repo manually. Add a short optional source-intelligence section sourced from
 `templates/codegraph-agent-hints.md`.
 
+**Status — 2026-06-21**
+
+Done. `templates/AGENTS.md` gained a 6-line `## Source Intelligence` section;
+the generators substitute the template verbatim, so all nine example
+entrypoints under `examples/generated-agent-entrypoints/` were regenerated.
+`templates/CLAUDE.md` is unchanged — generated `CLAUDE.md` imports `@AGENTS.md`,
+so it inherits the section without duplication. Read order is unchanged
+(`.mq/context/task-pack.md` first); budget and export checks pass.
+
 Acceptance:
 
-* [ ] Generated `AGENTS.md` still starts with `.mq/context/task-pack.md`.
-* [ ] Generated `CLAUDE.md` still imports or mirrors the same compact read order.
-* [ ] Generated files stay under token budget.
-* [ ] CodeGraph text does not turn entrypoints into long docs.
-* [ ] `python3 scripts/check-token-budget.py` passes.
+* [x] Generated `AGENTS.md` still starts with `.mq/context/task-pack.md`.
+* [x] Generated `CLAUDE.md` still imports or mirrors the same compact read order.
+* [x] Generated files stay under token budget.
+* [x] CodeGraph text does not turn entrypoints into long docs.
+* [x] `python3 scripts/check-token-budget.py` passes.
 
 ### Update task-pack generation
 
@@ -1110,7 +1119,7 @@ This turns the idea into measurable architecture value.
 |     7 | Repo responsibility map       | less duplicated explanation           |
 |     8 | CI token gates                | enforce small context                 |
 |     9 | Cross-repo integration        | real MQ-stack function                |
-|    10 | Measurement                   | prove reduction                       | prove reduction              |
+|    10 | Measurement                   | prove reduction                       |
 
 ## Definition of done
 

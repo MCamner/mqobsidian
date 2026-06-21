@@ -31,3 +31,11 @@ Stop reading as soon as the task is grounded.
 MQ-stack memory lives in `mqobsidian`.
 
 Use generated context packs before reading large docs.
+
+## Source Intelligence
+
+If `.codegraph/` exists, prefer CodeGraph for source-structure questions before
+broad file scans: symbol lookup, callers/callees, impact analysis, code-flow.
+
+Do not use CodeGraph as durable MQ memory. Use `mqobsidian` context packs and
+cards for memory, repo boundaries, and prior verified work.
