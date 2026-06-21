@@ -60,3 +60,4 @@ __pycache__/
 *.bak
 *.tmp
 *.swp
+.codegraph/
