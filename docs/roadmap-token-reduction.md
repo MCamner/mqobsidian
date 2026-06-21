@@ -675,12 +675,21 @@ source-code-heavy. For now, do **not** break `context-pack.v1`; use existing
 `notes`, `relevant_files`, and `do_not_read` fields. Later, consider
 `context-pack.v1.1` with an optional `codegraph_queries` array.
 
+**Status — 2026-06-21**
+
+Done. `scripts/generate-context-pack.py` appends CodeGraph guidance to the
+existing `notes` field — no schema change. A keyword heuristic
+(`task_is_source_heavy`) triggers on source-structure tasks (callers, impact,
+refactor, rename, trace, symbol, fix, …) and is suppressed for doc-shaped tasks
+(readme, roadmap, release note, changelog, …). A `--codegraph {auto,on,off}`
+flag overrides the heuristic. The note is repo-aware when a repo is known.
+
 Acceptance:
 
-* [ ] No breaking change to `context-pack.v1`.
-* [ ] Source-heavy packs can suggest CodeGraph queries.
-* [ ] Non-source tasks do not mention CodeGraph unnecessarily.
-* [ ] `python3 scripts/validate-export.py` passes.
+* [x] No breaking change to `context-pack.v1`.
+* [x] Source-heavy packs can suggest CodeGraph queries.
+* [x] Non-source tasks do not mention CodeGraph unnecessarily.
+* [x] `python3 scripts/validate-export.py` passes.
 
 ### Public-safe rules
 
