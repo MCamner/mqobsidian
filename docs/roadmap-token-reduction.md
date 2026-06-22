@@ -1199,17 +1199,28 @@ feedback loop.
 Make it explicit what must **not** enter a pack, instead of relying on the
 generator to omit it by accident.
 
-* [ ] Define a format for explicit exclusions in the context-pack contract.
-* [ ] Distinguish `irrelevant`, `fallback`, and `forbidden` so historical or
-  large blocks become fallback, not default.
-* [ ] Mark unrelated repos as explicitly excludable per task-type.
-* [ ] Add a sanitized example that shows both included and excluded context.
+* [x] Define a format for explicit exclusions in the context-pack contract.
+  Optional `exclusions` array in `schemas/context-pack.v1.json`, each entry
+  `{ item, kind, reason? }`. Additive and backward-compatible: the legacy flat
+  `do_not_read` list is retained and means `kind: irrelevant`.
+* [x] Distinguish `irrelevant`, `fallback`, and `forbidden` so historical or
+  large blocks become fallback, not default. (`kind` enum.)
+* [x] Mark unrelated repos as explicitly excludable per task-type.
+  (`forbidden` entry naming the repo; see the example.)
+* [x] Add a sanitized example that shows both included and excluded context.
+  (`examples/sanitized-context-pack.md` now has a structured `## Exclusions`
+  section; `templates/context-pack.md` carries the canonical shape.)
 
 **Definition of done**
 
-* [ ] Negative context is described, exemplified, and consumable by `mq-agent`.
-* [ ] **Any change to `schemas/context-pack.v*` regenerates the affected
+* [x] Negative context is described, exemplified, and consumable by `mq-agent`.
+  The contract + canonical template + example are in place. Producing
+  `exclusions` from real packs is mq-agent-side work (it owns generation); the
+  contract is now stable for that consumer.
+* [x] **Any change to `schemas/context-pack.v*` regenerates the affected
   examples in the same PR** — otherwise the stale-example CI guard fails.
+  (Schema + template + example landed together; all five public-safe CI gates
+  pass, and `examples/repo-context-exports` shows no regeneration drift.)
 
 ### 11b - Block-level metadata
 

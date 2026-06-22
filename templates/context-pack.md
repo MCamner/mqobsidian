@@ -25,7 +25,13 @@ summary: Short summary of the minimum context needed for this task
 
 * Prefer local memory query before broad repo scans.
 
-## Do not read first
+## Exclusions
 
-* full README
-* unrelated release notes
+Each entry is `kind` — `item`: reason. `kind` is one of `forbidden` (never pull
+into the pack), `fallback` (read only if the context above is insufficient), or
+`irrelevant` (not needed for this task). The legacy flat `do_not_read` list is
+still accepted and means `irrelevant`.
+
+* `irrelevant` — full README
+* `fallback` — archived release notes: read only if the context above is thin
+* `forbidden` — unrelated MQ repos: never pull into this pack
