@@ -1170,3 +1170,97 @@ It becomes:
 ```text
 MQ-stack context compressor and durable architecture memory layer.
 ```
+
+## Phase 11 - Next Context-Quality Layer
+
+**Version target**
+
+`mqobsidian v1.x`
+
+**Goal**
+
+Improve selection *quality* on top of the working compression layer (Phases
+1-10), without re-implementing anything `mq-agent` already owns. Phases 1-10
+proved that small packs work and measured the reduction (94.8% first-read,
+~99% source-discovery via CodeGraph). Phase 11 adds the three things those
+phases do not yet express: explicit exclusions, block-level metadata, and a
+feedback loop.
+
+**Ownership boundary (unchanged, restated for this phase)**
+
+* `mqobsidian` owns the *knowledge*: durable notes, schemas, templates,
+  public-safe examples, and the new metadata/exclusion vocabulary below.
+* `mq-agent` owns the *mechanism*: context selection, pack generation, and
+  export. Any compiler or export script belongs in `mq-agent`, **not** in
+  `mqobsidian/scripts/`. Phase 11 must not move selection logic into this repo.
+
+### 11a - Negative context
+
+Make it explicit what must **not** enter a pack, instead of relying on the
+generator to omit it by accident.
+
+* [ ] Define a format for explicit exclusions in the context-pack contract.
+* [ ] Distinguish `irrelevant`, `fallback`, and `forbidden` so historical or
+  large blocks become fallback, not default.
+* [ ] Mark unrelated repos as explicitly excludable per task-type.
+* [ ] Add a sanitized example that shows both included and excluded context.
+
+**Definition of done**
+
+* [ ] Negative context is described, exemplified, and consumable by `mq-agent`.
+* [ ] **Any change to `schemas/context-pack.v*` regenerates the affected
+  examples in the same PR** — otherwise the stale-example CI guard fails.
+
+### 11b - Block-level metadata
+
+Improve selection quality with structured stand-off data, consumed by
+`mq-agent` — not a new compiler here.
+
+* [ ] `freshness`: `current` / `stale` / `archived`, with rules for when it
+  updates and how it may affect selection.
+* [ ] `scope`: `repo` / `system` / `cross-repo` / `local-only`, used to bound
+  selection and prevent context bloat.
+* [ ] `publishability`: `public-safe` / `sanitized-example` / `local-rich` /
+  `generated-target-artifact`, tied to which directory may hold what.
+* [ ] Optional `priority` as supporting metadata only.
+* [ ] Update schema + examples; keep backward compatibility where required.
+
+**Definition of done**
+
+* [ ] Blocks can be tagged consistently and `mq-agent` can use the metadata
+  without ownership moving into `mqobsidian`.
+
+### 11c - Feedback loop
+
+Let real usage improve selection over time, with no publish leak.
+
+* [ ] Define which usage signals are worth capturing.
+* [ ] Keep signal logs in a local-only, gitignored surface.
+* [ ] Define how high-value material is promoted into better templates/examples.
+* [ ] Define how stale / low-value material is downgraded.
+* [ ] Guarantee the loop never auto-publishes anything.
+
+**Definition of done**
+
+* [ ] A safe improvement loop exists whose data never requires committing
+  local-rich material.
+
+### Publishability map for Phase 11 work
+
+* Tracked / public-safe: `docs/`, `schemas/`, `templates/`, `examples/`,
+  `scripts/` (knowledge + checks only — **no compiler/export scripts**), `.mq/`.
+* Local-only / gitignored: `views/`, `benchmarks/`, raw selection logs,
+  unsanitized task snapshots, repo-specific experiments.
+
+### Open decision carried into Phase 11
+
+The Phase 4 question — whether per-repo `.mq/context/` exports are tracked in
+each target repo or regenerated locally — is still open. **Record that decision
+as a local `decisions/` ADR** (gitignored convention; it is not expected in
+public history) and tie it to the publishability map and the CI/regen rules.
+
+**Token reduction value**
+
+Phases 1-10 made packs *small*; Phase 11 makes them *right* — fewer wrong
+blocks pulled in, explicit exclusions, and a loop that keeps the gains real
+instead of cosmetic.

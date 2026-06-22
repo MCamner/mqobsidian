@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-06-20
+updated: 2026-06-22
 owner:
 links_to: [hot]
 ---
@@ -14,11 +14,11 @@ links_to: [hot]
 Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade kontextyta.
 
 ## Current state
-`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`. `mq-agent context export` är mergat till `main`; fem idempotenta, budgeterade context-filer har rullats ut till nio repo. Mqobsidians exempel-export är versionshanterad medan övriga repo-exporter ännu är lokala.
+`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`. `mq-agent context export` är mergat till `main`; fem idempotenta, budgeterade context-filer har rullats ut till nio repo. Exporter-policyn är nu avgjord (ADR-006): public-safe `.mq/context/`-exporter versionshanteras i målrepo, lokal regen är arbetsmetod, och repo utan beslutad publik agentyta förblir local-only.
 
 ## Current priorities
 1. Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
-2. Bestäm versionshantering kontra lokal regenerering för repo-exporter.
+2. Rulla ut tracked public-safe `.mq/context/`-exporter med drift-gates (ADR-006) och påbörja Phase 11 (negative context, block-metadata).
 3. Samla fler effektmätningar från verkliga uppgifter.
 
 ## Key links
@@ -41,10 +41,11 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - Duplicerad source-repo-dokumentation i vaulten skapar drift.
 
 ## Open questions
-- Ska repo-lokala `.mq/context/`-exporter versionshanteras i varje målrepo eller regenereras lokalt?
 - Vilka verkliga uppgifter ska ingå i nästa mätbatch?
+- Vilka repon får en beslutad publik agentyta (och därmed tracked `.mq/context/`)?
 
 ## Recent changes
+- 2026-06-22: ADR-006 stänger exporter-frågan — public-safe `.mq/context/` trackas i målrepo; lokal regen är arbetsmetod; local-only-undantag speglar ADR-005 P6. Roadmapen fick Phase 11 (next context-quality layer: negative context, block-metadata, feedback-loop).
 - 2026-06-20: `mq-agent context export` landade isolerat i mq-agent PR #92; mqobsidian förblir ägare för cards, budgetkontrakt och public-safe exempel.
 - 2026-06-20: Rullade lokalt ut fem `.mq/context/`-filer till nio repo; andra körningen gav 45 oförändrade filer och alla låg inom budget.
 - 2026-06-20: Verifierade exportstruktur, tokenbudget och 94,8 % first-read-reduktion inför mq-agents context-export-implementation.
