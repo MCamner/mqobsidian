@@ -1,4 +1,5 @@
 <!--
+mq-template-lineage: superset-v1
 Generated from mqobsidian agent-entrypoint templates for <REPO_NAME>.
 Do not hand-edit this file directly; edit the mqobsidian templates and regenerate.
 
@@ -19,6 +20,11 @@ This repo is part of the MQ stack.
 These instructions add MQ memory read-order rules. They do not replace
 repo-specific build, test, safety, or release instructions.
 
+## mqobsidian Location
+
+Default local vault path: `$MQ_OBSIDIAN_DIR`. If `MQ_OBSIDIAN_DIR` is set,
+prefer that value.
+
 ## Read First
 
 For work related to `<REPO_NAME>`:
@@ -29,8 +35,18 @@ For work related to `<REPO_NAME>`:
 4. Read `<MQOBSIDIAN_VAULT_PATH>/memory/learn/agent/<REPO_NAME>.md` if it exists.
 5. Read `<MQOBSIDIAN_VAULT_PATH>/systems/<REPO_NAME>/hot.md` if it exists.
 6. Read `<MQOBSIDIAN_VAULT_PATH>/systems/<REPO_NAME>/index.md` if it exists.
+7. Read `<MQOBSIDIAN_VAULT_PATH>/memory/learn/repos/<REPO_NAME>.md` if it exists.
+8. Read individual pattern notes only if the compressed notes are insufficient.
 
 Stop reading as soon as the task is grounded.
+
+## Low-Token Rules
+
+- Prefer task packs and agent views over full notes.
+- Prefer hot/index over pattern notes.
+- Do not scan the whole vault by default.
+- Do not open multiple pattern notes unless clearly needed.
+- Summarize instead of replaying long note bodies.
 
 ## Rules
 
@@ -42,9 +58,12 @@ Stop reading as soon as the task is grounded.
 
 ## Durable Memory
 
-MQ-stack memory lives in `mqobsidian`.
+MQ-stack memory lives in `mqobsidian`. Use generated context packs before
+reading large docs.
 
-Use generated context packs before reading large docs.
+`mqobsidian` is durable memory, not live runtime truth. If the task depends on
+current code behavior, tests, contracts, CLI behavior, or runtime state, verify
+in this repo before making claims.
 
 ## Source Intelligence
 
@@ -53,6 +72,19 @@ broad file scans: symbol lookup, callers/callees, impact analysis, code-flow.
 
 Do not use CodeGraph as durable MQ memory. Use `mqobsidian` context packs and
 cards for memory, repo boundaries, and prior verified work.
+
+## Writing Rules
+
+When creating notes, summaries, or exports:
+
+- separate facts, interpretation, and recommendation
+- keep outputs compact
+- preserve timestamps and provenance when relevant
+- prefer links over duplicated prose
+- avoid raw dumps
+
+Do not store or copy secrets, tokens, internal hostnames, raw enterprise logs,
+or machine-specific private paths.
 
 ## MQ Skills
 
@@ -65,3 +97,8 @@ near-universal across MQ repos:
 - `mq-secrets-public-safe` — before publishing, commit, or PR.
 
 Use any other installed skill when its description matches the task.
+
+## Fallback Rule
+
+If `mqobsidian` is missing, stale, or too weak for the task, say so and verify
+in the repo. Do not invent continuity.
