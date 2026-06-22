@@ -1,3 +1,17 @@
+<!--
+Generated from mqobsidian agent-entrypoint templates for <REPO_NAME>.
+Do not hand-edit this file directly; edit the mqobsidian templates and regenerate.
+
+Ownership model:
+- mqobsidian owns the contract, templates, schemas, and generators.
+- this repo owns this committed agent surface once published.
+
+Paths use the portable $MQ_OBSIDIAN_DIR placeholder; resolve it to your local
+mqobsidian checkout. Regenerate with:
+  MQ_OBSIDIAN_DIR=<path-to-mqobsidian> \
+    python3 "$MQ_OBSIDIAN_DIR"/scripts/generate-agents-md.py --repo <REPO_NAME> --out AGENTS.md
+-->
+
 # AGENTS.md
 
 This repo is part of the MQ stack.
@@ -39,3 +53,15 @@ broad file scans: symbol lookup, callers/callees, impact analysis, code-flow.
 
 Do not use CodeGraph as durable MQ memory. Use `mqobsidian` context packs and
 cards for memory, repo boundaries, and prior verified work.
+
+## MQ Skills
+
+Repo-local skills live under `.agents/skills/` (Codex) and `.claude/skills/`
+(Claude Code). Route by each skill's frontmatter `description`. A few are
+near-universal across MQ repos:
+
+- `mq-writing-plans` — before multi-step or cross-repo changes.
+- `mq-worktree-safe` — before risky branch/worktree flows.
+- `mq-secrets-public-safe` — before publishing, commit, or PR.
+
+Use any other installed skill when its description matches the task.

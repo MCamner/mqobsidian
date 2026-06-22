@@ -14,6 +14,10 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TEMPLATE = ROOT / "templates" / "CLAUDE.md"
 
 
+def render(template: str, repo: str) -> str:
+    return template.replace("<REPO_NAME>", repo)
+
+
 def parse_args() -> ArgumentParser:
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--repo", help="Target repo name")
@@ -32,20 +36,23 @@ def main() -> int:
     parser = parse_args()
     args = parser.parse_args()
 
-    content = args.template.read_text(encoding="utf-8")
+    template = args.template.read_text(encoding="utf-8")
 
     if args.all:
         if args.output or not args.output_dir:
             parser.error("--all requires --output-dir and cannot be combined with --output")
         for repo in CORE_MQ_REPOS:
+            content = render(template=template, repo=repo)
             path = args.output_dir / repo / "CLAUDE.md"
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(content, encoding="utf-8")
             print(path)
         return 0
 
-    if not args.repo and args.output:
-        parser.error("--repo is required when writing a single CLAUDE.md")
+    if not args.repo:
+        parser.error("--repo is required unless --all is used")
+
+    content = render(template=template, repo=args.repo)
 
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
