@@ -39,3 +39,15 @@ broad file scans: symbol lookup, callers/callees, impact analysis, code-flow.
 
 Do not use CodeGraph as durable MQ memory. Use `mqobsidian` context packs and
 cards for memory, repo boundaries, and prior verified work.
+
+## MQ Skills
+
+Repo-local skills live under `.agents/skills/` (Codex) and `.claude/skills/`
+(Claude Code). Route by each skill's frontmatter `description`. A few are
+near-universal across MQ repos:
+
+- `mq-writing-plans` — before multi-step or cross-repo changes.
+- `mq-worktree-safe` — before risky branch/worktree flows.
+- `mq-secrets-public-safe` — before publishing, commit, or PR.
+
+Use any other installed skill when its description matches the task.

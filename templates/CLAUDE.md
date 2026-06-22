@@ -14,3 +14,6 @@ For cross-repo work:
 4. Only then inspect source files.
 
 Do not expand scope unless the task requires it.
+
+Claude Code auto-loads skills from `.claude/skills/`; see **MQ Skills** in
+AGENTS.md for routing.
