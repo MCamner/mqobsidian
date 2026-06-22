@@ -1,4 +1,5 @@
 <!--
+mq-template-lineage: superset-v1
 Generated from mqobsidian agent-entrypoint templates for <REPO_NAME>.
 Do not hand-edit this file directly; edit the mqobsidian templates and regenerate.
 
