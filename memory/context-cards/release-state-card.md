@@ -3,6 +3,9 @@ schema: context-card.v1
 repo: mq-release-state
 role: Compact pointer to release readiness state across MQ repos
 updated_at: 2026-06-19T00:00:00Z
+freshness: current
+scope: cross-repo
+publishability: public-safe
 ---
 
 # Context Card: release state
