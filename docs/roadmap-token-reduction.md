@@ -1252,12 +1252,15 @@ Let real usage improve selection over time, with no publish leak.
 * Local-only / gitignored: `views/`, `benchmarks/`, raw selection logs,
   unsanitized task snapshots, repo-specific experiments.
 
-### Open decision carried into Phase 11
+### Decision carried into Phase 11 (resolved)
 
 The Phase 4 question — whether per-repo `.mq/context/` exports are tracked in
-each target repo or regenerated locally — is still open. **Record that decision
-as a local `decisions/` ADR** (gitignored convention; it is not expected in
-public history) and tie it to the publishability map and the CI/regen rules.
+each target repo or regenerated locally — is **resolved by ADR-006**: public-safe
+`.mq/context/` exports are tracked in the target repo, local regen is the build
+method (not the publish model), and repos without a decided public agent surface
+stay local-only (mirrors ADR-005 P6). The ADR lives in the gitignored
+`decisions/` convention, so it is not expected in public history. Phase 11's
+publishability map and the CI/regen drift gates inherit this decision.
 
 **Token reduction value**
 
