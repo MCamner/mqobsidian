@@ -7,15 +7,12 @@ from argparse import ArgumentParser
 from pathlib import Path
 import sys
 
+from agent_entrypoints import render_agents, write_entrypoint
 from mq_repos import CORE_MQ_REPOS
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TEMPLATE = ROOT / "templates" / "AGENTS.md"
-
-
-def render(template: str, repo: str, vault_path: str) -> str:
-    return template.replace("<REPO_NAME>", repo).replace("<MQOBSIDIAN_VAULT_PATH>", vault_path)
 
 
 def parse_args() -> ArgumentParser:
@@ -39,6 +36,16 @@ def parse_args() -> ArgumentParser:
         type=Path,
         help="With --all, write <repo>/AGENTS.md files under this directory",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite a target even if it is dirty or untracked in its repo",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Dry-run: validate and report drift vs the on-disk file, write nothing",
+    )
     return parser
 
 
@@ -51,24 +58,20 @@ def main() -> int:
     if args.all:
         if args.output or not args.output_dir:
             parser.error("--all requires --output-dir and cannot be combined with --output")
+        rc = 0
         for repo in CORE_MQ_REPOS:
-            content = render(template=template, repo=repo, vault_path=args.vault_path)
+            content = render_agents(template, repo, args.vault_path)
             path = args.output_dir / repo / "AGENTS.md"
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(content, encoding="utf-8")
-            print(path)
-        return 0
+            rc |= write_entrypoint(path, content, kind="agents", force=args.force, check=args.check)
+        return rc
 
     if not args.repo:
         parser.error("--repo is required unless --all is used")
 
-    content = render(template=template, repo=args.repo, vault_path=args.vault_path)
+    content = render_agents(template, args.repo, args.vault_path)
 
     if args.output:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(content, encoding="utf-8")
-        print(args.output)
-        return 0
+        return write_entrypoint(args.output, content, kind="agents", force=args.force, check=args.check)
 
     sys.stdout.write(content)
     return 0

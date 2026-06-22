@@ -27,6 +27,9 @@ jobs:
       - name: Check token budget
         run: python3 scripts/check-token-budget.py
 
+      - name: Check agent-entrypoint canonical contract
+        run: python3 scripts/check-agent-entrypoints.py
+
       - name: Check context exports are regenerated
         run: |
           python3 scripts/generate-repo-context-export.py --all
