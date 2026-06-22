@@ -3,6 +3,9 @@ schema: context-card.v1
 repo: mq-mcp
 role: MCP execution and validation runtime for the MQ stack
 updated_at: 2026-06-17T00:00:00Z
+freshness: current
+scope: repo
+publishability: public-safe
 ---
 
 # Context Card: mq-mcp

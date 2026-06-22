@@ -125,6 +125,19 @@ def validate_context_card(path: Path, schema: dict[str, object]) -> list[str]:
     if data["schema"] != "context-card.v1":
         problems.append(f"{path.relative_to(ROOT)}: schema must be context-card.v1")
 
+    # Block-level metadata (Phase 11b) is optional, but when present it must use
+    # the enum values declared in the schema. Read allowed values from the schema
+    # so it stays the single source of truth.
+    for field in ("freshness", "scope", "publishability"):
+        value = frontmatter.get(field)
+        if value is None:
+            continue
+        allowed_values = properties.get(field, {}).get("enum")
+        if isinstance(allowed_values, list) and value not in allowed_values:
+            problems.append(
+                f"{path.relative_to(ROOT)}: {field} must be one of {allowed_values}"
+            )
+
     return problems
 
 

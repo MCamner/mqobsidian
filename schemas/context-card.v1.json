@@ -70,6 +70,18 @@
     "updated_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "freshness": {
+      "type": "string",
+      "enum": ["current", "stale", "archived"]
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["repo", "system", "cross-repo", "local-only"]
+    },
+    "publishability": {
+      "type": "string",
+      "enum": ["public-safe", "sanitized-example", "local-rich", "generated-target-artifact"]
     }
   },
   "additionalProperties": false

@@ -1225,21 +1225,30 @@ generator to omit it by accident.
 ### 11b - Block-level metadata
 
 Improve selection quality with structured stand-off data, consumed by
-`mq-agent` — not a new compiler here.
+`mq-agent` — not a new compiler here. The *block* is the context-card
+(`schemas/context-card.v1.json`): the per-repo unit `mq-agent` assembles into
+packs. Metadata lives in card frontmatter.
 
-* [ ] `freshness`: `current` / `stale` / `archived`, with rules for when it
-  updates and how it may affect selection.
-* [ ] `scope`: `repo` / `system` / `cross-repo` / `local-only`, used to bound
-  selection and prevent context bloat.
-* [ ] `publishability`: `public-safe` / `sanitized-example` / `local-rich` /
-  `generated-target-artifact`, tied to which directory may hold what.
-* [ ] Optional `priority` as supporting metadata only.
-* [ ] Update schema + examples; keep backward compatibility where required.
+* [x] `freshness`: `current` / `stale` / `archived`, demoted-not-deleted in
+  selection. (Optional enum on `context-card.v1`.)
+* [x] `scope`: `repo` / `system` / `cross-repo` / `local-only`, used to bound
+  selection and prevent context bloat. (All 14 cards tagged; the four synthesis
+  cards are `cross-repo`, repo cards are `repo`.)
+* [x] `publishability`: `public-safe` / `sanitized-example` / `local-rich` /
+  `generated-target-artifact`. Documented to only *narrow* a target, never widen
+  the publish boundary (see `docs/CONTEXT_CARDS.md`).
+* [ ] Optional `priority` as supporting metadata only. (Deferred — not needed
+  yet; add when a real selection case requires ranking beyond freshness/scope.)
+* [x] Update schema + examples; keep backward compatibility where required.
+  (Fields are optional; `validate-export.py` enforces the enums from the schema
+  only when present, so pre-existing cards and consumers are unaffected.)
 
 **Definition of done**
 
-* [ ] Blocks can be tagged consistently and `mq-agent` can use the metadata
-  without ownership moving into `mqobsidian`.
+* [x] Blocks can be tagged consistently and `mq-agent` can use the metadata
+  without ownership moving into `mqobsidian`. (All 14 cards tagged; CI validates
+  the enums; the metadata propagates into generated `repo-card.md` exports.
+  Producing/consuming it in selection is mq-agent-side work.)
 
 ### 11c - Feedback loop
 

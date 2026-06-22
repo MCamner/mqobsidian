@@ -3,6 +3,9 @@ schema: context-card.v1
 repo: mqobsidian
 role: Durable memory layer and context compressor for the MQ stack
 updated_at: 2026-06-17T00:00:00Z
+freshness: current
+scope: repo
+publishability: public-safe
 ---
 
 # Context Card: mqobsidian

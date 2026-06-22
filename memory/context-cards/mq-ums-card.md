@@ -3,6 +3,9 @@ schema: context-card.v1
 repo: mq-ums
 role: Local operator UI for bounded IGEL UMS management
 updated_at: 2026-06-19T00:00:00Z
+freshness: current
+scope: repo
+publishability: public-safe
 ---
 
 # Context Card: mq-ums

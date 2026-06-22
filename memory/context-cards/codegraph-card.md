@@ -3,6 +3,9 @@ schema: context-card.v1
 repo: codegraph
 role: Local source-code intelligence layer for MQ repos
 updated_at: 2026-06-21T00:00:00Z
+freshness: current
+scope: repo
+publishability: public-safe
 ---
 
 # Context Card: codegraph

@@ -3,6 +3,9 @@ schema: context-card.v1
 repo: mq-blockers
 role: Compact pointer to current MQ blockers and risks
 updated_at: 2026-06-19T00:00:00Z
+freshness: current
+scope: cross-repo
+publishability: public-safe
 ---
 
 # Context Card: current blockers

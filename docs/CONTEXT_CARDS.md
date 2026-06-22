@@ -65,6 +65,28 @@ A context surface must stay smaller than the material it replaces.
 - docs/TOKEN_BUDGET.md
 ```
 
+## Block-level metadata (Phase 11b)
+
+Cards are the per-repo *blocks* `mq-agent` assembles into packs. Three optional
+frontmatter fields let it bound and rank that selection without the selection
+logic moving into `mqobsidian`. They are optional for backward compatibility,
+but when present they must use the enum values below — `validate-export.py`
+reads the allowed values from the schema and fails CI on anything else.
+
+| Field | Values | Meaning |
+| --- | --- | --- |
+| `freshness` | `current` / `stale` / `archived` | How current the block is. `stale`/`archived` are demoted in selection, not deleted. |
+| `scope` | `repo` / `system` / `cross-repo` / `local-only` | What the block spans. Bounds selection so a repo task does not pull unrelated cross-repo blocks. |
+| `publishability` | `public-safe` / `sanitized-example` / `local-rich` / `generated-target-artifact` | Where the block may travel. |
+
+`publishability` may only *narrow* what a target receives — it must never widen
+the publish boundary. A `public-safe` (Codex/Claude public) target must not pull
+a `local-rich` or `local-only` block. This mirrors the publish-boundary rule in
+the repo `CLAUDE.md`; the metadata makes it machine-checkable for selection, it
+does not replace the rule.
+
+These fields tag the block; they do not change card content or the size rule.
+
 ## Naming
 
 Prefer short, stable names: `token-budget`, `vault-structure`,
