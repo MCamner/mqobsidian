@@ -33,8 +33,9 @@ summary: Focus on vault path standardization between mq-mcp legacy writers and m
 * Update writer outputs conservatively.
 * Keep source-of-truth ownership in mq-mcp and mq-agent docs aligned.
 
-## Do not read first
+## Exclusions
 
-* full repo README
-* unrelated screenshots
-* archived release notes
+* `forbidden` — mq-ums: unrelated repo for this task; never pull into the pack
+* `fallback` — archived release notes: read only if the decisions above are insufficient
+* `irrelevant` — full repo README
+* `irrelevant` — unrelated screenshots
