@@ -1,0 +1,25 @@
+{
+  "schema": "feedback-signal.v1",
+  "task": "fix mq-mcp brain writer paths",
+  "generated_at": "2026-06-23T00:00:00Z",
+  "repo": "mq-mcp",
+  "outcome": "sufficient",
+  "judgments": [
+    {
+      "block": "mqobsidian/memory/context-cards/mq-mcp-card.md",
+      "judgment": "useful",
+      "reason": "named the writer ownership and the durable path boundary"
+    },
+    {
+      "block": "mq-mcp/.mq/context/repo-card.md",
+      "judgment": "noise",
+      "reason": "duplicated the card; selected but not read"
+    },
+    {
+      "block": "mqobsidian/memory/context-cards/mq-agent-card.md",
+      "judgment": "missing",
+      "reason": "needed the mq-agent contract boundary but it was not selected"
+    }
+  ],
+  "notes": "Sanitized example. Live records land in the gitignored feedback/ surface and are never committed."
+}
