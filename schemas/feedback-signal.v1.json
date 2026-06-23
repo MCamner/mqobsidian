@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "feedback-signal.v1",
+  "description": "One pack-usage feedback event (Phase 11c). mqobsidian owns this vocabulary; mq-agent emits records into a local-only, gitignored `feedback/` surface. The loop never auto-publishes: promotion/downgrade are proposals, not commits.",
+  "type": "object",
+  "required": [
+    "schema",
+    "task",
+    "generated_at",
+    "outcome"
+  ],
+  "properties": {
+    "schema": {
+      "const": "feedback-signal.v1"
+    },
+    "task": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "repo": {
+      "type": "string"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["sufficient", "insufficient"]
+    },
+    "judgments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["block", "judgment"],
+        "properties": {
+          "block": {
+            "type": "string",
+            "minLength": 1
+          },
+          "judgment": {
+            "type": "string",
+            "enum": ["useful", "noise", "missing", "stale"]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

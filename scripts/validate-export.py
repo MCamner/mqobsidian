@@ -141,6 +141,65 @@ def validate_context_card(path: Path, schema: dict[str, object]) -> list[str]:
     return problems
 
 
+def validate_feedback_signal(path: Path, schema: dict[str, object]) -> list[str]:
+    """Validate a Phase 11c feedback-signal record (JSON) against the schema.
+
+    Shallow on purpose, like the frontmatter validators: enforce the `schema`
+    const, required keys, and the enum fields — reading the allowed values from
+    the schema so it stays the single source of truth — without pulling in a
+    full JSON-Schema dependency.
+    """
+    problems: list[str] = []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [f"{path.relative_to(ROOT)}: invalid JSON: {exc}"]
+    if not isinstance(data, dict):
+        return [f"{path.relative_to(ROOT)}: feedback-signal must be a JSON object"]
+
+    required = schema.get("required", [])
+    properties = schema.get("properties", {})
+    if not isinstance(required, list) or not isinstance(properties, dict):
+        return [f"{path.relative_to(ROOT)}: invalid feedback-signal schema shape"]
+
+    if data.get("schema") != "feedback-signal.v1":
+        problems.append(f"{path.relative_to(ROOT)}: schema must be feedback-signal.v1")
+    for key in required:
+        if isinstance(key, str) and not data.get(key):
+            problems.append(f"{path.relative_to(ROOT)}: missing required `{key}`")
+
+    allowed = set(properties)
+    for key in data:
+        if key not in allowed:
+            problems.append(f"{path.relative_to(ROOT)}: unknown key `{key}`")
+
+    outcome_enum = properties.get("outcome", {}).get("enum")
+    if isinstance(outcome_enum, list) and data.get("outcome") not in outcome_enum:
+        problems.append(f"{path.relative_to(ROOT)}: outcome must be one of {outcome_enum}")
+
+    judgment_enum = (
+        properties.get("judgments", {})
+        .get("items", {})
+        .get("properties", {})
+        .get("judgment", {})
+        .get("enum")
+    )
+    judgments = data.get("judgments", [])
+    if isinstance(judgments, list) and isinstance(judgment_enum, list):
+        for entry in judgments:
+            if not isinstance(entry, dict):
+                problems.append(f"{path.relative_to(ROOT)}: each judgment must be an object")
+                continue
+            if not entry.get("block"):
+                problems.append(f"{path.relative_to(ROOT)}: judgment missing `block`")
+            if entry.get("judgment") not in judgment_enum:
+                problems.append(
+                    f"{path.relative_to(ROOT)}: judgment must be one of {judgment_enum}"
+                )
+
+    return problems
+
+
 def main() -> int:
     required_schemas = [
         SCHEMAS / "stack-truth.v1.json",
@@ -150,6 +209,7 @@ def main() -> int:
         SCHEMAS / "endpoint-truth.v1.json",
         SCHEMAS / "context-pack.v1.json",
         SCHEMAS / "context-card.v1.json",
+        SCHEMAS / "feedback-signal.v1.json",
         SCHEMAS / "repo-memory-index.v1.json",
     ]
     required_templates = [
@@ -187,6 +247,11 @@ def main() -> int:
     context_card_schema = parsed_schemas["context-card.v1.json"]
     for path in sorted((ROOT / "memory" / "context-cards").glob("*.md")):
         problems.extend(validate_context_card(path, context_card_schema))
+
+    feedback_schema = parsed_schemas["feedback-signal.v1.json"]
+    feedback_example = EXAMPLES / "feedback-signal.example.json"
+    if feedback_example.exists():
+        problems.extend(validate_feedback_signal(feedback_example, feedback_schema))
 
     if problems:
         print("export validation failed:")

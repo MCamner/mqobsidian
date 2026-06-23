@@ -1254,16 +1254,33 @@ packs. Metadata lives in card frontmatter.
 
 Let real usage improve selection over time, with no publish leak.
 
-* [ ] Define which usage signals are worth capturing.
-* [ ] Keep signal logs in a local-only, gitignored surface.
-* [ ] Define how high-value material is promoted into better templates/examples.
-* [ ] Define how stale / low-value material is downgraded.
-* [ ] Guarantee the loop never auto-publishes anything.
+* [x] Define which usage signals are worth capturing.
+  `feedback-signal.v1` (`schemas/feedback-signal.v1.json`): per pack-usage event
+  `task` / `generated_at` / `repo` / `outcome` plus per-block `judgments`
+  (`useful` / `noise` / `missing` / `stale`). See `docs/FEEDBACK_LOOP.md`.
+* [x] Keep signal logs in a local-only, gitignored surface.
+  Live records append to `feedback/` (added to `.gitignore`); only the schema and
+  one sanitized example (`examples/feedback-signal.example.json`) are public.
+* [x] Define how high-value material is promoted into better templates/examples.
+  Recurring `useful` / `missing` becomes a *proposal* routed through the existing
+  inbox / template-based note-creation path (`docs/FEEDBACK_LOOP.md`).
+* [x] Define how stale / low-value material is downgraded.
+  Recurring `noise` → demote / add a `fallback`/`forbidden` exclusion for the
+  task-type; recurring `stale` → flip the card's `freshness`. Maps onto the 11b
+  knobs mq-agent already consumes.
+* [x] Guarantee the loop never auto-publishes anything.
+  Recorded as a local decision, ADR-007: signal data gitignored and never
+  force-added; promotion/downgrade are review-gated proposals, not commits; the
+  publish boundary applies to anything the loop suggests.
 
 **Definition of done**
 
-* [ ] A safe improvement loop exists whose data never requires committing
-  local-rich material.
+* [x] A safe improvement loop exists whose data never requires committing
+  local-rich material. The vocabulary, local-only surface, promotion/downgrade
+  policy, and no-auto-publish guarantee are defined and CI-checked
+  (`validate-export.py` validates the example against the schema). Emitting
+  signals and computing proposals is mq-agent-side work — a separate gated
+  producer track, symmetric with 11a/11b → mq-agent PR #102.
 
 ### Publishability map for Phase 11 work
 
