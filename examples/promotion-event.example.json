@@ -1,0 +1,17 @@
+{
+  "schema": "promotion-event.v1",
+  "id": "promo_20260618_001",
+  "timestamp": "2026-06-18T09:00:00Z",
+  "producer": "mqobsidian",
+  "memory_id": "mem_adr_before_roadmap",
+  "from": "candidate",
+  "to": "promoted",
+  "reason": "Four independent sources observed it and review feedback was consistently positive with no unresolved negatives.",
+  "score": 72,
+  "evidence": {
+    "frequency": 18,
+    "source_count": 4,
+    "confidence": 0.82,
+    "feedback": 8
+  }
+}

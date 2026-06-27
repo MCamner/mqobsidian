@@ -1,0 +1,27 @@
+{
+  "schema": "memory-observation.v1",
+  "id": "obs_20260626_001",
+  "timestamp": "2026-06-26T14:30:00Z",
+  "producer": "mq-agent",
+  "repository": "mq-agent",
+  "workflow": "architecture-review",
+  "session_id": "sess_001",
+  "title": "ADR files are frequently loaded together with the roadmap",
+  "summary": "ADR and roadmap files are repeatedly used together during review.",
+  "observation": "Agents should read the relevant ADR before proposing a roadmap update.",
+  "category": "pattern",
+  "confidence": 0.82,
+  "evidence": [
+    {
+      "source": "codex",
+      "reference": "review_001",
+      "excerpt": "Including ADR context measurably improved the recommendation."
+    }
+  ],
+  "tags": [
+    "adr",
+    "roadmap",
+    "context"
+  ],
+  "proposed_memory_key": "adr-before-roadmap"
+}

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "promotion-event.v1",
+  "description": "An audit-trail event recorded when a memory changes promotion tier (Phase 12). mqobsidian is the sole producer; all repos may consume the trail. `from`/`to` use the memory-score.v1 promotion axis. Every promotion is explainable (reason) and reversible (a downgrade is just a promotion-event in the other direction) — see ADR-008.",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "timestamp",
+    "memory_id",
+    "from",
+    "to",
+    "reason"
+  ],
+  "properties": {
+    "schema": {
+      "const": "promotion-event.v1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "producer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "memory_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "from": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "candidate",
+        "promoted",
+        "deprecated",
+        "archived"
+      ]
+    },
+    "to": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "candidate",
+        "promoted",
+        "deprecated",
+        "archived"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "frequency": {
+          "type": "number"
+        },
+        "source_count": {
+          "type": "number"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "feedback": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

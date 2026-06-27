@@ -1,0 +1,22 @@
+{
+  "schema": "memory-query.v1",
+  "id": "q_20260626_001",
+  "timestamp": "2026-06-26T15:10:00Z",
+  "consumer": "mq-agent",
+  "repository": "mq-agent",
+  "workflow": "architecture-review",
+  "task": "update the roadmap after shipping the context-card block metadata",
+  "scope": [
+    "permanent",
+    "patterns"
+  ],
+  "categories": [
+    "architecture",
+    "decision"
+  ],
+  "tags": [
+    "adr",
+    "roadmap"
+  ],
+  "max_results": 20
+}

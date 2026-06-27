@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "memory-observation.v1",
+  "description": "One evidence-bearing observation that a repo emits when it notices a potential reusable pattern or knowledge bit (Phase 12). mqobsidian owns this vocabulary; any MQ repo may produce records into a local-only, gitignored surface. An observation is a proposal, not a memory: promotion to a durable memory is decided by the scoring engine (memory-score.v1) and audited via promotion-event.v1. Frequency alone never promotes (see ADR-008).",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "timestamp",
+    "producer",
+    "repository",
+    "title",
+    "observation",
+    "category",
+    "confidence",
+    "evidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "memory-observation.v1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "producer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workflow": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "observation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "pattern",
+        "workflow",
+        "architecture",
+        "bug",
+        "review",
+        "decision",
+        "prompt",
+        "preference",
+        "learning"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reference": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "related": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "proposed_memory_key": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "branch": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "pr": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
