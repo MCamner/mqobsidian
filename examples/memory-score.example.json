@@ -1,0 +1,28 @@
+{
+  "schema": "memory-score.v1",
+  "memory_id": "mem_adr_before_roadmap",
+  "timestamp": "2026-06-26T15:00:00Z",
+  "status": "promoted",
+  "score": 72,
+  "factors": {
+    "frequency": 18,
+    "source_count": 4,
+    "confidence": 12,
+    "recency": 8,
+    "usage_score": 25,
+    "manual_boost": 5
+  },
+  "observed_by": [
+    "codex",
+    "claude",
+    "mq-agent",
+    "mq-mcp"
+  ],
+  "feedback": {
+    "positive": 8,
+    "negative": 0
+  },
+  "first_seen": "2026-05-21",
+  "last_seen": "2026-06-26",
+  "promoted_at": "2026-06-18"
+}

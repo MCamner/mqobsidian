@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "memory-score.v1",
+  "description": "Current ranking and promotion tier of one memory (Phase 12). mqobsidian is the sole producer; all repos consume it to decide what to read. `status` is a PROMOTION axis (how valuable a memory has become over time) and is deliberately separate from the command-pattern freshness lifecycle (experimental/active/stale/deprecated) — the two dimensions coexist. Frequency is one factor among several and never promotes on its own (see ADR-008).",
+  "type": "object",
+  "required": [
+    "schema",
+    "memory_id",
+    "timestamp",
+    "status",
+    "score"
+  ],
+  "properties": {
+    "schema": {
+      "const": "memory-score.v1"
+    },
+    "memory_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "candidate",
+        "promoted",
+        "deprecated",
+        "archived"
+      ]
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0
+    },
+    "factors": {
+      "type": "object",
+      "properties": {
+        "frequency": {
+          "type": "number"
+        },
+        "source_count": {
+          "type": "number"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "recency": {
+          "type": "number"
+        },
+        "usage_score": {
+          "type": "number"
+        },
+        "manual_boost": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observed_by": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "feedback": {
+      "type": "object",
+      "properties": {
+        "positive": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "negative": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "first_seen": {
+      "type": "string",
+      "format": "date"
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date"
+    },
+    "promoted_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "memory-query.v1",
+  "description": "A repo asking mqobsidian for relevant memory before or during a task (Phase 12). Producers are consumer repos (mq-agent, mqlaunch, mq-hal, …); mqobsidian answers. Read-only: a query never mutates memory.",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "timestamp",
+    "consumer",
+    "repository",
+    "task"
+  ],
+  "properties": {
+    "schema": {
+      "const": "memory-query.v1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "consumer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workflow": {
+      "type": "string"
+    },
+    "task": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "permanent",
+          "patterns",
+          "candidates"
+        ]
+      }
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "pattern",
+          "workflow",
+          "architecture",
+          "bug",
+          "review",
+          "decision",
+          "prompt",
+          "preference",
+          "learning"
+        ]
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "max_results": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 20
+    }
+  },
+  "additionalProperties": false
+}
