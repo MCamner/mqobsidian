@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "workflow-observation.v1",
+  "description": "One sanitized workflow-run observation (Phase 9). mqobsidian owns this vocabulary; mq-agent emits records into a local-only, gitignored `memory/workflows/inbox/` surface after a workflow run. This is a run-metrics record, distinct from the evidence-based memory-observation.v1: it captures which tool sequence ran, whether it succeeded, where it failed, how long it took, and how many approvals it cost. mqobsidian only renders views over these records (which sequences recur) — it never runs anything. Store only sanitized tool names and results: no full prompts, no raw stdout, no secrets, and no absolute private paths. Recurrence alone never promotes a sequence (ADR-007, ADR-008); proposals are decided by the scoring engine, not by this surface.",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "timestamp",
+    "producer",
+    "repository",
+    "workflow_id",
+    "template",
+    "task_type",
+    "tool_sequence",
+    "outcome"
+  ],
+  "properties": {
+    "schema": {
+      "const": "workflow-observation.v1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "producer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Emitting component, e.g. mq-agent."
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Repo the workflow ran against (name, not an absolute path)."
+    },
+    "workflow_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The run id from the orchestrator, e.g. run_20260628_001."
+    },
+    "template": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Template name, e.g. repo-preflight, review-and-test, release-ready."
+    },
+    "task_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Coarse intent of the workflow, e.g. preflight, review, release."
+    },
+    "tool_sequence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Ordered, sanitized tool names that ran (no args, no stdout)."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["completed", "failed", "cancelled"]
+    },
+    "failed_step": {
+      "type": "string",
+      "description": "Step id of the first failing step when outcome=failed."
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "approval_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of explicit approvals the run required."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "branch": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "pr": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
