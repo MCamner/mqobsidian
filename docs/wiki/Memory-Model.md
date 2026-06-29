@@ -7,6 +7,9 @@ This repo models MQ memory as structured, reviewable layers.
 - `decision-record.v1`: architectural decisions and durable boundaries.
 - `repo-review.v1`: sanitized repository review outputs worth reusing.
 - `learn-record.v1`: verified patterns, lessons, and reusable fixes.
+- `memory-observation.v1`: evidence-bearing proposals from real MQ runs.
+- `memory-score.v1`: mqobsidian-owned ranking and promotion status for observations.
+- `promotion-event.v1`: audit trail for status changes such as observed -> candidate.
 - `stack-truth.v1`: current or recent stack status snapshots.
 - `endpoint-truth.v1`: endpoint or UMS readiness snapshots.
 - `context-pack.v1`: small task-scoped context bundles for Codex and Claude.
@@ -23,8 +26,8 @@ This repo models MQ memory as structured, reviewable layers.
 
 ```text
 raw signal
-  -> validated output
-  -> sanitized export
-  -> memory record
-  -> reused as future context
+  -> memory-observation.v1
+  -> memory-score.v1
+  -> promotion-event.v1 audit when status changes
+  -> promoted memory reused as future context
 ```
