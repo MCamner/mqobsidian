@@ -1,0 +1,21 @@
+flowchart TD
+  subgraph ENTRY["Entrypoints"]
+    CLI["cli (mq-image)"]
+    MCP["mcp server (mq-image-mcp)"]
+    WEBAPI["web (FastAPI/uvicorn)"]
+  end
+  subgraph CORE["Pipeline"]
+    PIPE["pipelines"]
+    VIS["vision"]
+    REAS["reasoning"]
+  end
+  ADAPT["adapters (model providers)"]
+  UTIL["utils"]
+  CLI --> PIPE
+  MCP --> PIPE
+  WEBAPI --> PIPE
+  PIPE --> VIS
+  PIPE --> REAS
+  VIS --> ADAPT
+  REAS --> ADAPT
+  PIPE --> UTIL

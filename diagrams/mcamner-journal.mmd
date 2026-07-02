@@ -1,0 +1,16 @@
+flowchart TD
+  subgraph SRC["Source"]
+    POSTS["docs / posts"]
+    IDX["index.html + style.css"]
+    TOOLS["tools (build)"]
+  end
+  subgraph CI["Release"]
+    REL["release.sh"]
+    VER["VERSION / CHANGELOG"]
+  end
+  PAGES["GitHub Pages"]
+  POSTS --> TOOLS
+  TOOLS --> IDX
+  REL --> VER
+  IDX -->|"deploy"| PAGES
+  REL -->|"publish"| PAGES

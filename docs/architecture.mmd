@@ -1,0 +1,28 @@
+flowchart TD
+  subgraph VAULT["Vault content"]
+    MEM["memory (learn, reviews, scores, stack-truth)"]
+    DEC["decisions"]
+    PROJ["projects"]
+    PROMPT["prompts / Prompt-OS"]
+  end
+  subgraph GEN["Generators (scripts)"]
+    GCM["generate-claude-md"]
+    TOK["check-token-budget"]
+    SENS["check-sensitive-content"]
+    SKILLS["build-skills"]
+  end
+  subgraph OUT["Published contract"]
+    CMD["CLAUDE.md / AGENTS.md"]
+    CTXOUT[".mq/context"]
+  end
+  CONSUMERS["mq-agent / mq-mcp / mq-hal"]
+  MEM --> GCM
+  DEC --> GCM
+  PROMPT --> SKILLS
+  GCM --> CMD
+  SKILLS --> CMD
+  GCM --> CTXOUT
+  TOK -.->|"guards"| GCM
+  SENS -.->|"guards"| CMD
+  CMD -->|"read by"| CONSUMERS
+  MEM -->|"agent view"| CONSUMERS

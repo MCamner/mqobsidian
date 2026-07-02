@@ -1,0 +1,32 @@
+flowchart TD
+  subgraph MEMORY["Durable memory / contract"]
+    OBS["mqobsidian (vault, CLAUDE.md/AGENTS.md, agent views)"]
+  end
+  subgraph RUNTIME["Runtime / orchestration"]
+    AGENT["mq-agent (workflows, routing)"]
+    MCP["mq-mcp (MCP server: review/learn)"]
+    HAL["mq-hal (operator layer)"]
+  end
+  subgraph ANALYSIS["Analysis"]
+    SIGNAL["repo-signal (repo scoring)"]
+    IMG["mq-image-analyze (vision: CLI/MCP/web)"]
+  end
+  subgraph SURFACES["Human surfaces"]
+    LAUNCH["macos-scripts / mqlaunch (TUI)"]
+    UMS["mq-ums (IGEL UMS web UI)"]
+    JOURNAL["mcamner-journal (static site)"]
+  end
+  OBS -->|"context/memory"| AGENT
+  OBS -->|"context/memory"| MCP
+  OBS -->|"context/memory"| HAL
+  AGENT -->|"MCP tool calls"| MCP
+  AGENT -->|"signal dep"| SIGNAL
+  MCP -->|"writes reviews/arch memory"| OBS
+  SIGNAL -->|"emits memory"| OBS
+  HAL -->|"operates"| AGENT
+  HAL -->|"operates"| MCP
+  IMG -->|"MCP tools"| AGENT
+  LAUNCH -->|"launches"| AGENT
+  LAUNCH -->|"launches"| HAL
+  LAUNCH -->|"launches"| UMS
+  LAUNCH -->|"launches"| IMG

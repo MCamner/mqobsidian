@@ -24,13 +24,23 @@ mqobsidian  -> durable memory and compact context
 
 ## mq-mcp
 
-`mq-mcp` can provide bounded review and learn outputs. `mqobsidian` stores only
+`mq-mcp` provides bounded review, learn, and brain tools. `mqobsidian` stores only
 sanitized durable summaries, not raw runtime output.
+
+Current brain-facing tools:
+
+- `brain_status` reports vault availability and top-level folders.
+- `brain_preview_memory_scores` previews `memory-score.v1` from real observations without writes.
+- `brain_apply_memory_scores` writes `memory-score.v1` records and appends `promotion-event.v1` audit when status changes.
+- `brain_record_*` writes decisions, reviews, sessions, and learned patterns.
+- `brain_promote_learning` moves verified learning notes into `learn/verified/`.
 
 ## repo-signal
 
 `repo-signal` can provide readiness, docs quality, and repo intelligence
-signals. Exported records should stay compact and public-safe.
+signals. When configured for memory export, real inspect runs may emit
+`memory-observation.v1` records into `memory/observations/`. Exported records
+should stay compact and public-safe.
 
 ## mq-hal
 
