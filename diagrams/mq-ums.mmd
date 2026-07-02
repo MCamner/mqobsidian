@@ -1,0 +1,18 @@
+flowchart TD
+  subgraph BROWSER["Browser"]
+    WEB["web/ (index.html, app.js, styles.css)"]
+  end
+  subgraph SERVER["Express server"]
+    IDX["server/src/index.js"]
+    VAL["validate-config"]
+    API["REST API routes"]
+  end
+  CFG["config/ (commands)"]
+  PSIGEL["PSIGEL PowerShell"]
+  UMS["IGEL UMS"]
+  WEB -->|"fetch /api"| IDX
+  IDX --> API
+  IDX --> VAL
+  VAL --> CFG
+  API -->|"invoke"| PSIGEL
+  PSIGEL -->|"manage"| UMS

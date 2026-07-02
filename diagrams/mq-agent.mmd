@@ -1,0 +1,30 @@
+flowchart TD
+  subgraph ENTRY["Entrypoints"]
+    CLI["cli / main.py (mq-agent app)"]
+    TUI["tui"]
+  end
+  subgraph CORE["Core"]
+    ROUTER["core — routing/runtime"]
+    WF["workflows"]
+    AG["agents"]
+    OP["operator"]
+    PERC["perception"]
+  end
+  subgraph IO["Integrations"]
+    TOOLS["tools"]
+    MCP["mcp client"]
+    INTEG["integrations"]
+    SIGNAL["repo-signal (dep)"]
+  end
+  MEM["memory (mqobsidian view)"]
+  CLI --> ROUTER
+  TUI --> ROUTER
+  ROUTER --> WF
+  ROUTER --> AG
+  WF --> OP
+  WF --> PERC
+  AG --> TOOLS
+  AG --> MCP
+  TOOLS --> INTEG
+  ROUTER -->|"signal"| SIGNAL
+  ROUTER -->|"reads/writes"| MEM

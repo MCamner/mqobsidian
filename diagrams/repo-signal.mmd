@@ -1,0 +1,30 @@
+flowchart TD
+  subgraph ENTRY["Entrypoints"]
+    CLI["cli (repo-signal)"]
+    RA["repoaware"]
+  end
+  subgraph PIPE["Pipeline"]
+    PL["pipeline"]
+    CORE["core"]
+    GRAPH["graph"]
+    SYM["symbols"]
+  end
+  subgraph SEM["Semantic"]
+    AI["ai"]
+    VEC["vectorstore"]
+  end
+  subgraph OUT["Outputs"]
+    ANALYZE["analyze / brief / readiness"]
+    SCORE["readme_score / portfolio_check"]
+    EXP["exports / codex"]
+  end
+  CLI --> PL
+  RA --> GRAPH
+  PL --> CORE
+  CORE --> GRAPH
+  CORE --> SYM
+  CORE --> AI
+  AI --> VEC
+  PL --> ANALYZE
+  PL --> SCORE
+  ANALYZE --> EXP

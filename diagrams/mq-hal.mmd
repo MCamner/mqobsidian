@@ -1,0 +1,28 @@
+flowchart TD
+  subgraph CLI["Entrypoint"]
+    BIN["bin/mq-hal"]
+  end
+  subgraph HAL["hal/"]
+    OP["operator"]
+    BRAIN["brain"]
+    RT["runtime"]
+    CTX["context"]
+  end
+  subgraph VIEWS["Operator surfaces"]
+    DASH["dashboard"]
+    HIST["history"]
+    DOC["doctor"]
+    REL["release"]
+  end
+  TOOLS["mq_hal/tools registry"]
+  STACK["MQ stack (agent/mcp/obsidian)"]
+  BIN --> OP
+  OP --> BRAIN
+  BRAIN --> RT
+  OP --> CTX
+  OP --> DASH
+  OP --> HIST
+  OP --> DOC
+  OP --> REL
+  RT --> TOOLS
+  TOOLS -->|"drives"| STACK

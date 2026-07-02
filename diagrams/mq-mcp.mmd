@@ -1,0 +1,30 @@
+flowchart TD
+  subgraph SRV["MCP server"]
+    MAIN["main.py / server.py"]
+    REG["tool_registry"]
+    POL["tool_policy (safety)"]
+    GATE["release_gate"]
+    RT["runtime"]
+  end
+  subgraph ENG["Engines"]
+    REV["review_engine (callgraph, context_selector)"]
+    LEARN["learn_engine"]
+  end
+  subgraph MEMS["Memory"]
+    ARCH["architecture_memory"]
+    SEM["semantic_memory"]
+  end
+  PROV["providers (LLM)"]
+  BRIDGE["bridget_* workflow/voice"]
+  CLIENT["MCP client (Claude / mq-agent)"]
+  CLIENT -->|"tool calls"| MAIN
+  MAIN --> REG
+  REG --> POL
+  POL --> RT
+  RT --> REV
+  RT --> LEARN
+  REV --> ARCH
+  LEARN --> SEM
+  RT --> PROV
+  MAIN --> GATE
+  MAIN --> BRIDGE
