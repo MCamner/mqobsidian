@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 from collections import defaultdict
 from pathlib import Path
+from typing import cast
 
 HERE = Path(__file__).resolve().parent
 OBSERVATIONS = HERE / "inbox" / "workflow-observations.jsonl"
@@ -87,7 +88,7 @@ def aggregate_failures(observations: list[dict]) -> list[dict]:
         {"failed_step": step, "failures": n, "templates": ", ".join(sorted(seqs[step]))}
         for step, n in counts.items()
     ]
-    rows.sort(key=lambda r: (-r["failures"], r["failed_step"]))
+    rows.sort(key=lambda r: (-cast(int, r["failures"]), cast(str, r["failed_step"])))
     return rows
 
 
