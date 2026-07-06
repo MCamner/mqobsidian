@@ -12,6 +12,35 @@
     "findings": {
       "type": "array",
       "items": { "type": "object" }
+    },
+    "lifecycle_state": {
+      "type": "string",
+      "enum": ["promoted", "deprecated", "archived"],
+      "description": "Durable-memory lifecycle state on the post-promotion segment of the canonical promotion axis (observed/candidate/promoted/deprecated/archived; see promotion-event.v1 and DEC-002). A durable record starts 'promoted'; 'deprecated' = kept for history but no longer authoritative; 'archived' = retired. Distinct from any domain status field. Optional and additive."
+    },
+    "promoted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this record was promoted to durable memory; corresponds to a promotion-event.v1 into 'promoted'."
+    },
+    "deprecated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this record was deprecated (no longer authoritative). Present once lifecycle_state has reached 'deprecated'."
+    },
+    "archived_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this record was archived/retired. Present when lifecycle_state is 'archived'."
+    },
+    "superseded_by": {
+      "type": "string",
+      "description": "Stable id of the record that replaces this one. Supersession is expressed by this pointer, not a lifecycle_state value; a superseded record is typically also 'deprecated'."
+    },
+    "source_evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "References to the source evidence this durable record was promoted from (e.g. memory-observation.v1 ids, inbox item ids, vault-relative notes). Satisfies the SSOT exit criterion that every promoted durable item traces back to source evidence. Never absolute/machine-specific."
     }
   }
 }
