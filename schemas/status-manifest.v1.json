@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mqobsidian status-manifest.v1",
+  "description": "Canonical current-status surface for the MQ stack: one exported manifest that answers 'what is the state of each repo right now?' as a read, not a computation. mqobsidian owns this contract under the single-source-of-truth model (ROADMAP Delivery A/D; see DEC-002); consumers (mqlaunch read-only, mq-agent orchestration) read it and never reconstruct current status from raw evidence. This tightens the loose stack-truth.v1 export into a typed, closed shape. freshness_state uses the canonical freshness axis (experimental/active/stale/deprecated) — deliberately distinct from the promotion axis used by memory-score.v1 / promotion-event.v1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "source", "generated_at", "repos"],
+  "properties": {
+    "schema": {
+      "const": "status-manifest.v1",
+      "description": "Schema discriminator. Consumers must match this exact value before trusting the shape."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Producer identity that generated this manifest (e.g. an mqobsidian export job). mqobsidian is the sole producer."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this manifest was materialized. The primary freshness marker consumers compare against staleness thresholds (Delivery D)."
+    },
+    "repos": {
+      "type": "array",
+      "description": "One status record per tracked repo. The array is the whole current-status surface; consumers read it directly.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "freshness_state"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "description": "Canonical repo key (e.g. macos-scripts, mq-agent). Stable identifier; not a display label."
+          },
+          "hot": {
+            "type": "string",
+            "description": "Vault-relative path to the repo's hot-context note, if one is exported. Never absolute; resolved under the consumer's vault root."
+          },
+          "freshness_state": {
+            "type": "string",
+            "enum": ["experimental", "active", "stale", "deprecated"],
+            "description": "Current freshness on the canonical freshness axis. NOT the promotion axis (observed/candidate/promoted/deprecated/archived) — the two coexist by design."
+          },
+          "drift": {
+            "type": "boolean",
+            "description": "True when the exported truth for this repo is known to lag its source (a drift marker, Delivery D). Consumers may warn but must still read; absence means no drift asserted."
+          },
+          "last_verified_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this repo's status was last confirmed against source. Distinct from generated_at (which times the manifest, not the per-repo check)."
+          },
+          "summary": {
+            "type": "string",
+            "description": "Short human-readable status line for menus/dashboards only; carries no machine meaning."
+          }
+        }
+      }
+    }
+  }
+}

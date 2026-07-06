@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mqobsidian inbox-manifest.v1",
+  "description": "Canonical exported view of the promotion inbox: candidate memories that have been observed but not yet promoted to durable memory. mqobsidian owns this contract under the single-source-of-truth model (ROADMAP Delivery A/D; see DEC-002). This manifest is the current-state surface consumers read; the raw inbox itself (vault inbox/ folder) is private and gitignored. Item state uses the PRE-PROMOTION end of the canonical promotion axis (observed/candidate) shared with memory-score.v1 / promotion-event.v1; anything past 'candidate' has left the inbox. Ranking and the review-needed-vs-auto-promotable decision are mq-agent orchestration concerns (ROADMAP Delivery B), NOT encoded as inbox state here — this manifest carries the score input, not the routing verdict.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "source", "generated_at", "items"],
+  "properties": {
+    "schema": {
+      "const": "inbox-manifest.v1",
+      "description": "Schema discriminator. Consumers must match this exact value before trusting the shape."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Producer identity that generated this manifest. mqobsidian is the sole producer."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this manifest was materialized. Freshness marker for staleness thresholds (Delivery D)."
+    },
+    "items": {
+      "type": "array",
+      "description": "Current inbox contents. Each item is a candidate memory awaiting a promotion decision; the array is the whole current inbox surface.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source", "state", "first_seen", "last_seen"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable inbox-item identifier. Traceable to the durable note if this item is later promoted (promotion-event.v1.memory_id)."
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Where the candidate originated (e.g. a repo key or ingestion channel). Not a file path."
+          },
+          "evidence": {
+            "type": "array",
+            "description": "Pointers to the source evidence supporting this candidate — the traceability chain the exit criteria require (every promoted item traces to source evidence).",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["ref"],
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Reference to a source record/event (e.g. a memory-observation.v1 id or vault-relative note path). Never absolute/machine-specific."
+                },
+                "kind": {
+                  "type": "string",
+                  "description": "Optional evidence kind (e.g. observation, feedback, review) for display/filtering only."
+                }
+              }
+            }
+          },
+          "first_seen": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this candidate first entered the inbox. With last_seen/occurrences it forms the recurrence signal ranking consumes (Delivery B)."
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Most recent time this candidate was observed."
+          },
+          "occurrences": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "How many times the candidate has been observed. A ranking INPUT only; frequency never promotes on its own (see memory-score.v1 / ADR-008)."
+          },
+          "state": {
+            "type": "string",
+            "enum": ["observed", "candidate"],
+            "description": "Pre-promotion position on the canonical promotion axis. 'observed' = seen; 'candidate' = accumulating evidence toward review. Promotion beyond this removes the item from the inbox and is recorded as a promotion-event.v1."
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Optional current ranking score mirrored from memory-score.v1 for this candidate. Provided as a read convenience; memory-score.v1 remains the authority for how it is computed."
+          }
+        }
+      }
+    }
+  }
+}
