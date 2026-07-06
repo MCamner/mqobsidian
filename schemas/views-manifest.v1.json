@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mqobsidian views-manifest.v1",
+  "description": "Canonical manifest of vault views that consumers resolve to open a file or folder in the mqobsidian vault. mqobsidian owns this contract as part of the single-source-of-truth model (ROADMAP Delivery A/D); consumers such as mqlaunch are read-only and resolve views by stable key, never by hardcoded path. The manifest is a top-level array of view records; this v1 codifies the format already consumed by mqlaunch (mqlaunch/config/mqobsidian/views.json) so ownership of the schema moves to the truth owner without changing the consumer format.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["key", "label", "type", "relative_path"],
+    "properties": {
+      "key": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "description": "Stable identifier used as the consumer's CLI/menu argument. Must not be inferred from the path; renaming a key is a consumer-contract change."
+      },
+      "label": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Human-readable text for menus/pickers only; carries no resolution meaning."
+      },
+      "type": {
+        "type": "string",
+        "enum": ["file", "folder"],
+        "description": "Whether the resolved target is a file or a folder. Consumers validate the target kind against this."
+      },
+      "relative_path": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Vault-relative path resolved under the consumer's configured vault root (e.g. MQ_OBSIDIAN_DIR). Never absolute; never machine-specific."
+      }
+    }
+  }
+}
