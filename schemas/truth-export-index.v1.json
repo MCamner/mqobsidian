@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mqobsidian truth-export-index.v1",
+  "description": "The single canonical entry point to mqobsidian's exported truth. It is the one surface a consumer reads FIRST: it enumerates every exported truth surface (views/status/inbox/... manifests and other canonical exports), states the schema+version each conforms to, where the materialized surface lives, and its freshness/drift. Consumers discover and version-check surfaces here, then resolve into the specific manifest — they never hardcode surface paths or assume a schema version. mqobsidian owns and is the sole producer of this index under the single-source-of-truth model (ROADMAP Delivery A/D; see DEC-002). This closes Delivery D's 'version exported truth surfaces' and 'expose freshness and drift markers'.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "source", "generated_at", "surfaces"],
+  "properties": {
+    "schema": {
+      "const": "truth-export-index.v1",
+      "description": "Schema discriminator. Consumers must match this exact value before trusting the shape."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Producer identity that generated this index. mqobsidian is the sole producer."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the index itself was materialized. A consumer comparing this against now gets a top-level staleness read for the whole export."
+    },
+    "surfaces": {
+      "type": "array",
+      "description": "Every exported truth surface mqobsidian publishes. The array is the complete discovery set; a surface not listed here is not a canonical export.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key", "schema", "path"],
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "description": "Stable identifier a consumer requests a surface by (e.g. views, status, inbox). Decoupled from both path and schema id; renaming a key is a consumer-contract change."
+          },
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*\\.v[0-9]+$",
+            "description": "The versioned schema id this surface conforms to (e.g. status-manifest.v1). Carries the version explicitly so a consumer can refuse an unexpected major before parsing."
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Vault-relative path to the materialized surface, resolved under the consumer's vault root (e.g. MQ_OBSIDIAN_DIR). Never absolute; never machine-specific."
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this specific surface was last materialized. May be older than the index's generated_at; that gap is itself a freshness signal."
+          },
+          "drift": {
+            "type": "boolean",
+            "description": "True when this surface is known to lag its source evidence (a drift marker, Delivery D). Consumers may warn but must still read; absence asserts no known drift."
+          },
+          "record_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Optional count of records in the surface, for a cheap sanity/health read without fetching the surface."
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional human-readable note about the surface for menus/tooling only; carries no resolution meaning."
+          }
+        }
+      }
+    }
+  }
+}
