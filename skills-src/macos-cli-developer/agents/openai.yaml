@@ -1,0 +1,5 @@
+interface:
+  display_name: "macOS CLI Developer"
+  short_description: "Review and improve macOS shell CLI tools"
+  brand_color: "#D97706"
+  default_prompt: "Use $macos-cli-developer to review this macOS shell script for safer CLI behavior."
