@@ -1,0 +1,5 @@
+interface:
+  display_name: "MQ Memory Retrieval Engineer"
+  short_description: "Improve MQ local-first memory retrieval"
+  brand_color: "#2563EB"
+  default_prompt: "Use $mq-memory-retrieval-engineer to design a local-first retrieval rule for mqobsidian memory."

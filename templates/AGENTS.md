@@ -7,8 +7,8 @@ Ownership model:
 - mqobsidian owns the contract, templates, schemas, and generators.
 - this repo owns this committed agent surface once published.
 
-Paths use the portable $MQ_OBSIDIAN_DIR placeholder; resolve it to your local
-mqobsidian checkout. Regenerate with:
+Paths use the portable ${MQ_OBSIDIAN_DIR:-$HOME/mqobsidian} shell fallback.
+Regenerate with:
   MQ_OBSIDIAN_DIR=<path-to-mqobsidian> \
     python3 "$MQ_OBSIDIAN_DIR"/scripts/generate-agents-md.py --repo <REPO_NAME> --out AGENTS.md
 -->
@@ -22,7 +22,7 @@ repo-specific build, test, safety, or release instructions.
 
 ## mqobsidian Location
 
-Default local vault path: `$MQ_OBSIDIAN_DIR`. If `MQ_OBSIDIAN_DIR` is set,
+Default local vault path: `$HOME/mqobsidian`. If `MQ_OBSIDIAN_DIR` is set,
 prefer that value.
 
 ## Read First
@@ -65,6 +65,22 @@ reading large docs.
 current code behavior, tests, contracts, CLI behavior, or runtime state, verify
 in this repo before making claims.
 
+## Observation Emission
+
+After evidence-backed work reveals a reusable pattern, workflow, convention, or
+review finding, emit one observation:
+
+```bash
+uv --directory <MQOBSIDIAN_VAULT_PATH>/memory run python commands/emit_observation.py \
+  --producer codex --repository <REPO_NAME> --workflow task-work --category pattern --confidence 0.70 \
+  --title "Short reusable lesson" --observation "What was learned and when to reuse it" \
+  --evidence-source codex --evidence-reference "commit, test run, review, or session reference" \
+  --evidence-excerpt "Concrete evidence summary" --tag <REPO_NAME>
+```
+
+Use `--producer claude` from Claude Code. Prefer `--dry-run` when uncertain.
+Do not emit secrets, private paths, raw logs, chain-of-thought, or unevidenced opinions.
+
 ## Source Intelligence
 
 If `.codegraph/` exists, prefer CodeGraph for source-structure questions before
@@ -88,15 +104,15 @@ or machine-specific private paths.
 
 ## MQ Skills
 
-Repo-local skills live under `.agents/skills/` (Codex) and `.claude/skills/`
-(Claude Code). Route by each skill's frontmatter `description`. A few are
-near-universal across MQ repos:
+Use repo-local skills from `.agents/skills/` (Codex) and `.claude/skills/`
+(Claude Code); route by frontmatter `description`. Near-universal:
+`mq-writing-plans`, `mq-worktree-safe`, `mq-secrets-public-safe`.
 
-- `mq-writing-plans` — before multi-step or cross-repo changes.
-- `mq-worktree-safe` — before risky branch/worktree flows.
-- `mq-secrets-public-safe` — before publishing, commit, or PR.
+## Codex Governor
 
-Use any other installed skill when its description matches the task.
+Default to Swedish, concise, direct, no hype. Be honest about uncertainty.
+Make surgical changes; state assumptions, define success, and verify before done.
+Do not invent facts, sources, APIs, or numbers. Ask only before destructive ops.
 
 ## Fallback Rule
 

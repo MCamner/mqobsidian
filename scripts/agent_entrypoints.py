@@ -24,6 +24,7 @@ CANONICAL_SECTIONS = [
     "## Low-Token Rules",
     "## Rules",
     "## Durable Memory",
+    "## Observation Emission",
     "## Source Intelligence",
     "## Writing Rules",
     "## MQ Skills",
@@ -33,6 +34,9 @@ CANONICAL_SECTIONS = [
 # Content canaries: rendered output must still carry these exact substrings.
 CANONICAL_CANARIES = [
     "memory/learn/repos/",            # repo-scoped learn read step
+    "commands/emit_observation.py",    # producer observation writeback path
+    "--workflow",                      # required observation field
+    "--evidence-excerpt",              # required observation evidence field
     "Do not store or copy secrets",   # secrets / private-path safety rule
 ]
 
