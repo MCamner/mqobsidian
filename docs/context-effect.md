@@ -27,10 +27,10 @@ Result:
 
 | Context path | Lines |
 | --- | ---: |
-| Context pack + available cards | 213 |
-| Broad first-read baseline | 4114 |
-| Avoided first-read lines | 3901 |
-| Reduction | 94.8% |
+| Context pack + available cards | 222 |
+| Broad first-read baseline | 4797 |
+| Avoided first-read lines | 4575 |
+| Reduction | 95.4% |
 
 ## Interpretation
 
