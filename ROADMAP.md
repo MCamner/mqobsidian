@@ -173,25 +173,30 @@ gap is integration:
 **Owner:** `mqobsidian`
 **Files:**
 
-- [ ] modify `docs/integrations/codegraph.md`
-- [ ] modify `scripts/check-codegraph-stack.sh`
-- [ ] create `examples/codegraph/stack-coverage.example.json`
+- [x] modify `docs/integrations/codegraph.md` (added "Coverage and unsupported
+  surfaces" section + upstream boundary)
+- [x] modify `scripts/check-codegraph-stack.sh` (added `--coverage` public-safe
+  JSON mode; default human report unchanged)
+- [x] create `examples/codegraph/stack-coverage.example.json`
 
 Tasks:
 
-- [ ] record installed version, index freshness, file/node/edge counts, and
+- [x] record installed version, index freshness, file/node/edge counts, and
   indexed languages per MQ repo
-- [ ] distinguish supported source, unsupported source, generated files, and
-  intentionally excluded memory/docs
-- [ ] report shell and PowerShell coverage as unsupported instead of silently
+- [~] distinguish supported source, unsupported source, generated files, and
+  intentionally excluded memory/docs — supported vs unsupported source is
+  reported; generated-file / excluded-memory-doc classification is deferred (not
+  needed for the exit gate, add when a real case requires it)
+- [x] report shell and PowerShell coverage as unsupported instead of silently
   treating those repos as fully indexed
-- [ ] keep all machine paths and `.codegraph/` databases out of exported output
-- [ ] document the upstream feature request boundary for shell/PowerShell
+- [x] keep all machine paths and `.codegraph/` databases out of exported output
+- [x] document the upstream feature request boundary for shell/PowerShell
 
 Exit gate:
 
-- [ ] every indexed MQ repo has an explicit, public-safe coverage status
-- [ ] a green index status cannot hide unsupported command surfaces
+- [x] every indexed MQ repo has an explicit, public-safe coverage status
+- [x] a green index status cannot hide unsupported command surfaces (verified:
+  all 8 repos report `partial`; `macos-scripts` surfaces 219 unindexed shell files)
 
 #### B. Cross-repo contract map
 

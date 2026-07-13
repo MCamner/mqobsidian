@@ -1,0 +1,97 @@
+{
+  "schema": "codegraph-stack-coverage.v1",
+  "generated_by": "scripts/check-codegraph-stack.sh --coverage",
+  "codegraph_version": "1.0.1",
+  "note": "Public-safe coverage view. CodeGraph indexes only supported source languages; shell and PowerShell command surfaces are unsupported upstream and reported here so a green index cannot hide them. This file is an illustrative snapshot with example timestamps and a representative subset of repos; run the script locally for the live view.",
+  "repos": [
+    {
+      "repo": "mqobsidian",
+      "indexed": true,
+      "last_indexed": "2026-07-08T00:00:00.000Z",
+      "index_up_to_date": true,
+      "counts": {
+        "files": 13,
+        "nodes": 147,
+        "edges": 274
+      },
+      "indexed_languages": [
+        "python",
+        "yaml"
+      ],
+      "unsupported_source": [
+        {
+          "kind": "shell",
+          "files_on_disk": 6,
+          "indexed": false
+        },
+        {
+          "kind": "powershell",
+          "files_on_disk": 0,
+          "indexed": false
+        }
+      ],
+      "coverage_status": "partial",
+      "coverage_note": "green index omits unsupported command surfaces: 6 shell"
+    },
+    {
+      "repo": "mq-ums",
+      "indexed": true,
+      "last_indexed": "2026-07-08T00:00:00.000Z",
+      "index_up_to_date": true,
+      "counts": {
+        "files": 44,
+        "nodes": 132,
+        "edges": 261
+      },
+      "indexed_languages": [
+        "javascript",
+        "python",
+        "yaml"
+      ],
+      "unsupported_source": [
+        {
+          "kind": "shell",
+          "files_on_disk": 5,
+          "indexed": false
+        },
+        {
+          "kind": "powershell",
+          "files_on_disk": 5,
+          "indexed": false
+        }
+      ],
+      "coverage_status": "partial",
+      "coverage_note": "green index omits unsupported command surfaces: 5 shell, 5 powershell"
+    },
+    {
+      "repo": "macos-scripts",
+      "indexed": true,
+      "last_indexed": "2026-07-08T00:00:00.000Z",
+      "index_up_to_date": true,
+      "counts": {
+        "files": 45,
+        "nodes": 546,
+        "edges": 1119
+      },
+      "indexed_languages": [
+        "python",
+        "xml",
+        "yaml"
+      ],
+      "unsupported_source": [
+        {
+          "kind": "shell",
+          "files_on_disk": 219,
+          "indexed": false
+        },
+        {
+          "kind": "powershell",
+          "files_on_disk": 0,
+          "indexed": false
+        }
+      ],
+      "coverage_status": "partial",
+      "coverage_note": "green index omits unsupported command surfaces: 219 shell"
+    }
+  ]
+}
