@@ -121,6 +121,15 @@ trust, and manual moderation bottlenecks.
 **Goal:** Turn CodeGraph's per-repo source graph into a measured MQ workflow
 without making `mqobsidian` a code index or reimplementing CodeGraph.
 
+> **Prior art / governance (verified 2026-07-14).** This block extends, not
+> replaces, the shipped `docs/roadmap-token-reduction.md` Phase 4.5 foundation:
+> `docs/integrations/codegraph.md`, `scripts/check-codegraph-stack.sh`, stack-wide
+> indexing, and recorded discovery measurements already exist. The memory boundary
+> is fixed by `decisions/ADR-009-codegraph-memory-boundary.md` (accepted
+> 2026-06-27): CodeGraph Core (Project A) may build now; the CodeGraph→memory
+> producer (Project B) is **parked and data-gated**. Nothing in this block may
+> treat graph data as observation/promotion evidence.
+
 ### Problem
 
 CodeGraph already provides symbol search, source-aware exploration,
@@ -258,8 +267,10 @@ Tasks:
 - [ ] compare CodeGraph-assisted discovery with a defined broad-read baseline
 - [ ] measure at least one Python task, one cross-repo contract task, and one
   unsupported shell task with explicit fallback
-- [ ] feed only verified reusable conclusions into the existing observation →
-  scoring → curated-learn pipeline
+- [ ] keep measurement records as durable *measurement* format only; per
+  ADR-009 (Principle 12, graph data ≠ observation evidence) CodeGraph output does
+  **not** feed the observation → scoring → curated-learn pipeline until Project B
+  is unblocked by the real-data Slice 2 readiness gate
 
 Exit gate:
 
@@ -313,3 +324,11 @@ remain required before merge when CLI behavior or a public contract changes.
 - `docs/integrations/codegraph.md` — current local CodeGraph operating guide.
 - `docs/roadmap-token-reduction.md` — Phase 4.5 baseline and recorded source
   discovery measurements.
+- `decisions/ADR-009-codegraph-memory-boundary.md` — CodeGraph Core vs. parked,
+  data-gated memory producer; graph data ≠ observation evidence.
+
+---
+
+*Roadmap aligned with verified reality on 2026-07-14: both blocks confirmed
+`Proposed` (no delivery files exist yet); CodeGraph block reconciled with the
+shipped Phase 4.5 foundation and ADR-009's memory boundary.*
