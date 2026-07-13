@@ -751,10 +751,17 @@ Minimum first tasks to measure:
 
 * [x] `fix mq-mcp brain writer paths` — measured cross-repo (68 vs 6,922 lines,
   ~99% fewer); see `docs/context-effect.md`.
-* [ ] `add endpoint-truth export to mq-ums`
-* [ ] `connect repo-signal review export to mqobsidian`
-* [ ] `update mq-agent context export`
-* [ ] `generate AGENTS.md / CLAUDE.md for all MQ repos`
+* [ ] Measure `add endpoint-truth export to mq-ums` — blocked: no endpoint-truth
+  export implementation exists in `mq-ums` yet.
+* [ ] Measure `connect repo-signal review export to mqobsidian` — ready:
+  `repo-signal review-export` is implemented locally with `repo-review.v1` and
+  `inspect.v1` provenance; focused and full tests pass. Merge and the CodeGraph
+  comparison remain.
+* [ ] Measure `update mq-agent context export` — ready: the command is implemented
+  and its focused test suite passes (7 tests); the CodeGraph comparison remains.
+* [ ] Measure `generate AGENTS.md / CLAUDE.md for all MQ repos` — ready: all 9 × 2
+  generated examples were refreshed and the canonical contract passes; the
+  CodeGraph comparison remains.
 
 **Token reduction value**
 

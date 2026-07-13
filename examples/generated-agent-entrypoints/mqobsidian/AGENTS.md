@@ -104,15 +104,15 @@ or machine-specific private paths.
 
 ## MQ Skills
 
-Repo-local skills live under `.agents/skills/` (Codex) and `.claude/skills/`
-(Claude Code). Route by each skill's frontmatter `description`. A few are
-near-universal across MQ repos:
+Use repo-local skills from `.agents/skills/` (Codex) and `.claude/skills/`
+(Claude Code); route by frontmatter `description`. Near-universal:
+`mq-writing-plans`, `mq-worktree-safe`, `mq-secrets-public-safe`.
 
-- `mq-writing-plans` — before multi-step or cross-repo changes.
-- `mq-worktree-safe` — before risky branch/worktree flows.
-- `mq-secrets-public-safe` — before publishing, commit, or PR.
+## Codex Governor
 
-Use any other installed skill when its description matches the task.
+Default to Swedish, concise, direct, no hype. Be honest about uncertainty.
+Make surgical changes; state assumptions, define success, and verify before done.
+Do not invent facts, sources, APIs, or numbers. Ask only before destructive ops.
 
 ## Fallback Rule
 

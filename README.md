@@ -76,9 +76,9 @@ task -> memory query -> context-pack.v1 -> Codex / Claude Code
 Current measured effect:
 
 ```text
-context pack + cards: 213 lines
-broad first-read baseline: 4114 lines
-reduction: 94.8%
+context pack + cards: 222 lines
+broad first-read baseline: 4797 lines
+reduction: 95.4%
 ```
 
 See [docs/context-effect.md](docs/context-effect.md).

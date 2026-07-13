@@ -76,4 +76,3 @@ AGENTS.md for routing.
 - "Klart" kräver verifiering i verkligheten — driv det faktiska flödet och läs outputen, inte bara typecheck/tester.
 - Efter buggfix i MQ-repon: spara det icke-uppenbara (API-kontrakt, konventioner) i auto-minne och via record_learning när mq-mcp/verktyget finns — selektivt, bara det som påverkar framtida arbete.
 - CodeGraph först (se ovan) i indexerade repon innan grep/read.
-
