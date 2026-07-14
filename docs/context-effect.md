@@ -113,6 +113,34 @@ This confirms the cross-repo payoff: the pack still does orientation (which repo
 which files, the `memory/reviews/` vs `memory/learn/` decision), and CodeGraph
 collapses the source-discovery step from thousands of lines to tens.
 
+## Delivery D — structured measurement records
+
+Phase 4.5's narrative measurements above are now also captured as structured
+`codegraph-measurement.v1` records (`schemas/codegraph-measurement.v1.json`,
+`templates/codegraph-measurement.md`), so a measurement is queryable and its
+correctness claim is machine-checked. `examples/codegraph-measurement.example.json`
+holds three reproducible MQ measurements:
+
+| Task | Type | CodeGraph | Baseline | Verification |
+| --- | --- | ---: | ---: | --- |
+| trace `render_pack` | python | 66 lines | 321 lines (full file) | `python3 -m unittest discover -s tests` → pass |
+| trace `export_repo_review` (repo-review.v1) | cross-repo-contract | 35 lines | 103 lines (full file) | `pytest tests/test_review_export.py` → pass |
+| find shell `log` helper | unsupported-shell | 0 (miss) | grep fallback | n/a — no correctness asserted |
+
+The third record is the honest fallback case: `codegraph query log` in
+`macos-scripts` returned only unrelated Python symbols while the shell `log()`
+helper lives in 53 unindexed shell files, so the measurement records the CodeGraph
+miss and a grep fallback rather than a fabricated reduction.
+
+Two rules the records encode (per `decisions/ADR-009-codegraph-memory-boundary.md`):
+measured facts stay separate from inferred savings, and a record may claim
+correctness only when its source tests pass (enforced by `validate-export.py`).
+These are measurement records only — CodeGraph output does not feed the
+observation → scoring → curated-learn pipeline.
+
+The `mq-agent` measurement command is deferred until this record contract has
+settled in use (roadmap Delivery D).
+
 ## Next action
 
 Continue Phase 2 by tightening card content from verified repo boundaries, then

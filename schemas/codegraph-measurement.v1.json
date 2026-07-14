@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "codegraph-measurement.v1",
+  "description": "CodeGraph discovery measurement records (Roadmap: CodeGraph MQ Integration → Delivery D). mqobsidian owns this durable measurement format; mq-agent owns execution. Each record compares CodeGraph-assisted source discovery with a defined broad-read baseline for one task, keeps measured facts separate from inferred token savings, and records the verification. Per ADR-009 these are measurement records only — CodeGraph output is NOT observation/promotion evidence. A record may claim correctness only when its source tests pass. Values are repo-relative or symbol names — never absolute machine paths.",
+  "type": "object",
+  "required": [
+    "schema",
+    "measurements"
+  ],
+  "properties": {
+    "schema": {
+      "const": "codegraph-measurement.v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "note": {
+      "type": "string"
+    },
+    "measurements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "task",
+          "task_type",
+          "repos",
+          "queries",
+          "measured",
+          "baseline",
+          "verification",
+          "fallback",
+          "correctness_claimed"
+        ],
+        "properties": {
+          "task": { "type": "string", "minLength": 1 },
+          "task_type": {
+            "type": "string",
+            "enum": ["python", "cross-repo-contract", "unsupported-shell"]
+          },
+          "repos": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "queries": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "The CodeGraph (or fallback) commands actually run."
+          },
+          "returned_symbols": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Symbols CodeGraph returned — a measured fact."
+          },
+          "measured": {
+            "type": "object",
+            "description": "Measured facts only. No inferred savings here.",
+            "required": ["baseline_lines", "source_reads"],
+            "properties": {
+              "codegraph_lines": { "type": ["integer", "null"] },
+              "baseline_lines": { "type": "integer" },
+              "source_reads": { "type": "integer" }
+            },
+            "additionalProperties": false
+          },
+          "baseline": {
+            "type": "object",
+            "required": ["description"],
+            "properties": {
+              "description": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          },
+          "inferred": {
+            "type": "object",
+            "description": "Explicitly inferred, not measured. Kept separate on purpose.",
+            "properties": {
+              "reduction_pct": { "type": ["number", "null"] },
+              "note": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "verification": {
+            "type": "object",
+            "required": ["command", "result"],
+            "properties": {
+              "selected_tests": { "type": "array", "items": { "type": "string" } },
+              "executed_tests": { "type": "array", "items": { "type": "string" } },
+              "command": { "type": "string" },
+              "result": {
+                "type": "string",
+                "enum": ["pass", "fail", "not-run"]
+              }
+            },
+            "additionalProperties": false
+          },
+          "fallback": {
+            "type": "object",
+            "required": ["used"],
+            "properties": {
+              "used": { "type": "boolean" },
+              "reason": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "correctness_claimed": {
+            "type": "boolean",
+            "description": "May be true only when verification.result is `pass` (enforced by validate-export.py)."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
