@@ -54,6 +54,14 @@ CODEGRAPH_TASK_SUPPRESS = (
 )
 
 
+# Source extensions CodeGraph can index; a `node` query only makes sense for
+# these. Shell/PowerShell are unsupported (see docs/integrations/codegraph.md).
+SOURCE_EXTS = (".py", ".js", ".ts", ".tsx", ".jsx")
+
+# Hard cap so CodeGraph guidance can never become a token sink in the pack.
+MAX_CODEGRAPH_QUERIES = 5
+
+
 def task_is_source_heavy(task: str) -> bool:
     key = task.lower()
     if any(token in key for token in CODEGRAPH_TASK_SUPPRESS):
@@ -61,32 +69,74 @@ def task_is_source_heavy(task: str) -> bool:
     return any(token in key for token in CODEGRAPH_TASK_HINTS)
 
 
-def apply_codegraph_defaults(
+def _sanitize_query(task: str) -> str:
+    return " ".join(task.split()).replace('"', "'")[:80]
+
+
+def _repo_relative(path: str, repo: str) -> str:
+    prefix = f"{repo}/"
+    while path.startswith(prefix):
+        path = path[len(prefix):]
+    return path
+
+
+def build_codegraph_queries(
     task: str,
     repo: str | None,
     relevant_repos: list[str],
-    notes: list[str],
+    relevant_files: list[str],
+    symbols: list[str],
     mode: str,
 ) -> list[str]:
-    """Append optional CodeGraph guidance to `notes` without touching the schema.
+    """Concrete, bounded, copy-pasteable CodeGraph commands for a source task.
 
-    `mode` is auto (heuristic), on (force), or off (suppress). Guidance lands in
-    the existing `notes` field so `context-pack.v1` is unchanged.
+    `mode` is auto (heuristic), on (force), or off (suppress). Returns an empty
+    list when suppressed, when the task is doc-shaped, or when no target repo is
+    known — so a documentation pack carries no CodeGraph noise. Every query
+    passes an explicit `-p <repo>` project path, and the list is capped at
+    `MAX_CODEGRAPH_QUERIES` so it can never become a token sink.
     """
     if mode == "off":
-        return notes
+        return []
     if mode == "auto" and not task_is_source_heavy(task):
-        return notes
+        return []
+    target = repo or (relevant_repos[0] if relevant_repos else None)
+    if not target:
+        return []
 
-    target_repo = repo or (relevant_repos[0] if relevant_repos else None)
-    where = f" in `{target_repo}`" if target_repo else ""
-    for item in [
-        f"If `.codegraph/` exists{where}, ask CodeGraph for callers/impact before broad grep.",
-        "Use CodeGraph for source structure only; use mqobsidian for durable memory and repo boundaries.",
-    ]:
-        if item not in notes:
-            notes.append(item)
-    return notes
+    queries = [f'codegraph explore "{_sanitize_query(task)}" -p {target} --max-files 8']
+    for symbol in symbols:
+        symbol = symbol.strip()
+        if not symbol:
+            continue
+        queries.append(f"codegraph callers {symbol} -p {target} -l 20")
+        queries.append(f"codegraph impact {symbol} -p {target} -d 2")
+    for path in relevant_files:
+        if path.split("/", 1)[0] == target and path.lower().endswith(SOURCE_EXTS):
+            queries.append(f"codegraph node {_repo_relative(path, target)} -p {target}")
+
+    bounded: list[str] = []
+    for query in queries:
+        if query not in bounded:
+            bounded.append(query)
+        if len(bounded) >= MAX_CODEGRAPH_QUERIES:
+            break
+    return bounded
+
+
+def codegraph_section(queries: list[str]) -> str:
+    """Render the optional `## CodeGraph queries` section, or empty when none."""
+    if not queries:
+        return ""
+    body = "\n".join(queries)
+    return (
+        "\n## CodeGraph queries\n\n"
+        "Bounded source-structure queries for this task; run from your MQ repos "
+        "root. Fall back to targeted source reads if the index is missing, "
+        "unsupported (shell/PowerShell), locked, or stale. CodeGraph never "
+        "replaces source tests or CLI verification.\n\n"
+        f"```bash\n{body}\n```\n"
+    )
 
 
 def apply_task_defaults(
@@ -156,6 +206,7 @@ def render_pack(
     relevant_decisions: list[str],
     notes: list[str],
     do_not_read: list[str],
+    codegraph_queries: list[str] | None = None,
 ) -> str:
     generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     repo_line = repo or ""
@@ -185,7 +236,7 @@ summary: {summary}
 ## Notes
 
 {bullet_lines(notes, "Keep the task pack focused on the current change")}
-
+{codegraph_section(codegraph_queries or [])}
 ## Do not read first
 
 {bullet_lines(do_not_read, "Broad repo scans unless the pack proves insufficient")}
@@ -202,6 +253,7 @@ def parse_args() -> ArgumentParser:
     parser.add_argument("--relevant-repo", action="append", default=[], help="Relevant repo name")
     parser.add_argument("--relevant-file", action="append", default=[], help="Relevant file or doc path")
     parser.add_argument("--relevant-decision", action="append", default=[], help="Relevant decision or rule")
+    parser.add_argument("--symbol", action="append", default=[], help="Named symbol for a CodeGraph callers/impact query")
     parser.add_argument("--note", action="append", default=[], help="Short operator note")
     parser.add_argument("--do-not-read", action="append", default=[], help="Files or surfaces to avoid at first")
     parser.add_argument(
@@ -233,11 +285,12 @@ def main() -> int:
         do_not_read=args.do_not_read,
     )
 
-    notes = apply_codegraph_defaults(
+    codegraph_queries = build_codegraph_queries(
         task=task,
         repo=args.repo,
         relevant_repos=relevant_repos,
-        notes=notes,
+        relevant_files=relevant_files,
+        symbols=args.symbol,
         mode=args.codegraph,
     )
 
@@ -251,6 +304,7 @@ def main() -> int:
         relevant_decisions=relevant_decisions,
         notes=notes,
         do_not_read=do_not_read,
+        codegraph_queries=codegraph_queries,
     )
 
     if args.output:

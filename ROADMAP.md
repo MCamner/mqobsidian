@@ -236,27 +236,34 @@ Exit gate:
 **Owner:** `mqobsidian` for the contract; `mq-agent` for execution
 **Files:**
 
-- [ ] modify `scripts/generate-context-pack.py`
-- [ ] modify `templates/context-pack.md` only if the existing `notes` field is
-  insufficient
-- [ ] modify `mq-agent/mq_agent/tools/context_pack.py`
-- [ ] add focused tests in both owner repos
+- [x] modify `scripts/generate-context-pack.py` (concrete `## CodeGraph queries`
+  section; `--symbol` flag)
+- [x] modify `templates/context-pack.md` (added the optional queries section —
+  a bullet `notes` list is insufficient for copy-pasteable command blocks)
+- [x] modify `mq-agent/mq_agent/tools/context_pack.py` (mirrors the generator;
+  `--symbol` wired through the CLI)
+- [x] add focused tests in both owner repos (mqobsidian `tests/test_context_pack_queries.py`
+  wired into CI; mq-agent `tests/test_context_pack_cmd.py` — full suite 846 passed)
 
 Tasks:
 
-- [ ] generate concrete queries from named symbols, files, and contract records
-  instead of only saying “use CodeGraph”
-- [ ] keep `--codegraph auto|on|off` and preserve non-source suppression
-- [ ] cap query count and context size so CodeGraph cannot become a token sink
-- [ ] pass an explicit repo/project path for every query
-- [ ] fall back cleanly to targeted source reads when an index is missing,
-  unsupported, locked, or stale
-- [ ] never let CodeGraph replace source tests or CLI verification
+- [x] generate concrete queries from named symbols, files, and contract records
+  instead of only saying “use CodeGraph” (symbols via `--symbol`; source files
+  from `relevant_files`; contract-map symbols feed in via `--symbol`)
+- [x] keep `--codegraph auto|on|off` and preserve non-source suppression
+- [x] cap query count and context size so CodeGraph cannot become a token sink
+  (`MAX_CODEGRAPH_QUERIES = 5`; a real source pack is 57 lines vs the 200 budget)
+- [x] pass an explicit repo/project path for every query (`-p <repo>` on each)
+- [x] fall back cleanly to targeted source reads when an index is missing,
+  unsupported, locked, or stale (stated in the section guidance)
+- [x] never let CodeGraph replace source tests or CLI verification (stated in the
+  section guidance)
 
 Exit gate:
 
-- [ ] a source-heavy task pack contains bounded, copy-pasteable queries
-- [ ] a documentation-only task pack contains no CodeGraph noise
+- [x] a source-heavy task pack contains bounded, copy-pasteable queries
+- [x] a documentation-only task pack contains no CodeGraph noise (verified: doc
+  task emits no `## CodeGraph queries` section; test-covered both ends)
 
 #### D. Measurement and verification loop
 
