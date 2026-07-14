@@ -1,0 +1,33 @@
+{
+  "schema": "truth-export-index.v1",
+  "source": "mqobsidian-export",
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "surfaces": [
+    {
+      "key": "status",
+      "schema": "status-manifest.v1",
+      "path": "exports/status-manifest.json",
+      "generated_at": "2026-07-14T00:00:00.000Z",
+      "drift": false,
+      "record_count": 8,
+      "description": "per-repo current status"
+    },
+    {
+      "key": "inbox",
+      "schema": "inbox-manifest.v1",
+      "path": "exports/inbox-manifest.json",
+      "generated_at": "2026-07-13T00:00:00.000Z",
+      "drift": true,
+      "record_count": 2,
+      "description": "promotion inbox candidates"
+    },
+    {
+      "key": "views",
+      "schema": "views-manifest.v1",
+      "path": "exports/views-manifest.json",
+      "generated_at": "2026-07-14T00:00:00.000Z",
+      "record_count": 3,
+      "description": "vault view resolution for read-only consumers"
+    }
+  ]
+}

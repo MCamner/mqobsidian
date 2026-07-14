@@ -1,0 +1,20 @@
+[
+  {
+    "key": "hot",
+    "label": "System hot notes",
+    "type": "folder",
+    "relative_path": "systems"
+  },
+  {
+    "key": "roadmap",
+    "label": "Roadmap",
+    "type": "file",
+    "relative_path": "ROADMAP.md"
+  },
+  {
+    "key": "decisions",
+    "label": "Decision records",
+    "type": "folder",
+    "relative_path": "decisions"
+  }
+]

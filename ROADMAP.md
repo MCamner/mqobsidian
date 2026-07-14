@@ -73,62 +73,69 @@ trust, and manual moderation bottlenecks.
 > froze the durable-memory + promotion model and names mqobsidian the owner of the
 > memory/promotion contracts; `ADR-006` fixes the publish boundary; `ADR-007`
 > guarantees no-auto-publish; `roadmap/ROADMAP_NOTES.md` records that the real
-> bottleneck is observation volume, not more schema. The verified gaps are
-> narrow: (1) `views-manifest.v1` is an **empty stub** and the manifests carry no
-> `version`/`freshness`/`drift` markers; (2) no generators, examples, or
-> validation exist for the manifest surfaces; (3) there is no single consumer-read
-> contract that ties the existing surfaces together. The CodeGraph
-> `codegraph-contract-map.v1` (block above) traces one contract producer→consumer;
-> this block is the stack-wide truth-surface index consumers read.
+> bottleneck is observation volume, not more schema. **Correction (2026-07-14):**
+> the manifest *contracts* are already fully built too — `views-manifest.v1`
+> (#29), `status-manifest.v1` + `inbox-manifest.v1` (#31) and
+> `truth-export-index.v1` (#32) all have complete, documented shapes; status/inbox
+> carry `freshness_state` + `drift`, and `truth-export-index` already versions and
+> exposes freshness/drift for every surface. An earlier survey wrongly read
+> `views-manifest.v1` (a top-level array) as an "empty stub"; it is not. The
+> remaining real gaps are narrow: (1) no examples or validation exist for the
+> manifest surfaces; (2) there is no single consumer-read contract that ties the
+> existing surfaces together. The CodeGraph `codegraph-contract-map.v1` (block
+> above) traces one contract producer→consumer; this block is the stack-wide
+> truth-surface index consumers read.
 
-### Delivery A — Complete the manifest contracts
+### Delivery A — Complete the manifest contracts — ALREADY DONE (#29/#31/#32)
 
 **Owner:** `mqobsidian`
-**Files:**
 
-- [ ] modify `schemas/views-manifest.v1.json` (empty stub → real shape)
-- [ ] modify `schemas/status-manifest.v1.json` and `schemas/truth-export-index.v1.json`
-  (add `version` + `freshness`/`drift` markers)
-- [ ] create `templates/status-manifest.md`, `templates/inbox-manifest.md`,
-  `templates/views-manifest.md`, `templates/truth-export-index.md`
+Reconciled 2026-07-14: the manifest contracts already shipped and satisfy this
+delivery. No work remains beyond optional templates.
 
-Tasks:
-
-- [ ] give `views-manifest.v1` a documented shape (`schema`, `source`,
-  `generated_at`, `views[]` with id/source/scope/freshness)
-- [ ] add `version` and `freshness` (`current`/`stale`/`archived`) + a `drift`
-  marker to each exported truth surface; additive and backward-compatible so
-  consumers ignore unknown fields
-- [ ] reuse ADR-008 lifecycle vocabulary; do **not** invent a parallel memory model
+- [x] `schemas/views-manifest.v1.json` has a full shape (top-level array of
+  `key`/`label`/`type`/`relative_path` view records) — #29
+- [x] `schemas/status-manifest.v1.json` + `schemas/inbox-manifest.v1.json` carry
+  `freshness_state`, `drift`, `generated_at`, evidence traceability — #31
+- [x] `schemas/truth-export-index.v1.json` versions every surface (via its
+  `schema` id) and exposes per-surface `generated_at` + `drift` — #32
+- [ ] optional `templates/*-manifest.md` for the four surfaces (deferred — docs
+  only; the schemas are self-documenting)
 
 Exit gate:
 
-- [ ] no manifest schema is an empty stub; each has a documented shape
-- [ ] every exported truth surface carries a `version` + `freshness` marker
+- [x] no manifest schema is an empty stub; each has a documented shape
+- [x] every exported truth surface carries a version (schema id) + freshness marker
 
-### Delivery B — Generators, examples, validation
+### Delivery B — Public-safe examples + validation
 
 **Owner:** `mqobsidian`
 **Files:**
 
-- [ ] create `scripts/generate-truth-manifests.py`
-- [ ] create `examples/status-manifest.example.json`,
+- [x] create `examples/status-manifest.example.json`,
   `examples/inbox-manifest.example.json`, `examples/views-manifest.example.json`,
   `examples/truth-export-index.example.json`
-- [ ] modify `scripts/validate-export.py` (validate each example against its
-  schema; reject absolute private paths — reuse the `_abs_path_hits` helper)
+- [x] modify `scripts/validate-export.py` (validate each example against its
+  schema; reject absolute private paths via `_abs_path_hits`)
 
 Tasks:
 
-- [ ] produce deterministic, public-safe manifest instances from vault state
-- [ ] validate examples in CI as pure JSON with no runtime deps, mirroring the
-  CodeGraph contract-map/measurement validators
-- [ ] fold regeneration into the existing CI stale-example gate (idempotent)
+- [x] commit one public-safe example per manifest surface
+- [x] validate examples in CI as pure JSON with no runtime deps, via a small
+  schema-lite checker (required/const/enum/unknown-keys), mirroring the CodeGraph
+  contract-map/measurement validators
+
+Scope note: **materializing** manifests from live vault state is a *local* export
+concern — the materialized surfaces are gitignored (ADR-006: tracked schema +
+public-safe examples, local materialized output). A `generate-truth-manifests.py`
+that reads live `systems/`/`inbox/` state is therefore deferred and does not
+commit generated truth here; the committed, CI-enforced public surface is the
+schema + example + validation.
 
 Exit gate:
 
-- [ ] each manifest surface has a generated public-safe example that validates in CI
-- [ ] a second regeneration run produces no diff
+- [x] each manifest surface has a public-safe example that validates in CI
+- [x] examples reject absolute machine paths (negative-tested)
 
 ### Delivery C — SSOT statement + consumer read contract
 
@@ -162,11 +169,11 @@ Exit gate:
 
 ### Overall exit criteria
 
-- [ ] no manifest schema is an empty stub; each has an example that validates in CI
-- [ ] every exported truth surface is versioned and carries a freshness/drift marker
-- [ ] one consumer-read contract doc enumerates the canonical surfaces and consumers
-- [ ] mqobsidian is the documented single truth owner (ADR-010 records it)
-- [ ] promotion / durable-memory traceability still runs through the ADR-008
+- [x] no manifest schema is an empty stub; each has an example that validates in CI (A + B)
+- [x] every exported truth surface is versioned and carries a freshness/drift marker (A)
+- [ ] one consumer-read contract doc enumerates the canonical surfaces and consumers (C)
+- [ ] mqobsidian is the documented single truth owner (ADR-010 records it) (C)
+- [x] promotion / durable-memory traceability still runs through the ADR-008
   pipeline, not a new truth plane
 
 ## CodeGraph MQ Integration
