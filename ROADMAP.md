@@ -204,26 +204,31 @@ Exit gate:
 **Secondary repos:** `mq-agent`, `repo-signal`, `mq-mcp`, `mq-ums`
 **Files:**
 
-- [ ] create `schemas/codegraph-contract-map.v1.json`
-- [ ] create `templates/codegraph-contract-map.md`
-- [ ] create `examples/codegraph-contract-map.example.json`
-- [ ] create `docs/CODEGRAPH_CONTRACT_MAP.md`
-- [ ] modify `scripts/validate-export.py`
+- [x] create `schemas/codegraph-contract-map.v1.json`
+- [x] create `templates/codegraph-contract-map.md`
+- [x] create `examples/codegraph-contract-map.example.json`
+- [x] create `docs/CODEGRAPH_CONTRACT_MAP.md`
+- [x] modify `scripts/validate-export.py`
 
 Tasks:
 
-- [ ] define a small contract record with producer repo, consumer repo, schema,
+- [x] define a small contract record with producer repo, consumer repo, schema,
   entrypoint, implementation symbol, validation command, and evidence timestamp
-- [ ] map `repo-review.v1`, `context-pack.v1`, `endpoint-truth.v1`, and
-  `feedback-signal.v1` first
-- [ ] use CodeGraph only for repo-local symbol evidence; join repos through the
+- [x] map `repo-review.v1`, `context-pack.v1`, `endpoint-truth.v1`, and
+  `feedback-signal.v1` first (context-pack + repo-review verified against real
+  symbols; endpoint-truth `planned` (no mq-ums producer yet); feedback-signal
+  `unverified` (mq-agent emitter not wired) — recorded honestly)
+- [x] use CodeGraph only for repo-local symbol evidence; join repos through the
   declared contract record
-- [ ] require source schema provenance and reject absolute private paths
-- [ ] validate examples without requiring a local CodeGraph installation in CI
+- [x] require source schema provenance and reject absolute private paths
+  (`schema_source` required; validator rejects absolute/private paths — negative-
+  tested)
+- [x] validate examples without requiring a local CodeGraph installation in CI
+  (`validate-export.py` is pure JSON validation)
 
 Exit gate:
 
-- [ ] one queryable record can trace a contract from producer through consumer to
+- [x] one queryable record can trace a contract from producer through consumer to
   its verification command without pretending there is a federated code graph
 
 #### C. Focused task-pack queries

@@ -1,0 +1,80 @@
+{
+  "schema": "codegraph-contract-map.v1",
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "note": "Public-safe example. Each record traces one MQ schema contract from producer to consumer to its verification command. Repos are joined through the declared record, not a federated code graph. Paths are repo-relative; no absolute machine paths.",
+  "contracts": [
+    {
+      "contract": "context-pack.v1",
+      "schema_source": "schemas/context-pack.v1.json",
+      "producer": {
+        "repo": "mqobsidian",
+        "entrypoint": "scripts/generate-context-pack.py",
+        "symbol": "render_pack"
+      },
+      "consumer": {
+        "repo": "mq-agent",
+        "surface": "mq_agent/tools/context_pack.py::build_task_pack"
+      },
+      "verification": {
+        "command": "python3 scripts/validate-export.py",
+        "status": "verified",
+        "evidence_timestamp": "2026-07-14T00:00:00.000Z"
+      },
+      "notes": "mqobsidian owns the contract and the generator seed; mq-agent owns task-pack generation from context cards."
+    },
+    {
+      "contract": "repo-review.v1",
+      "schema_source": "schemas/repo-review.v1.json",
+      "producer": {
+        "repo": "repo-signal",
+        "entrypoint": "repo-signal review-export",
+        "symbol": "repo_signal/review_export.py::export_repo_review"
+      },
+      "consumer": {
+        "repo": "mqobsidian",
+        "surface": "memory/reviews/"
+      },
+      "verification": {
+        "command": "pytest tests/test_review_export.py",
+        "status": "verified",
+        "evidence_timestamp": "2026-07-14T00:00:00.000Z"
+      },
+      "notes": "repo-signal maps its inspect.v1 result to repo-review.v1 below the mqobsidian vault; mqobsidian consumes it as durable review memory."
+    },
+    {
+      "contract": "endpoint-truth.v1",
+      "schema_source": "schemas/endpoint-truth.v1.json",
+      "producer": {
+        "repo": "mq-ums",
+        "entrypoint": "mq-ums endpoint-truth"
+      },
+      "consumer": {
+        "repo": "mq-agent",
+        "surface": "context selection / integration map"
+      },
+      "verification": {
+        "command": "mq-ums endpoint-truth --out endpoint-truth.v1.json && python3 scripts/validate-export.py",
+        "status": "planned"
+      },
+      "notes": "mqobsidian owns the schema; no producer exists in mq-ums yet, so the record carries no implementation symbol and its verification is planned, not run."
+    },
+    {
+      "contract": "feedback-signal.v1",
+      "schema_source": "schemas/feedback-signal.v1.json",
+      "producer": {
+        "repo": "mq-agent",
+        "entrypoint": "context pack usage emitter"
+      },
+      "consumer": {
+        "repo": "mqobsidian",
+        "surface": "feedback/ (local-only, gitignored)"
+      },
+      "verification": {
+        "command": "python3 scripts/validate-export.py",
+        "status": "unverified",
+        "evidence_timestamp": "2026-07-14T00:00:00.000Z"
+      },
+      "notes": "mqobsidian owns the contract and validates the sanitized example; the mq-agent emitter is a separate gated producer track and is not yet wired in code, so the producer symbol is omitted and status is unverified."
+    }
+  ]
+}

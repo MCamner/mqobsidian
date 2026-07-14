@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "codegraph-contract-map.v1",
+  "description": "Cross-repo contract map (Roadmap: CodeGraph MQ Integration → Delivery B). mqobsidian owns this metadata. Each record traces one MQ schema contract from its producer repo/symbol through its consumer repo to the command that verifies it. CodeGraph is used only for repo-local symbol evidence; repos are joined here through the declared contract record, NOT through a federated code graph. Values must be repo-relative paths, symbol names, or repo basenames — never absolute machine paths.",
+  "type": "object",
+  "required": [
+    "schema",
+    "contracts"
+  ],
+  "properties": {
+    "schema": {
+      "const": "codegraph-contract-map.v1"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "note": {
+      "type": "string"
+    },
+    "contracts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "contract",
+          "schema_source",
+          "producer",
+          "consumer",
+          "verification"
+        ],
+        "properties": {
+          "contract": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The schema id this contract carries, e.g. `repo-review.v1`."
+          },
+          "schema_source": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Repo-relative path in mqobsidian to the owning schema, e.g. `schemas/repo-review.v1.json`. Provenance is required."
+          },
+          "producer": {
+            "type": "object",
+            "required": ["repo", "entrypoint"],
+            "properties": {
+              "repo": { "type": "string", "minLength": 1 },
+              "entrypoint": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Repo-relative file or CLI command that emits the contract."
+              },
+              "symbol": {
+                "type": "string",
+                "description": "Repo-local implementation symbol (CodeGraph evidence). Omit when not yet implemented."
+              }
+            },
+            "additionalProperties": false
+          },
+          "consumer": {
+            "type": "object",
+            "required": ["repo"],
+            "properties": {
+              "repo": { "type": "string", "minLength": 1 },
+              "surface": {
+                "type": "string",
+                "description": "Repo-relative read surface or consuming symbol, e.g. `memory/reviews/` or `mq_agent/tools/context_pack.py::build_task_pack`."
+              }
+            },
+            "additionalProperties": false
+          },
+          "verification": {
+            "type": "object",
+            "required": ["command", "status"],
+            "properties": {
+              "command": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The command that verifies this contract end-to-end."
+              },
+              "status": {
+                "type": "string",
+                "enum": ["verified", "unverified", "planned"]
+              },
+              "evidence_timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": false
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
