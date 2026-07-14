@@ -142,22 +142,24 @@ Exit gate:
 **Owner:** `mqobsidian`; **consumers:** `mq-agent`, `macos-scripts` / `mqlaunch`
 **Files:**
 
-- [ ] create `decisions/ADR-010-single-source-of-truth.md` (local convention)
-- [ ] create `docs/TRUTH_SURFACES.md` (public-safe consumer read contract)
+- [x] the SSOT decision already exists as `docs/decision-records/DEC-002-truth-surfaces-ownership.md`
+  (public `DEC-NNN` convention — NOT a local `ADR-010`; the raw `decisions/`
+  folder is gitignored, public sanitized decisions live under `docs/decision-records/`)
+- [x] create `docs/TRUTH_SURFACES.md` (public-safe consumer read contract)
 
 Tasks:
 
-- [ ] state mqobsidian as the single truth owner; enumerate every canonical
-  exported truth surface with its `version` and intended consumer
-- [ ] define "no competing truth plane": shell/agent layers read or delegate,
-  never own (mirrors the ownership boundary above and ADR-005 P6 local-only rule)
-- [ ] cross-reference ADR-006 (publish boundary), ADR-008 (memory/promotion
+- [x] state mqobsidian as the single truth owner (recorded in DEC-002); enumerate
+  every canonical exported truth surface with its version and intended consumer
+- [x] define "no competing truth plane": shell/agent layers read or delegate,
+  never own (per DEC-002; mirrors the ownership boundary above and ADR-005 P6)
+- [x] cross-reference DEC-002, ADR-006 (publish boundary), ADR-008 (memory/promotion
   ownership), ADR-009 (graph ≠ evidence) instead of duplicating them
 
 Exit gate:
 
-- [ ] one doc lists every canonical truth surface, its version, and its consumer
-- [ ] consumers read from exported surfaces instead of inventing local truth
+- [x] one doc lists every canonical truth surface, its version, and its consumer
+- [x] consumers read from exported surfaces instead of inventing local truth
 
 ### Non-goals
 
@@ -171,10 +173,18 @@ Exit gate:
 
 - [x] no manifest schema is an empty stub; each has an example that validates in CI (A + B)
 - [x] every exported truth surface is versioned and carries a freshness/drift marker (A)
-- [ ] one consumer-read contract doc enumerates the canonical surfaces and consumers (C)
-- [ ] mqobsidian is the documented single truth owner (ADR-010 records it) (C)
+- [x] one consumer-read contract doc enumerates the canonical surfaces and consumers
+  (C — `docs/TRUTH_SURFACES.md`)
+- [x] mqobsidian is the documented single truth owner (C — recorded in DEC-002,
+  not a new ADR-010)
 - [x] promotion / durable-memory traceability still runs through the ADR-008
   pipeline, not a new truth plane
+
+*SSOT & Promotion Governance block complete (A–C) on 2026-07-14: contracts
+already existed (#29/#31/#32); this track added public-safe examples + validation
+(#39) and the `docs/TRUTH_SURFACES.md` consumer contract on top of the DEC-002
+ownership decision. Deferred: optional manifest templates, and the local
+live-vault materializer (ADR-006 keeps materialized output local).*
 
 ## CodeGraph MQ Integration
 
