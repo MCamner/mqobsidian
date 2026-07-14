@@ -62,56 +62,112 @@ trust, and manual moderation bottlenecks.
 - one canonical export surface for consumers
 - no competing truth plane in shell or agent layers
 
-### Scope
+> **Prior art / what already exists (verified 2026-07-14).** Most of the
+> canonical vocabulary is already built and frozen — this block is **not**
+> "define the model". `schemas/` already holds `status-manifest.v1`,
+> `inbox-manifest.v1`, `views-manifest.v1`, `truth-export-index.v1`,
+> `repo-memory-index.v1`, `memory-observation.v1`, `memory-score.v1`,
+> `memory-query.v1`, `promotion-event.v1`, plus `decision-record.v1`,
+> `learn-record.v1`, `repo-review.v1`, `endpoint-truth.v1`, `stack-truth.v1`,
+> `feedback-signal.v1`. `decisions/ADR-008-evidence-based-memory-architecture.md`
+> froze the durable-memory + promotion model and names mqobsidian the owner of the
+> memory/promotion contracts; `ADR-006` fixes the publish boundary; `ADR-007`
+> guarantees no-auto-publish; `roadmap/ROADMAP_NOTES.md` records that the real
+> bottleneck is observation volume, not more schema. The verified gaps are
+> narrow: (1) `views-manifest.v1` is an **empty stub** and the manifests carry no
+> `version`/`freshness`/`drift` markers; (2) no generators, examples, or
+> validation exist for the manifest surfaces; (3) there is no single consumer-read
+> contract that ties the existing surfaces together. The CodeGraph
+> `codegraph-contract-map.v1` (block above) traces one contract producer→consumer;
+> this block is the stack-wide truth-surface index consumers read.
 
-- [ ] define canonical note/schema structure
-- [ ] define inbox item model
-- [ ] define scoring fields and promotion-state fields
-- [ ] define durable memory categories and thresholds
-- [ ] define canonical views/manifests for consumers
-- [ ] define freshness/version markers for exported truth surfaces
-- [ ] define moderator checkpoints where automation stops
+### Delivery A — Complete the manifest contracts
 
-### Delivery
+**Owner:** `mqobsidian`
+**Files:**
 
-#### A. Canonical schema
+- [ ] modify `schemas/views-manifest.v1.json` (empty stub → real shape)
+- [ ] modify `schemas/status-manifest.v1.json` and `schemas/truth-export-index.v1.json`
+  (add `version` + `freshness`/`drift` markers)
+- [ ] create `templates/status-manifest.md`, `templates/inbox-manifest.md`,
+  `templates/views-manifest.md`, `templates/truth-export-index.md`
 
-- [ ] define status manifest
-- [ ] define inbox manifest
-- [ ] define views manifest
-- [ ] define learn/review/decision schemas
-- [ ] define promotion-state fields
-- [ ] define archival/deprecation lifecycle fields
+Tasks:
 
-#### B. Inbox and ranking model
+- [ ] give `views-manifest.v1` a documented shape (`schema`, `source`,
+  `generated_at`, `views[]` with id/source/scope/freshness)
+- [ ] add `version` and `freshness` (`current`/`stale`/`archived`) + a `drift`
+  marker to each exported truth surface; additive and backward-compatible so
+  consumers ignore unknown fields
+- [ ] reuse ADR-008 lifecycle vocabulary; do **not** invent a parallel memory model
 
-- [ ] define what enters the inbox
-- [ ] define recurrence/evidence fields
-- [ ] define ranking inputs
-- [ ] define review-needed vs auto-promotable states
-- [ ] define thresholds and exception paths
+Exit gate:
 
-#### C. Durable memory governance
+- [ ] no manifest schema is an empty stub; each has a documented shape
+- [ ] every exported truth surface carries a `version` + `freshness` marker
 
-- [ ] define what qualifies as durable memory
-- [ ] define what remains transient or session-local
-- [ ] define promotion approvals and guardrails
-- [ ] define the rollback/deprecation path for bad memory
-- [ ] define traceability from source evidence to durable note
+### Delivery B — Generators, examples, validation
 
-#### D. Consumer contracts
+**Owner:** `mqobsidian`
+**Files:**
 
-- [ ] define canonical read surfaces for `mqlaunch`
-- [ ] define canonical delegation/contract surfaces for `mq-agent`
-- [ ] version exported truth surfaces
-- [ ] expose freshness and drift markers
+- [ ] create `scripts/generate-truth-manifests.py`
+- [ ] create `examples/status-manifest.example.json`,
+  `examples/inbox-manifest.example.json`, `examples/views-manifest.example.json`,
+  `examples/truth-export-index.example.json`
+- [ ] modify `scripts/validate-export.py` (validate each example against its
+  schema; reject absolute private paths — reuse the `_abs_path_hits` helper)
 
-### Exit criteria
+Tasks:
 
-- [ ] `mqobsidian` is the undisputed truth owner
-- [ ] inbox, ranking, promotion, and durable memory have one canonical model
-- [ ] consumers read from exported truth surfaces instead of inventing local truth
-- [ ] every promoted durable memory item can be traced back to source evidence
+- [ ] produce deterministic, public-safe manifest instances from vault state
+- [ ] validate examples in CI as pure JSON with no runtime deps, mirroring the
+  CodeGraph contract-map/measurement validators
+- [ ] fold regeneration into the existing CI stale-example gate (idempotent)
+
+Exit gate:
+
+- [ ] each manifest surface has a generated public-safe example that validates in CI
+- [ ] a second regeneration run produces no diff
+
+### Delivery C — SSOT statement + consumer read contract
+
+**Owner:** `mqobsidian`; **consumers:** `mq-agent`, `macos-scripts` / `mqlaunch`
+**Files:**
+
+- [ ] create `decisions/ADR-010-single-source-of-truth.md` (local convention)
+- [ ] create `docs/TRUTH_SURFACES.md` (public-safe consumer read contract)
+
+Tasks:
+
+- [ ] state mqobsidian as the single truth owner; enumerate every canonical
+  exported truth surface with its `version` and intended consumer
+- [ ] define "no competing truth plane": shell/agent layers read or delegate,
+  never own (mirrors the ownership boundary above and ADR-005 P6 local-only rule)
+- [ ] cross-reference ADR-006 (publish boundary), ADR-008 (memory/promotion
+  ownership), ADR-009 (graph ≠ evidence) instead of duplicating them
+
+Exit gate:
+
+- [ ] one doc lists every canonical truth surface, its version, and its consumer
+- [ ] consumers read from exported surfaces instead of inventing local truth
+
+### Non-goals
+
+- do not re-open the ADR-008 frozen memory/promotion model or add a parallel
+  scorer/queue
+- do not build a ranking or promotion engine here — `mq-agent` owns orchestration
+- do not move terminal UX, shell runtime authority, or menu routing into mqobsidian
+- do not fabricate data volume to advance Slice 2 readiness (ROADMAP_NOTES)
+
+### Overall exit criteria
+
+- [ ] no manifest schema is an empty stub; each has an example that validates in CI
+- [ ] every exported truth surface is versioned and carries a freshness/drift marker
+- [ ] one consumer-read contract doc enumerates the canonical surfaces and consumers
+- [ ] mqobsidian is the documented single truth owner (ADR-010 records it)
+- [ ] promotion / durable-memory traceability still runs through the ADR-008
+  pipeline, not a new truth plane
 
 ## CodeGraph MQ Integration
 
