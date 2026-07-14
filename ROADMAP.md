@@ -270,29 +270,36 @@ Exit gate:
 **Owner:** `mq-agent` for execution; `mqobsidian` for durable measurement format
 **Files:**
 
-- [ ] create `schemas/codegraph-measurement.v1.json`
-- [ ] create `templates/codegraph-measurement.md`
-- [ ] create `examples/codegraph-measurement.example.json`
-- [ ] modify `docs/context-effect.md`
-- [ ] add an `mq-agent` measurement command only after the record contract is stable
+- [x] create `schemas/codegraph-measurement.v1.json`
+- [x] create `templates/codegraph-measurement.md`
+- [x] create `examples/codegraph-measurement.example.json`
+- [x] modify `docs/context-effect.md`
+- [ ] add an `mq-agent` measurement command only after the record contract is
+  stable (deferred by design — the record contract just landed; wire the command
+  once it has settled in use)
 
 Tasks:
 
-- [ ] record task, repos, queries, returned symbols, source reads, selected
+- [x] record task, repos, queries, returned symbols, source reads, selected
   tests, executed tests, result, and fallback reason
-- [ ] separate measured facts from inferred token savings
-- [ ] compare CodeGraph-assisted discovery with a defined broad-read baseline
-- [ ] measure at least one Python task, one cross-repo contract task, and one
-  unsupported shell task with explicit fallback
-- [ ] keep measurement records as durable *measurement* format only; per
+- [x] separate measured facts from inferred token savings (`measured` vs
+  `inferred` blocks in the schema)
+- [x] compare CodeGraph-assisted discovery with a defined broad-read baseline
+- [x] measure at least one Python task, one cross-repo contract task, and one
+  unsupported shell task with explicit fallback (all three in the example, run for
+  real)
+- [x] keep measurement records as durable *measurement* format only; per
   ADR-009 (Principle 12, graph data ≠ observation evidence) CodeGraph output does
   **not** feed the observation → scoring → curated-learn pipeline until Project B
   is unblocked by the real-data Slice 2 readiness gate
 
 Exit gate:
 
-- [ ] three reproducible MQ measurements exist with commands and verification output
-- [ ] no measurement claims correctness unless the relevant source tests pass
+- [x] three reproducible MQ measurements exist with commands and verification
+  output (render_pack 66/321 → tests pass; export_repo_review 35/103 → tests
+  pass; shell `log` → CodeGraph miss + grep fallback)
+- [x] no measurement claims correctness unless the relevant source tests pass
+  (enforced by `validate-export.py`; negative-tested)
 
 ### Test gates
 
@@ -326,11 +333,14 @@ remain required before merge when CLI behavior or a public contract changes.
 
 ### Overall exit criteria
 
-- [ ] MQ has an honest coverage view, including unsupported shell/PowerShell surfaces
-- [ ] cross-repo contracts are traceable without a fake federated graph
-- [ ] task packs emit bounded, concrete queries with deterministic fallback
-- [ ] measurements connect discovery to actual test evidence
-- [ ] mqobsidian remains durable memory and contract owner, not a source-code engine
+- [x] MQ has an honest coverage view, including unsupported shell/PowerShell surfaces (Delivery A)
+- [x] cross-repo contracts are traceable without a fake federated graph (Delivery B)
+- [x] task packs emit bounded, concrete queries with deterministic fallback (Delivery C)
+- [x] measurements connect discovery to actual test evidence (Delivery D)
+- [x] mqobsidian remains durable memory and contract owner, not a source-code engine
+
+*CodeGraph MQ Integration block complete (A–D) on 2026-07-14; the only deferred
+item is the gated `mq-agent` measurement command (Delivery D).*
 
 ## Related
 

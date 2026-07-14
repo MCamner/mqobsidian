@@ -283,6 +283,66 @@ def validate_contract_map(path: Path, schema: dict[str, object]) -> list[str]:
     return problems
 
 
+def validate_measurement(path: Path, schema: dict[str, object]) -> list[str]:
+    """Validate a Delivery D CodeGraph measurement record (JSON) against schema.
+
+    Enforces the `schema` const, required keys, the `task_type`/`result` enums,
+    the rule that correctness may be claimed only when tests pass, and rejects
+    absolute private paths — no full JSON-Schema dependency.
+    """
+    problems: list[str] = []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [f"{path.relative_to(ROOT)}: invalid JSON: {exc}"]
+    if not isinstance(data, dict):
+        return [f"{path.relative_to(ROOT)}: measurement must be a JSON object"]
+
+    properties = schema.get("properties", {})
+    if not isinstance(properties, dict):
+        return [f"{path.relative_to(ROOT)}: invalid measurement schema shape"]
+
+    if data.get("schema") != "codegraph-measurement.v1":
+        problems.append(f"{path.relative_to(ROOT)}: schema must be codegraph-measurement.v1")
+    for key in data:
+        if key not in properties:
+            problems.append(f"{path.relative_to(ROOT)}: unknown key `{key}`")
+
+    item_schema = properties.get("measurements", {}).get("items", {})
+    item_required = item_schema.get("required", [])
+    item_props = item_schema.get("properties", {})
+    type_enum = item_props.get("task_type", {}).get("enum")
+    result_enum = item_props.get("verification", {}).get("properties", {}).get("result", {}).get("enum")
+
+    measurements = data.get("measurements")
+    if not isinstance(measurements, list) or not measurements:
+        problems.append(f"{path.relative_to(ROOT)}: measurements must be a non-empty array")
+        measurements = []
+
+    for index, item in enumerate(measurements):
+        where = f"{path.relative_to(ROOT)}: measurements[{index}]"
+        if not isinstance(item, dict):
+            problems.append(f"{where}: must be an object")
+            continue
+        for key in item_required:
+            if isinstance(key, str) and key not in item:
+                problems.append(f"{where}: missing required `{key}`")
+        for key in item:
+            if key not in item_props:
+                problems.append(f"{where}: unknown key `{key}`")
+        if isinstance(type_enum, list) and item.get("task_type") not in type_enum:
+            problems.append(f"{where}: task_type must be one of {type_enum}")
+        result = item.get("verification", {}).get("result") if isinstance(item.get("verification"), dict) else None
+        if isinstance(result_enum, list) and result not in result_enum:
+            problems.append(f"{where}: verification.result must be one of {result_enum}")
+        # Exit-gate rule: correctness may be claimed only when tests pass.
+        if item.get("correctness_claimed") and result != "pass":
+            problems.append(f"{where}: correctness_claimed requires verification.result == pass")
+
+    problems.extend(f"{path.relative_to(ROOT)}: {hit}" for hit in _abs_path_hits(data))
+    return problems
+
+
 def main() -> int:
     required_schemas = [
         SCHEMAS / "stack-truth.v1.json",
@@ -295,6 +355,7 @@ def main() -> int:
         SCHEMAS / "feedback-signal.v1.json",
         SCHEMAS / "repo-memory-index.v1.json",
         SCHEMAS / "codegraph-contract-map.v1.json",
+        SCHEMAS / "codegraph-measurement.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
@@ -341,6 +402,11 @@ def main() -> int:
     contract_map_example = EXAMPLES / "codegraph-contract-map.example.json"
     if contract_map_example.exists():
         problems.extend(validate_contract_map(contract_map_example, contract_map_schema))
+
+    measurement_schema = parsed_schemas["codegraph-measurement.v1.json"]
+    measurement_example = EXAMPLES / "codegraph-measurement.example.json"
+    if measurement_example.exists():
+        problems.extend(validate_measurement(measurement_example, measurement_schema))
 
     if problems:
         print("export validation failed:")

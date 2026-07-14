@@ -1,0 +1,100 @@
+{
+  "schema": "codegraph-measurement.v1",
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "note": "Three reproducible MQ measurements: one Python task, one cross-repo contract task, and one unsupported shell task with explicit fallback. Measured facts are kept separate from inferred savings. Per ADR-009 these are measurement records, not observation/promotion evidence. Public-safe: repo-relative paths and symbol names only.",
+  "measurements": [
+    {
+      "task": "trace render_pack in the mqobsidian context-pack generator",
+      "task_type": "python",
+      "repos": ["mqobsidian"],
+      "queries": ["codegraph node render_pack -p mqobsidian"],
+      "returned_symbols": ["render_pack"],
+      "measured": {
+        "codegraph_lines": 66,
+        "baseline_lines": 321,
+        "source_reads": 0
+      },
+      "baseline": {
+        "description": "Read scripts/generate-context-pack.py in full to locate and understand render_pack."
+      },
+      "inferred": {
+        "reduction_pct": 79.4,
+        "note": "Inferred from 66 vs 321 first-read lines; not a runtime measurement."
+      },
+      "verification": {
+        "selected_tests": ["tests/test_context_pack_queries.py"],
+        "executed_tests": ["tests/test_context_pack_queries.py"],
+        "command": "python3 -m unittest discover -s tests -q",
+        "result": "pass"
+      },
+      "fallback": {
+        "used": false,
+        "reason": ""
+      },
+      "correctness_claimed": true
+    },
+    {
+      "task": "trace the repo-review.v1 producer symbol (contract map, Delivery B)",
+      "task_type": "cross-repo-contract",
+      "repos": ["repo-signal", "mqobsidian"],
+      "queries": ["codegraph node export_repo_review -p repo-signal"],
+      "returned_symbols": ["export_repo_review"],
+      "measured": {
+        "codegraph_lines": 35,
+        "baseline_lines": 103,
+        "source_reads": 0
+      },
+      "baseline": {
+        "description": "Read repo_signal/review_export.py in full; join to the mqobsidian consumer by hand."
+      },
+      "inferred": {
+        "reduction_pct": 66.0,
+        "note": "Inferred from 35 vs 103 first-read lines. CodeGraph gives repo-local symbol evidence; the producer→consumer join comes from the contract map, not a federated graph."
+      },
+      "verification": {
+        "selected_tests": ["tests/test_review_export.py"],
+        "executed_tests": ["tests/test_review_export.py"],
+        "command": "python -m pytest tests/test_review_export.py",
+        "result": "pass"
+      },
+      "fallback": {
+        "used": false,
+        "reason": ""
+      },
+      "correctness_claimed": true
+    },
+    {
+      "task": "find the shell `log` helper definition in macos-scripts",
+      "task_type": "unsupported-shell",
+      "repos": ["macos-scripts"],
+      "queries": [
+        "codegraph query log -p macos-scripts",
+        "grep -rn \"^log()\" --include=*.sh ."
+      ],
+      "returned_symbols": [],
+      "measured": {
+        "codegraph_lines": 0,
+        "baseline_lines": 3,
+        "source_reads": 3
+      },
+      "baseline": {
+        "description": "CodeGraph returned only unrelated Python symbols (changelog_latest, _DIALOG_CSS); the shell `log()` helper lives in 53 unindexed shell files. grep found the definition directly."
+      },
+      "inferred": {
+        "reduction_pct": null,
+        "note": "Not applicable — CodeGraph cannot index shell, so there is no CodeGraph-assisted path to compare. The fallback grep is the only path."
+      },
+      "verification": {
+        "selected_tests": [],
+        "executed_tests": [],
+        "command": "n/a — discovery-only measurement, no correctness asserted",
+        "result": "not-run"
+      },
+      "fallback": {
+        "used": true,
+        "reason": "shell is unsupported upstream (Delivery A coverage: 219 shell files unindexed in macos-scripts); fall back to grep/source reads"
+      },
+      "correctness_claimed": false
+    }
+  ]
+}
