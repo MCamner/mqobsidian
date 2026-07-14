@@ -1,0 +1,22 @@
+{
+  "schema": "status-manifest.v1",
+  "source": "mqobsidian-export",
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "repos": [
+    {
+      "name": "mq-agent",
+      "hot": "systems/mq-agent/hot.md",
+      "freshness_state": "active",
+      "drift": false,
+      "last_verified_at": "2026-07-14T00:00:00.000Z",
+      "summary": "orchestration + context/pack export"
+    },
+    {
+      "name": "macos-scripts",
+      "hot": "systems/macos-scripts/hot.md",
+      "freshness_state": "stale",
+      "drift": true,
+      "summary": "shell launcher; CodeGraph leaves the shell command surface unindexed"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "inbox-manifest.v1",
+  "source": "mqobsidian-export",
+  "generated_at": "2026-07-14T00:00:00.000Z",
+  "items": [
+    {
+      "id": "obs-0001",
+      "source": "command-pattern",
+      "state": "candidate",
+      "first_seen": "2026-07-01T00:00:00.000Z",
+      "last_seen": "2026-07-13T00:00:00.000Z",
+      "occurrences": 4,
+      "score": 0.42,
+      "evidence": [
+        { "ref": "memory/observations/obs-0001.json", "kind": "observation" }
+      ]
+    },
+    {
+      "id": "obs-0002",
+      "source": "repo-signal",
+      "state": "observed",
+      "first_seen": "2026-07-12T00:00:00.000Z",
+      "last_seen": "2026-07-12T00:00:00.000Z",
+      "occurrences": 1,
+      "evidence": [
+        { "ref": "memory/observations/obs-0002.json" }
+      ]
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import json
 import re
 from pathlib import Path
 import sys
+from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -222,6 +223,53 @@ def _abs_path_hits(value: object, path: str = "") -> list[str]:
     return hits
 
 
+def _schema_lite_errors(data: Any, schema: dict[str, Any], where: str) -> list[str]:
+    """Shallow JSON-Schema check: type, required, const, enum, closed objects.
+
+    Enough to validate the truth-surface manifest examples against their schemas
+    without a full JSON-Schema dependency. Ignores format/pattern by design.
+    """
+    errs: list[str] = []
+    schema_type = schema.get("type")
+    if schema_type == "object":
+        if not isinstance(data, dict):
+            return [f"{where}: expected object"]
+        props = schema.get("properties", {})
+        for key in schema.get("required", []) or []:
+            if key not in data:
+                errs.append(f"{where}: missing required `{key}`")
+        if schema.get("additionalProperties") is False:
+            for key in data:
+                if key not in props:
+                    errs.append(f"{where}: unknown key `{key}`")
+        for key, value in data.items():
+            if key in props:
+                errs.extend(_schema_lite_errors(value, props[key], f"{where}.{key}"))
+    elif schema_type == "array":
+        if not isinstance(data, list):
+            return [f"{where}: expected array"]
+        items = schema.get("items", {})
+        for index, element in enumerate(data):
+            errs.extend(_schema_lite_errors(element, items, f"{where}[{index}]"))
+    if "const" in schema and data != schema["const"]:
+        errs.append(f"{where}: must equal {schema['const']!r}")
+    if "enum" in schema and data not in schema["enum"]:
+        errs.append(f"{where}: must be one of {schema['enum']}")
+    return errs
+
+
+def validate_manifest_example(path: Path, schema: dict[str, object]) -> list[str]:
+    """Validate a truth-surface manifest example (JSON) against its schema."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [f"{path.relative_to(ROOT)}: invalid JSON: {exc}"]
+    rel = path.relative_to(ROOT)
+    problems = [f"{rel}: {msg}" for msg in _schema_lite_errors(data, schema, "<root>")]
+    problems.extend(f"{rel}: {hit}" for hit in _abs_path_hits(data))
+    return problems
+
+
 def validate_contract_map(path: Path, schema: dict[str, object]) -> list[str]:
     """Validate a Delivery B cross-repo contract map (JSON) against the schema.
 
@@ -356,6 +404,10 @@ def main() -> int:
         SCHEMAS / "repo-memory-index.v1.json",
         SCHEMAS / "codegraph-contract-map.v1.json",
         SCHEMAS / "codegraph-measurement.v1.json",
+        SCHEMAS / "status-manifest.v1.json",
+        SCHEMAS / "inbox-manifest.v1.json",
+        SCHEMAS / "views-manifest.v1.json",
+        SCHEMAS / "truth-export-index.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
@@ -407,6 +459,17 @@ def main() -> int:
     measurement_example = EXAMPLES / "codegraph-measurement.example.json"
     if measurement_example.exists():
         problems.extend(validate_measurement(measurement_example, measurement_schema))
+
+    manifest_examples = {
+        "status-manifest.example.json": "status-manifest.v1.json",
+        "inbox-manifest.example.json": "inbox-manifest.v1.json",
+        "views-manifest.example.json": "views-manifest.v1.json",
+        "truth-export-index.example.json": "truth-export-index.v1.json",
+    }
+    for example_name, schema_name in manifest_examples.items():
+        example_path = EXAMPLES / example_name
+        if example_path.exists():
+            problems.extend(validate_manifest_example(example_path, parsed_schemas[schema_name]))
 
     if problems:
         print("export validation failed:")
