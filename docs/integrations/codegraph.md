@@ -165,6 +165,39 @@ bash scripts/check-codegraph-stack.sh
 missing `.codegraph/` or the `.gitignore` entry, and runs `codegraph status`
 where initialized. It does not modify files.
 
+## Coverage and unsupported surfaces
+
+A green `codegraph status` only covers **supported source languages**. CodeGraph
+1.0.x indexes languages such as Python, JavaScript, YAML, and XML; it does **not**
+parse shell (`.sh`, `.bash`, `.zsh`, `.fish`) or PowerShell (`.ps1`, `.psm1`,
+`.psd1`). In the MQ stack those are real command surfaces — `macos-scripts` alone
+is hundreds of shell files — so an "up to date" index can silently hide most of a
+repo's actual behavior.
+
+Get an honest, public-safe coverage view:
+
+```bash
+bash scripts/check-codegraph-stack.sh --coverage
+```
+
+For every MQ repo this emits JSON with the indexed languages and counts plus an
+explicit `unsupported_source` list (shell / PowerShell files present on disk but
+not indexed) and a `coverage_status` of `full` or `partial`. Output is
+public-safe: repo basenames only, no machine paths and no `.codegraph/` database
+paths. See `examples/codegraph/stack-coverage.example.json` for the shape.
+
+Rule: a repo whose only unindexed source is shell/PowerShell is `partial`, never
+"fully indexed". Do not treat a green index as complete coverage of a
+command-surface repo.
+
+### Upstream boundary
+
+Shell and PowerShell parsing belong to **CodeGraph upstream**, not `mqobsidian`.
+The vault does not implement shell/PowerShell parsing (see the roadmap non-goals);
+it only reports the gap so agents fall back to source reads and tests for those
+surfaces. If upstream adds shell/PowerShell extraction, these surfaces move from
+`unsupported_source` into `indexed_languages` with no change to this contract.
+
 ## How agents should use CodeGraph
 
 Prefer CodeGraph before broad grep/read loops. Use it when the task asks:

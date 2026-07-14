@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 import sys
 
@@ -200,6 +201,88 @@ def validate_feedback_signal(path: Path, schema: dict[str, object]) -> list[str]
     return problems
 
 
+def _abs_path_hits(value: object, path: str = "") -> list[str]:
+    """Recursively flag string values that leak an absolute/private machine path."""
+    hits: list[str] = []
+    if isinstance(value, str):
+        if (
+            value.startswith("/")
+            or "/Users/" in value
+            or "$HOME" in value
+            or "\\Users\\" in value
+            or re.match(r"^[A-Za-z]:\\", value)
+        ):
+            hits.append(f"{path or '<root>'}: absolute/private path `{value}`")
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            hits.extend(_abs_path_hits(item, f"{path}.{key}" if path else str(key)))
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            hits.extend(_abs_path_hits(item, f"{path}[{index}]"))
+    return hits
+
+
+def validate_contract_map(path: Path, schema: dict[str, object]) -> list[str]:
+    """Validate a Delivery B cross-repo contract map (JSON) against the schema.
+
+    Shallow like the other validators: enforce the `schema` const, required keys,
+    the `verification.status` enum, and reject absolute private paths — without a
+    full JSON-Schema dependency or any local CodeGraph installation.
+    """
+    problems: list[str] = []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [f"{path.relative_to(ROOT)}: invalid JSON: {exc}"]
+    if not isinstance(data, dict):
+        return [f"{path.relative_to(ROOT)}: contract map must be a JSON object"]
+
+    properties = schema.get("properties", {})
+    if not isinstance(properties, dict):
+        return [f"{path.relative_to(ROOT)}: invalid contract-map schema shape"]
+
+    if data.get("schema") != "codegraph-contract-map.v1":
+        problems.append(f"{path.relative_to(ROOT)}: schema must be codegraph-contract-map.v1")
+
+    allowed_top = set(properties)
+    for key in data:
+        if key not in allowed_top:
+            problems.append(f"{path.relative_to(ROOT)}: unknown key `{key}`")
+
+    contract_schema = properties.get("contracts", {}).get("items", {})
+    contract_required = contract_schema.get("required", [])
+    contract_props = contract_schema.get("properties", {})
+    status_enum = (
+        contract_props.get("verification", {})
+        .get("properties", {})
+        .get("status", {})
+        .get("enum")
+    )
+
+    contracts = data.get("contracts")
+    if not isinstance(contracts, list) or not contracts:
+        problems.append(f"{path.relative_to(ROOT)}: contracts must be a non-empty array")
+        contracts = []
+
+    for index, contract in enumerate(contracts):
+        where = f"{path.relative_to(ROOT)}: contracts[{index}]"
+        if not isinstance(contract, dict):
+            problems.append(f"{where}: must be an object")
+            continue
+        for key in contract_required:
+            if isinstance(key, str) and not contract.get(key):
+                problems.append(f"{where}: missing required `{key}`")
+        for key in contract:
+            if key not in contract_props:
+                problems.append(f"{where}: unknown key `{key}`")
+        status = contract.get("verification", {}).get("status") if isinstance(contract.get("verification"), dict) else None
+        if isinstance(status_enum, list) and status not in status_enum:
+            problems.append(f"{where}: verification.status must be one of {status_enum}")
+
+    problems.extend(f"{path.relative_to(ROOT)}: {hit}" for hit in _abs_path_hits(data))
+    return problems
+
+
 def main() -> int:
     required_schemas = [
         SCHEMAS / "stack-truth.v1.json",
@@ -211,6 +294,7 @@ def main() -> int:
         SCHEMAS / "context-card.v1.json",
         SCHEMAS / "feedback-signal.v1.json",
         SCHEMAS / "repo-memory-index.v1.json",
+        SCHEMAS / "codegraph-contract-map.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
@@ -252,6 +336,11 @@ def main() -> int:
     feedback_example = EXAMPLES / "feedback-signal.example.json"
     if feedback_example.exists():
         problems.extend(validate_feedback_signal(feedback_example, feedback_schema))
+
+    contract_map_schema = parsed_schemas["codegraph-contract-map.v1.json"]
+    contract_map_example = EXAMPLES / "codegraph-contract-map.example.json"
+    if contract_map_example.exists():
+        problems.extend(validate_contract_map(contract_map_example, contract_map_schema))
 
     if problems:
         print("export validation failed:")

@@ -25,6 +25,22 @@ summary: Short summary of the minimum context needed for this task
 
 * Prefer local memory query before broad repo scans.
 
+## CodeGraph queries
+
+Optional. Emitted only for source-structure-heavy tasks (`--codegraph auto`) or
+when forced (`--codegraph on`); a documentation task carries no CodeGraph
+section. Queries are concrete, capped, and each passes an explicit `-p <repo>`
+project path. Fall back to targeted source reads if the index is missing,
+unsupported (shell/PowerShell), locked, or stale. CodeGraph never replaces
+source tests or CLI verification.
+
+```bash
+codegraph explore "short task description" -p mq-mcp --max-files 8
+codegraph callers store_learn_record -p mq-mcp -l 20
+codegraph impact store_learn_record -p mq-mcp -d 2
+codegraph node runtime/memory/obsidian_writer.py -p mq-mcp
+```
+
 ## Exclusions
 
 Each entry is `kind` — `item`: reason. `kind` is one of `forbidden` (never pull
