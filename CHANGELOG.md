@@ -1,6 +1,15 @@
 # Changelog
 
-## [Unreleased]
+## [0.2.2] - 2026-07-16
+
+### Added
+
+- Release metadata refreshed for the current mqobsidian branch work.
+
+### Changed
+
+- Updated version metadata to reflect the latest mqobsidian release state.
+
 
 ### Added
 
