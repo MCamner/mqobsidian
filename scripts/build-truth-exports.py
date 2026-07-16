@@ -10,7 +10,7 @@ leaves the previous bundle untouched.
 other surface is discovered from it and stays vault-relative.
 
 Sources (mqobsidian-owned):
-  memory/scores/*.json              -> memory-score.v1 records
+  memory/local/observation-scoring/scores/*.json -> memory-score.v1 records
   memory/observations/*.jsonl       -> memory-observation.v1 records (evidence)
   memory/promotion-policy.json      -> promotion-policy.v1 weights/thresholds
 
@@ -31,7 +31,10 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-SCORES_DIR = ROOT / "memory" / "scores"
+# The live scoring engine writes here (emit_generic_score.OUT / "scores"). A
+# parallel `memory/scores` directory holds a dead snapshot from an older scoring
+# scale; reading it publishes stale truth that still validates.
+SCORES_DIR = ROOT / "memory" / "local" / "observation-scoring" / "scores"
 OBSERVATIONS_DIR = ROOT / "memory" / "observations"
 POLICY_SOURCE = ROOT / "memory" / "promotion-policy.json"
 EXPORTS = ROOT / "exports"
@@ -298,17 +301,20 @@ def validate_bundle(directory: Path) -> list[str]:
     return problems
 
 
-def main() -> int:
+def rebuild() -> list[str]:
+    """Build, validate, and atomically swap in the bundle.
+
+    Returns the validation problems; an empty list means `exports/` now holds a
+    validated bundle. On any problem the previous bundle is left untouched, so a
+    caller can treat a non-empty result as "published truth did not change".
+    """
     staging: Path | None = Path(tempfile.mkdtemp(prefix="mqobsidian-exports-"))
     try:
         assert staging is not None
         build_bundle(staging)
         problems = validate_bundle(staging)
         if problems:
-            print("export build failed validation; exports/ left unchanged:")
-            for problem in problems:
-                print(f"  - {problem}")
-            return 1
+            return problems
 
         # Atomic-enough replace: swap the validated bundle in, then drop the old one.
         previous = EXPORTS.with_name("exports.previous")
@@ -323,6 +329,44 @@ def main() -> int:
     finally:
         if staging is not None and staging.exists():
             shutil.rmtree(staging)
+    return []
+
+
+def mark_drift() -> None:
+    """Set `drift: true` on every surface in the index, atomically.
+
+    The last resort: published truth could not be rebuilt and could not be
+    rolled back, so the index must say so rather than keep asserting freshness.
+    Written via a temp file + replace, because a half-written index would be
+    worse than a drifted one.
+    """
+    index_path = EXPORTS / "truth-export-index.json"
+    if not index_path.exists():
+        raise ValueError(f"cannot mark drift: {_display(index_path)} does not exist")
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    for surface in index.get("surfaces", []):
+        surface["drift"] = True
+    handle = tempfile.NamedTemporaryFile(
+        "w", encoding="utf-8", dir=str(EXPORTS), prefix=".index-", suffix=".json", delete=False
+    )
+    try:
+        with handle:
+            handle.write(json.dumps(index, indent=2, ensure_ascii=False) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(handle.name, index_path)
+    except BaseException:
+        Path(handle.name).unlink(missing_ok=True)
+        raise
+
+
+def main() -> int:
+    problems = rebuild()
+    if problems:
+        print("export build failed validation; exports/ left unchanged:")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
 
     built = sorted(p.name for p in EXPORTS.glob("*.json"))
     print(f"built {len(built)} canonical surfaces into exports/:")

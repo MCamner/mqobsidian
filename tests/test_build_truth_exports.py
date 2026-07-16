@@ -215,6 +215,39 @@ class BuildTruthExportsTests(unittest.TestCase):
             module.build_policy("2026-07-16T00:00:00Z")
         self.assertIn("never defaulted in code", str(ctx.exception))
 
+    def test_reads_the_scores_dir_the_scorer_actually_writes(self) -> None:
+        """The exporter must read live scoring output, not a parallel directory.
+
+        `memory/scores` is a dead 2026-06-29 snapshot from an older scoring
+        scale; the engine writes `memory/local/observation-scoring/scores`.
+        Reading the wrong one publishes stale truth that still validates, so
+        no schema check can catch it — only this assertion can.
+        """
+        module = _builder_module()
+        self.assertEqual(
+            module.SCORES_DIR,
+            ROOT / "memory" / "local" / "observation-scoring" / "scores",
+        )
+
+    def test_score_source_matches_the_scoring_engine(self) -> None:
+        """Cross-check the constant against the engine itself, when present.
+
+        The engine is gitignored vault code, so this cannot run in CI — but
+        locally it is the real invariant, not a restatement of the path.
+        """
+        commands = ROOT / "memory" / "commands"
+        if not (commands / "emit_generic_score.py").exists():
+            self.skipTest("scoring engine is local-only vault code; not present")
+        import sys
+
+        sys.path.insert(0, str(commands))
+        try:
+            import emit_generic_score as egs
+        finally:
+            sys.path.remove(str(commands))
+        module = _builder_module()
+        self.assertEqual(module.SCORES_DIR, egs._scores_dir(egs.OUT))
+
     def test_failed_validation_leaves_previous_exports_untouched(self) -> None:
         module = _builder_module()
         with tempfile.TemporaryDirectory() as directory:
