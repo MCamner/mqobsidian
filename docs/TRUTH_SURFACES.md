@@ -27,12 +27,20 @@ These answer "what is true right now?" as a read, not a computation.
 | Export index | `truth-export-index.v1` | all consumers (entry point) | per-surface `generated_at` + `drift` |
 | Repo status | `status-manifest.v1` | `mqlaunch` (read-only), `mq-agent` (orchestration) | `freshness_state` + `drift` + `last_verified_at` |
 | Promotion inbox | `inbox-manifest.v1` | `mq-agent` (ranking/promotion), moderator review | `generated_at`; items on the pre-promotion axis |
+| Promotion scores | `memory-score-manifest.v1` | `mq-agent` (ranking) | `generated_at`; complete records keyed by `memory_id` |
+| Promotion evidence | `memory-evidence-manifest.v1` | `mq-agent`, moderator review | `generated_at`; sanitized records keyed by exact evidence ref |
+| Promotion policy | `promotion-policy.v1` | `mq-agent` (ranking/freshness) | `generated_at`; versioned weights and thresholds |
 | Vault views | `views-manifest.v1` | `mqlaunch` (resolves view keys → vault paths) | resolved against the local vault root |
 
 Materialized manifests live under the consumer's local vault root (e.g.
 `MQ_OBSIDIAN_DIR`) and are gitignored; only the schema and a public-safe example
 (`examples/*-manifest.example.json`) are tracked (ADR-006). Every path in a
 surface is vault-relative — never absolute or machine-specific.
+
+The sole well-known runtime entrypoint is
+`$MQ_OBSIDIAN_DIR/exports/truth-export-index.json`. Inbox evidence is
+authoritative only when its exact `ref` resolves in the
+evidence manifest. Consumers must not fall back to private observation files.
 
 ## Records vs manifests
 

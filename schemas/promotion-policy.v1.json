@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "promotion-policy.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "source", "generated_at", "weights", "review_threshold", "auto_threshold", "min_supporting_factors", "block_negative_feedback", "max_manifest_age_seconds"],
+  "properties": {
+    "schema": {"const": "promotion-policy.v1"},
+    "source": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "weights": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frequency", "source_count", "confidence", "recency", "usage_score", "manual_boost"],
+      "properties": {
+        "frequency": {"type": "number", "minimum": 0}, "source_count": {"type": "number", "minimum": 0},
+        "confidence": {"type": "number", "minimum": 0}, "recency": {"type": "number", "minimum": 0},
+        "usage_score": {"type": "number", "minimum": 0}, "manual_boost": {"type": "number", "minimum": 0}
+      }
+    },
+    "review_threshold": {"type": "number", "minimum": 0},
+    "auto_threshold": {"type": "number", "minimum": 0},
+    "min_supporting_factors": {"type": "integer", "minimum": 2},
+    "block_negative_feedback": {"type": "boolean"},
+    "max_manifest_age_seconds": {"type": "integer", "minimum": 0}
+  }
+}

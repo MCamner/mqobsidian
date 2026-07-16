@@ -55,10 +55,10 @@ queue) and an **auto-promote threshold** (eligible to promote without review).
 - **Recommendation:** thresholds and factor weights are **data owned by
   `mqobsidian`** — a small versioned policy surface — so the promotion boundary
   is itself single-source-of-truth and auditable, not buried in `mq-agent`.
-- **Candidate (NOT authorized here):** a `promotion-policy.v1` schema
-  (`{review_threshold, auto_threshold, weights{…}, require_multi_factor: true,
-  block_on_negative_feedback: true}`). Flagged as a *possible* Delivery-B build
-  item to decide separately — do not build from this doc.
+- **Locked:** `promotion-policy.v1` owns weights, review/auto thresholds,
+  minimum supporting factors, negative-feedback blocking, and manifest age.
+  (`{review_threshold, auto_threshold, weights{…}, min_supporting_factors: 2,
+  block_negative_feedback: true, max_manifest_age_seconds: …}`).
 
 ## 3. Review-vs-auto-promote boundary
 
@@ -78,7 +78,7 @@ moderator checkpoint is where automation stops (ROADMAP Scope).
 
 - the vocabulary: `memory-score.v1`, `inbox-manifest.v1`, `promotion-event.v1`,
   the promotion axis, `source_evidence_refs`.
-- **thresholds/weights as versioned data** (candidate `promotion-policy.v1`).
+- **thresholds/weights as versioned data** (`promotion-policy.v1`).
 - the audit-trail contract (`promotion-event.v1`).
 - **NOT** the scoring computation, the queue, or the review UI.
 
@@ -101,13 +101,13 @@ moderator checkpoint is where automation stops (ROADMAP Scope).
 
 ## Decisions to lock before any Delivery-B build
 
-- [ ] thresholds/weights owned as **mqobsidian data** vs **mq-agent config** (rec: mqobsidian).
-- [ ] whether to add `promotion-policy.v1`, or express policy in existing config.
+- [x] thresholds/weights are owned as **mqobsidian data**.
+- [x] publish `promotion-policy.v1` and discover it through the canonical export index.
 - [ ] the moderator-checkpoint surface: `mqlaunch` review view vs `mq-agent` CLI (rec: delegate from mqlaunch).
-- [ ] scoring formula ownership: weights-as-data + formula-as-code (rec) vs fully in mq-agent.
+- [x] scoring formula ownership is weights-as-data in mqobsidian + formula-as-code in mq-agent.
 
 ## Exit criteria (scope done)
 
 - the six boundaries above are agreed;
 - the "locked decisions" list is resolved;
-- **no code or schema written** — the first build PR is a separate, explicit step.
+- policy/schema publication remains separate from private vault mutation state.

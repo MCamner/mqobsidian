@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "memory-evidence-manifest.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "source", "generated_at", "evidence"],
+  "properties": {
+    "schema": {"const": "memory-evidence-manifest.v1"},
+    "source": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "evidence": {
+      "type": "object",
+      "description": "Public-safe evidence keyed by the exact inbox evidence ref.",
+      "additionalProperties": {
+        "type": "object", "additionalProperties": false,
+        "required": ["ref", "producer", "schema_id", "observed_at", "summary"],
+        "properties": {
+          "ref": {"type": "string", "minLength": 1},
+          "producer": {"type": "string", "minLength": 1},
+          "schema_id": {"type": "string", "minLength": 1},
+          "candidate_id": {"type": "string", "minLength": 1},
+          "kind": {"type": "string", "minLength": 1},
+          "observed_at": {"type": "string", "format": "date-time"},
+          "summary": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

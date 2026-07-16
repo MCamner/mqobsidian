@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 import sys
 from typing import Any
@@ -270,6 +271,66 @@ def validate_manifest_example(path: Path, schema: dict[str, object]) -> list[str
     return problems
 
 
+def validate_promotion_policy(path: Path, schema: dict[str, object]) -> list[str]:
+    problems = validate_manifest_example(path, schema)
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return problems
+    review = data.get("review_threshold")
+    auto = data.get("auto_threshold")
+    if isinstance(review, (int, float)) and isinstance(auto, (int, float)) and auto < review:
+        problems.append(f"{path.relative_to(ROOT)}: auto_threshold must be >= review_threshold")
+    max_age = data.get("max_manifest_age_seconds")
+    if not isinstance(max_age, int) or isinstance(max_age, bool) or max_age < 0:
+        problems.append(f"{path.relative_to(ROOT)}: max_manifest_age_seconds must be a non-negative integer")
+    weights = data.get("weights")
+    if isinstance(weights, dict) and any(isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0 for value in weights.values()):
+        problems.append(f"{path.relative_to(ROOT)}: weights must be non-negative numbers")
+    return problems
+
+
+def manifest_is_fresh(generated_at: str, now: str, max_age_seconds: int) -> bool:
+    """Policy boundary: exact max age is fresh; only greater age is stale."""
+    generated = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
+    current = datetime.fromisoformat(now.replace("Z", "+00:00"))
+    age = (current - generated).total_seconds()
+    return 0 <= age <= max_age_seconds
+
+
+def validate_promotion_index_mapping(path: Path) -> list[str]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or not isinstance(data.get("surfaces"), list):
+        return [f"{path.relative_to(ROOT)}: surfaces must be an array"]
+    entries = data["surfaces"]
+    if not all(isinstance(entry, dict) for entry in entries):
+        return [f"{path.relative_to(ROOT)}: each surface must be an object"]
+    actual = {entry.get("key"): (entry.get("schema"), entry.get("path")) for entry in entries}
+    expected = {
+        "scores": ("memory-score-manifest.v1", "exports/memory-score-manifest.json"),
+        "evidence": ("memory-evidence-manifest.v1", "exports/memory-evidence-manifest.json"),
+        "promotion-policy": ("promotion-policy.v1", "exports/promotion-policy.json"),
+    }
+    return [f"{path.relative_to(ROOT)}: invalid mapping for `{key}`" for key, value in expected.items() if actual.get(key) != value]
+
+
+def validate_keyed_manifest(path: Path, schema: dict[str, object], map_key: str,
+                            identity_key: str) -> list[str]:
+    problems = validate_manifest_example(path, schema)
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return problems
+    records = data.get(map_key)
+    if isinstance(records, dict):
+        for key, record in records.items():
+            if not isinstance(record, dict) or record.get(identity_key) != key:
+                problems.append(
+                    f"{path.relative_to(ROOT)}: {map_key} key `{key}` must match nested `{identity_key}`"
+                )
+    return problems
+
+
 def validate_contract_map(path: Path, schema: dict[str, object]) -> list[str]:
     """Validate a Delivery B cross-repo contract map (JSON) against the schema.
 
@@ -406,6 +467,9 @@ def main() -> int:
         SCHEMAS / "codegraph-measurement.v1.json",
         SCHEMAS / "status-manifest.v1.json",
         SCHEMAS / "inbox-manifest.v1.json",
+        SCHEMAS / "memory-score-manifest.v1.json",
+        SCHEMAS / "memory-evidence-manifest.v1.json",
+        SCHEMAS / "promotion-policy.v1.json",
         SCHEMAS / "views-manifest.v1.json",
         SCHEMAS / "truth-export-index.v1.json",
     ]
@@ -463,6 +527,8 @@ def main() -> int:
     manifest_examples = {
         "status-manifest.example.json": "status-manifest.v1.json",
         "inbox-manifest.example.json": "inbox-manifest.v1.json",
+        "memory-score-manifest.example.json": "memory-score-manifest.v1.json",
+        "memory-evidence-manifest.example.json": "memory-evidence-manifest.v1.json",
         "views-manifest.example.json": "views-manifest.v1.json",
         "truth-export-index.example.json": "truth-export-index.v1.json",
     }
@@ -470,6 +536,19 @@ def main() -> int:
         example_path = EXAMPLES / example_name
         if example_path.exists():
             problems.extend(validate_manifest_example(example_path, parsed_schemas[schema_name]))
+
+    problems.extend(validate_promotion_policy(
+        EXAMPLES / "promotion-policy.example.json", parsed_schemas["promotion-policy.v1.json"]
+    ))
+    problems.extend(validate_keyed_manifest(
+        EXAMPLES / "memory-score-manifest.example.json",
+        parsed_schemas["memory-score-manifest.v1.json"], "scores", "memory_id"
+    ))
+    problems.extend(validate_promotion_index_mapping(EXAMPLES / "truth-export-index.example.json"))
+    problems.extend(validate_keyed_manifest(
+        EXAMPLES / "memory-evidence-manifest.example.json",
+        parsed_schemas["memory-evidence-manifest.v1.json"], "evidence", "ref"
+    ))
 
     if problems:
         print("export validation failed:")
