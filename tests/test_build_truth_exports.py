@@ -248,6 +248,58 @@ class BuildTruthExportsTests(unittest.TestCase):
         module = _builder_module()
         self.assertEqual(module.SCORES_DIR, egs._scores_dir(egs.OUT))
 
+    def test_published_scores_carry_only_schema_declared_fields(self) -> None:
+        """memory-score.v1 is `additionalProperties: false`, so publishing an
+        undeclared field emits a record that violates the contract we publish.
+
+        The live engine writes `ebms_state` (internal EBMS state, undeclared in
+        every schema, example and doc). `validate-export.py` is deliberately
+        shallow — stdlib-only, no jsonschema — so it enforces the top-level
+        const and keys but never `additionalProperties` on nested records. It
+        cannot catch this; only the producer can.
+        """
+        module = _builder_module()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            scores = root / "scores"
+            scores.mkdir()
+            (scores / "m-1.json").write_text(json.dumps({
+                "schema": "memory-score.v1", "memory_id": "m-1",
+                "timestamp": "2026-07-16T00:00:00Z", "status": "observed", "score": 0.9,
+                "first_seen": "2026-07-01", "last_seen": "2026-07-02",
+                "ebms_state": "scratch", "some_future_internal": {"x": 1},
+            }), encoding="utf-8")
+            module.SCORES_DIR = scores
+
+            declared = set(json.loads(
+                (ROOT / "schemas" / "memory-score.v1.json").read_text(encoding="utf-8")
+            )["properties"])
+            record = module.load_scores()["m-1"]
+            self.assertEqual(record["memory_id"], "m-1")
+            self.assertTrue(set(record) <= declared,
+                            f"published undeclared fields: {sorted(set(record) - declared)}")
+
+    def test_publishing_projection_is_driven_by_the_schema_not_a_hardcoded_list(self) -> None:
+        """A field the schema declares must survive; only undeclared ones drop."""
+        module = _builder_module()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            scores = root / "scores"
+            scores.mkdir()
+            (scores / "m-1.json").write_text(json.dumps({
+                "schema": "memory-score.v1", "memory_id": "m-1",
+                "timestamp": "2026-07-16T00:00:00Z", "status": "promoted", "score": 0.9,
+                "factors": {"frequency": 1.0}, "observed_by": ["repo-signal"],
+                "feedback": {"positive": 1, "negative": 0},
+                "first_seen": "2026-07-01", "last_seen": "2026-07-02",
+                "promoted_at": "2026-07-16", "ebms_state": "scratch",
+            }), encoding="utf-8")
+            module.SCORES_DIR = scores
+            record = module.load_scores()["m-1"]
+            self.assertNotIn("ebms_state", record)
+            for field in ("factors", "observed_by", "feedback", "promoted_at", "first_seen"):
+                self.assertIn(field, record, f"{field} is declared and must be published")
+
     def test_failed_validation_leaves_previous_exports_untouched(self) -> None:
         module = _builder_module()
         with tempfile.TemporaryDirectory() as directory:
