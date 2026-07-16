@@ -1,7 +1,7 @@
 # mqobsidian
 
 [![Public Safe Check](https://github.com/MCamner/mqobsidian/actions/workflows/public-safe-check.yml/badge.svg)](https://github.com/MCamner/mqobsidian/actions/workflows/public-safe-check.yml)
-[![Version](https://img.shields.io/badge/version-0.2.1-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.2.2-blue)](CHANGELOG.md)
 
 Durable memory layer for the MQ stack.
 
