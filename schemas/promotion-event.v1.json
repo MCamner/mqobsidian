@@ -77,6 +77,35 @@
         }
       },
       "additionalProperties": false
+    },
+    "source_evidence_refs": {
+      "type": "array",
+      "description": "Refs resolved from memory-evidence-manifest.v1 that justified this transition. Copied verbatim from the manifest; an opaque or unresolvable ref blocks the transition instead of appearing here.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "journal_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Transition journal that produced this event. Its presence in the log is the commit marker: recovery finishes forward when the event exists, and restores prior snapshots when it does not."
+    },
+    "verb": {
+      "type": "string",
+      "enum": [
+        "promote",
+        "reject",
+        "defer",
+        "rollback",
+        "deprecate"
+      ],
+      "description": "The requested transition. from/to remain authoritative; verb records which operator action produced them."
+    },
+    "compensates": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Event id this event reverses. Set only on compensation events appended when forward recovery cannot complete; the log is append-only and never truncated."
     }
   },
   "additionalProperties": false

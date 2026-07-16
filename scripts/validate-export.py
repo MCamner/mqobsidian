@@ -472,6 +472,7 @@ def main() -> int:
         SCHEMAS / "promotion-policy.v1.json",
         SCHEMAS / "views-manifest.v1.json",
         SCHEMAS / "truth-export-index.v1.json",
+        SCHEMAS / "promotion-event.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
@@ -531,6 +532,7 @@ def main() -> int:
         "memory-evidence-manifest.example.json": "memory-evidence-manifest.v1.json",
         "views-manifest.example.json": "views-manifest.v1.json",
         "truth-export-index.example.json": "truth-export-index.v1.json",
+        "promotion-event.example.json": "promotion-event.v1.json",
     }
     for example_name, schema_name in manifest_examples.items():
         example_path = EXAMPLES / example_name

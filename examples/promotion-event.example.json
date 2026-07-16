@@ -13,5 +13,11 @@
     "source_count": 4,
     "confidence": 0.82,
     "feedback": 8
-  }
+  },
+  "verb": "promote",
+  "journal_id": "9f2c1ab84e7d4c0b9a3e5d6f7a8b9c0d",
+  "source_evidence_refs": [
+    "observation:obs-0001",
+    "observation:obs-0002"
+  ]
 }
