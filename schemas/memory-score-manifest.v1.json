@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "memory-score-manifest.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "source", "generated_at", "scores"],
+  "properties": {
+    "schema": {"const": "memory-score-manifest.v1"},
+    "source": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "scores": {
+      "type": "object",
+      "description": "Complete memory-score.v1 records keyed by memory_id.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema", "memory_id", "timestamp", "status", "score"],
+        "properties": {
+          "schema": {"const": "memory-score.v1"},
+          "memory_id": {"type": "string", "minLength": 1},
+          "timestamp": {"type": "string", "format": "date-time"},
+          "status": {"enum": ["observed", "candidate", "promoted", "deprecated", "archived"]},
+          "score": {"type": "number", "minimum": 0},
+          "factors": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "frequency": {"type": "number"}, "source_count": {"type": "number"},
+              "confidence": {"type": "number"}, "recency": {"type": "number"},
+              "usage_score": {"type": "number"}, "manual_boost": {"type": "number"}
+            }
+          },
+          "observed_by": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "feedback": {
+            "type": "object", "additionalProperties": false,
+            "properties": {"positive": {"type": "integer", "minimum": 0}, "negative": {"type": "integer", "minimum": 0}}
+          },
+          "first_seen": {"type": "string", "format": "date"},
+          "last_seen": {"type": "string", "format": "date"},
+          "promoted_at": {"type": "string", "format": "date"}
+        }
+      }
+    }
+  }
+}

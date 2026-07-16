@@ -1,0 +1,14 @@
+{
+  "schema": "promotion-policy.v1",
+  "source": "mqobsidian-export",
+  "generated_at": "2026-07-16T00:00:00Z",
+  "weights": {
+    "frequency": 0.15, "source_count": 0.2, "confidence": 0.25,
+    "recency": 0.15, "usage_score": 0.2, "manual_boost": 0.05
+  },
+  "review_threshold": 0.55,
+  "auto_threshold": 0.8,
+  "min_supporting_factors": 2,
+  "block_negative_feedback": true,
+  "max_manifest_age_seconds": 86400
+}

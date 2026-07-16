@@ -1,0 +1,13 @@
+{
+  "schema": "memory-evidence-manifest.v1",
+  "source": "mqobsidian-export",
+  "generated_at": "2026-07-16T00:00:00Z",
+  "evidence": {
+    "observation:obs-0001": {
+      "ref": "observation:obs-0001", "producer": "mq-agent",
+      "schema_id": "memory-observation.v1", "candidate_id": "obs-0001",
+      "kind": "observation", "observed_at": "2026-07-15T12:00:00Z",
+      "summary": "Repeated public-safe command pattern across two verified sources."
+    }
+  }
+}

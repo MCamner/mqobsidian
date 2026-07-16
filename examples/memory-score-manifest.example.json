@@ -1,0 +1,14 @@
+{
+  "schema": "memory-score-manifest.v1",
+  "source": "mqobsidian-export",
+  "generated_at": "2026-07-16T00:00:00Z",
+  "scores": {
+    "obs-0001": {
+      "schema": "memory-score.v1", "memory_id": "obs-0001",
+      "timestamp": "2026-07-16T00:00:00Z", "status": "candidate", "score": 0.72,
+      "factors": {"frequency": 0.8, "source_count": 0.5, "confidence": 0.9, "recency": 1, "usage_score": 0.4, "manual_boost": 0},
+      "observed_by": ["mq-agent", "repo-signal"], "feedback": {"positive": 2, "negative": 0},
+      "first_seen": "2026-07-01", "last_seen": "2026-07-16"
+    }
+  }
+}

@@ -22,6 +22,33 @@
       "description": "promotion inbox candidates"
     },
     {
+      "key": "scores",
+      "schema": "memory-score-manifest.v1",
+      "path": "exports/memory-score-manifest.json",
+      "generated_at": "2026-07-14T00:00:00.000Z",
+      "drift": false,
+      "record_count": 1,
+      "description": "current promotion score records"
+    },
+    {
+      "key": "evidence",
+      "schema": "memory-evidence-manifest.v1",
+      "path": "exports/memory-evidence-manifest.json",
+      "generated_at": "2026-07-14T00:00:00.000Z",
+      "drift": false,
+      "record_count": 1,
+      "description": "sanitized promotion evidence"
+    },
+    {
+      "key": "promotion-policy",
+      "schema": "promotion-policy.v1",
+      "path": "exports/promotion-policy.json",
+      "generated_at": "2026-07-14T00:00:00.000Z",
+      "drift": false,
+      "record_count": 1,
+      "description": "promotion ranking weights and review thresholds"
+    },
+    {
       "key": "views",
       "schema": "views-manifest.v1",
       "path": "exports/views-manifest.json",
