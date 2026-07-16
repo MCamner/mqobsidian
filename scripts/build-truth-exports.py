@@ -151,10 +151,18 @@ def build_evidence_manifest(evidence: dict[str, dict[str, Any]], generated_at: s
     }
 
 
+def _display(path: Path) -> str:
+    """Repo-relative when possible; never let path formatting mask a real error."""
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def build_policy(generated_at: str) -> dict[str, Any]:
     if not POLICY_SOURCE.exists():
         raise ValueError(
-            f"missing policy source {POLICY_SOURCE.relative_to(ROOT)}; "
+            f"missing policy source {_display(POLICY_SOURCE)}; "
             "weights and thresholds are vault data and are never defaulted in code"
         )
     policy = json.loads(POLICY_SOURCE.read_text(encoding="utf-8"))
@@ -251,7 +259,7 @@ def validate_bundle(directory: Path) -> list[str]:
     spec.loader.exec_module(validator)
     # The validator reports paths relative to its ROOT; point it at the staging
     # directory so it can describe documents that do not live in the repo yet.
-    validator.ROOT = directory
+    validator.ROOT = directory  # type: ignore[attr-defined]
 
     schemas = {
         name: json.loads((ROOT / "schemas" / f"{name}.json").read_text(encoding="utf-8"))

@@ -21,11 +21,60 @@ def _builder_module():
     return module
 
 
+def _seed(module, root: Path) -> None:
+    """Point the builder at fixture sources.
+
+    memory/ is private vault data and gitignored, so it does not exist in CI.
+    Tests must never read it: they seed their own sources instead.
+    """
+    scores = root / "scores"
+    observations = root / "observations"
+    scores.mkdir(parents=True, exist_ok=True)
+    observations.mkdir(parents=True, exist_ok=True)
+
+    (scores / "cand-1.json").write_text(json.dumps({
+        "schema": "memory-score.v1", "memory_id": "cand-1",
+        "timestamp": "2026-07-16T00:00:00Z", "status": "candidate", "score": 0.72,
+        "factors": {"frequency": 1.0, "source_count": 2.0, "confidence": 0.5,
+                    "recency": 1.0, "usage_score": 0.0, "manual_boost": 0.0},
+        "observed_by": ["repo-signal"], "feedback": {"positive": 1, "negative": 0},
+        "first_seen": "2026-07-01", "last_seen": "2026-07-15",
+    }), encoding="utf-8")
+    (scores / "promoted-1.json").write_text(json.dumps({
+        "schema": "memory-score.v1", "memory_id": "promoted-1",
+        "timestamp": "2026-07-16T00:00:00Z", "status": "promoted", "score": 0.9,
+        "first_seen": "2026-06-01", "last_seen": "2026-07-01",
+    }), encoding="utf-8")
+    (observations / "seed.observations.jsonl").write_text(json.dumps({
+        "schema": "memory-observation.v1", "id": "obs-1", "producer": "claude",
+        "proposed_memory_key": "cand-1", "timestamp": "2026-07-15T12:00:00Z",
+        "title": "A reusable pattern", "repository": "mq-agent",
+        "evidence": [{"excerpt": "x", "reference": "docs/a.md line 1", "source": "claude"}],
+    }) + "\n", encoding="utf-8")
+
+    policy = root / "promotion-policy.json"
+    policy.write_text(json.dumps({
+        "schema": "promotion-policy.v1", "source": "mqobsidian",
+        "generated_at": "2026-07-16T00:00:00Z",
+        "weights": {"frequency": 0.15, "source_count": 0.2, "confidence": 0.25,
+                    "recency": 0.15, "usage_score": 0.2, "manual_boost": 0.05},
+        "review_threshold": 0.55, "auto_threshold": 0.8,
+        "min_supporting_factors": 2, "block_negative_feedback": True,
+        "max_manifest_age_seconds": 86400,
+    }), encoding="utf-8")
+
+    module.SCORES_DIR = scores
+    module.OBSERVATIONS_DIR = observations
+    module.POLICY_SOURCE = policy
+
+
 class BuildTruthExportsTests(unittest.TestCase):
     def test_builds_five_surfaces_that_validate(self) -> None:
         module = _builder_module()
         with tempfile.TemporaryDirectory() as directory:
-            staging = Path(directory)
+            staging = Path(directory) / "staging"
+            staging.mkdir()
+            _seed(module, Path(directory) / "src")
             module.build_bundle(staging, generated_at="2026-07-16T00:00:00Z")
             built = sorted(p.name for p in staging.glob("*.json"))
             self.assertEqual(
@@ -43,7 +92,9 @@ class BuildTruthExportsTests(unittest.TestCase):
     def test_output_is_byte_valid_json_with_trailing_newline(self) -> None:
         module = _builder_module()
         with tempfile.TemporaryDirectory() as directory:
-            staging = Path(directory)
+            staging = Path(directory) / "staging"
+            staging.mkdir()
+            _seed(module, Path(directory) / "src")
             module.build_bundle(staging, generated_at="2026-07-16T00:00:00Z")
             for path in staging.glob("*.json"):
                 raw = path.read_text(encoding="utf-8")
@@ -53,7 +104,9 @@ class BuildTruthExportsTests(unittest.TestCase):
     def test_index_lists_every_built_surface_with_counts(self) -> None:
         module = _builder_module()
         with tempfile.TemporaryDirectory() as directory:
-            staging = Path(directory)
+            staging = Path(directory) / "staging"
+            staging.mkdir()
+            _seed(module, Path(directory) / "src")
             index = module.build_bundle(staging, generated_at="2026-07-16T00:00:00Z")
             keys = {s["key"] for s in index["surfaces"]}
             self.assertEqual(keys, {"inbox", "scores", "evidence", "promotion-policy"})
@@ -144,7 +197,9 @@ class BuildTruthExportsTests(unittest.TestCase):
         """The join mq-agent ranking depends on must hold in real built output."""
         module = _builder_module()
         with tempfile.TemporaryDirectory() as directory:
-            staging = Path(directory)
+            staging = Path(directory) / "staging"
+            staging.mkdir()
+            _seed(module, Path(directory) / "src")
             module.build_bundle(staging, generated_at="2026-07-16T00:00:00Z")
             inbox = json.loads((staging / "inbox-manifest.json").read_text())
             evidence = json.loads((staging / "memory-evidence-manifest.json").read_text())
@@ -155,7 +210,7 @@ class BuildTruthExportsTests(unittest.TestCase):
 
     def test_missing_policy_source_fails_loudly(self) -> None:
         module = _builder_module()
-        module.POLICY_SOURCE = ROOT / "memory" / "does-not-exist.json"
+        module.POLICY_SOURCE = Path("/nonexistent/promotion-policy.json")
         with self.assertRaises(ValueError) as ctx:
             module.build_policy("2026-07-16T00:00:00Z")
         self.assertIn("never defaulted in code", str(ctx.exception))
