@@ -1,0 +1,9 @@
+# mqobsidian is otherwise stdlib-only by design. This single dependency exists
+# because the hand-rolled validator could not enforce the schemas this repo
+# publishes: it recursed only through `properties`, so records declared under
+# `additionalProperties: {<subschema>}` — every keyed manifest's payload — were
+# never inspected. That gap shipped `ebms_state` in the published bundle (#45).
+#
+# A partial schema engine that silently passes invalid data is worse than an
+# honest dependency. Pinned to a major to keep validation behaviour stable.
+jsonschema>=4.21,<5
