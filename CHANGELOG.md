@@ -1,5 +1,35 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Atomic promotion transitions with a write-ahead journal: five locked verbs
+  (promote/reject/defer/rollback/deprecate), fsynced intent journal with
+  hash-verified snapshots, deterministic recovery, and append-only compensation.
+  Exposed as bounded commands in the local-only memory CLI; preview by default.
+- `promotion-event.v1` extended additively with `source_evidence_refs`,
+  `journal_id`, `verb`, and `compensates`, and wired into `validate-export.py` —
+  it was never validated before.
+- `jsonschema` dependency for real schema enforcement (DEC-003), installed in CI.
+- DEC-003 (strict schema enforcement) and DEC-004 (evidence producer contract
+  before a generalized adapter) decision records.
+
+### Fixed
+
+- The export builder read `memory/scores`, a dead 2026-06-29 snapshot on an
+  obsolete scoring scale, instead of the live engine output. The published
+  bundle carried stale truth and omitted two memories while validating cleanly.
+- Published score records violated `memory-score.v1` by carrying `ebms_state`,
+  internal engine state undeclared in the schema. Records are now projected onto
+  the fields the schema declares, read from the schema itself.
+- `validate-export.py` recursed only through `properties`, so records declared
+  under `additionalProperties: {<subschema>}` — every keyed manifest's payload —
+  were never inspected at all. A score record of pure garbage produced zero
+  errors. Replaced with a real JSON-Schema engine.
+- The existing jsonschema-based test skipped itself whenever the library was
+  absent, which was always, in CI.
+
 ## [0.2.2] - 2026-07-16
 
 ### Added
