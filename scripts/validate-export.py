@@ -10,6 +10,8 @@ from pathlib import Path
 import sys
 from typing import Any
 
+from jsonschema import Draft202012Validator
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
@@ -224,38 +226,26 @@ def _abs_path_hits(value: object, path: str = "") -> list[str]:
     return hits
 
 
-def _schema_lite_errors(data: Any, schema: dict[str, Any], where: str) -> list[str]:
-    """Shallow JSON-Schema check: type, required, const, enum, closed objects.
+def _schema_errors(data: Any, schema: dict[str, Any], where: str) -> list[str]:
+    """Validate against the schema as written, using a real JSON-Schema engine.
 
-    Enough to validate the truth-surface manifest examples against their schemas
-    without a full JSON-Schema dependency. Ignores format/pattern by design.
+    This replaces a hand-rolled checker that recursed only through `properties`.
+    Every keyed manifest declares its records under
+    `additionalProperties: {<subschema>}` — a schema, not `false` — so the
+    records inside were never inspected at all, and a score record of pure
+    garbage produced zero errors. That is how `ebms_state` reached the published
+    bundle (#45).
+
+    A partial schema engine that silently passes invalid data is worse than a
+    dependency, so mqobsidian takes exactly one.
     """
+    validator = Draft202012Validator(schema)
     errs: list[str] = []
-    schema_type = schema.get("type")
-    if schema_type == "object":
-        if not isinstance(data, dict):
-            return [f"{where}: expected object"]
-        props = schema.get("properties", {})
-        for key in schema.get("required", []) or []:
-            if key not in data:
-                errs.append(f"{where}: missing required `{key}`")
-        if schema.get("additionalProperties") is False:
-            for key in data:
-                if key not in props:
-                    errs.append(f"{where}: unknown key `{key}`")
-        for key, value in data.items():
-            if key in props:
-                errs.extend(_schema_lite_errors(value, props[key], f"{where}.{key}"))
-    elif schema_type == "array":
-        if not isinstance(data, list):
-            return [f"{where}: expected array"]
-        items = schema.get("items", {})
-        for index, element in enumerate(data):
-            errs.extend(_schema_lite_errors(element, items, f"{where}[{index}]"))
-    if "const" in schema and data != schema["const"]:
-        errs.append(f"{where}: must equal {schema['const']!r}")
-    if "enum" in schema and data not in schema["enum"]:
-        errs.append(f"{where}: must be one of {schema['enum']}")
+    for error in sorted(validator.iter_errors(data), key=lambda e: list(e.absolute_path)):
+        location = where
+        for part in error.absolute_path:
+            location += f"[{part}]" if isinstance(part, int) else f".{part}"
+        errs.append(f"{location}: {error.message}")
     return errs
 
 
@@ -266,7 +256,7 @@ def validate_manifest_example(path: Path, schema: dict[str, object]) -> list[str
     except json.JSONDecodeError as exc:
         return [f"{path.relative_to(ROOT)}: invalid JSON: {exc}"]
     rel = path.relative_to(ROOT)
-    problems = [f"{rel}: {msg}" for msg in _schema_lite_errors(data, schema, "<root>")]
+    problems = [f"{rel}: {msg}" for msg in _schema_errors(data, schema, "<root>")]
     problems.extend(f"{rel}: {hit}" for hit in _abs_path_hits(data))
     return problems
 
