@@ -57,7 +57,27 @@ def _as_datetime(value: str) -> str:
     return f"{value}T00:00:00Z" if len(value) == 10 else value
 
 
+def _declared_score_fields() -> set[str]:
+    """The fields memory-score.v1 actually declares.
+
+    Read from the schema rather than restated here, so a field mqobsidian adds
+    to the contract is published without anyone remembering to edit this list.
+    """
+    schema = json.loads((ROOT / "schemas" / "memory-score.v1.json").read_text(encoding="utf-8"))
+    return set(schema["properties"])
+
+
 def load_scores() -> dict[str, dict[str, Any]]:
+    """Load score records, projected onto the published contract.
+
+    memory-score.v1 is `additionalProperties: false`, so an undeclared field
+    makes the record invalid. The engine keeps internal state on these records
+    (`ebms_state`, tied to the deferred DD-001 design), which is not ours to
+    publish: exporting it would both violate the schema and freeze an undecided
+    concept into a consumer contract. `validate-export.py` is stdlib-only and
+    shallow, so it cannot catch this — the projection has to happen here.
+    """
+    declared = _declared_score_fields()
     scores: dict[str, dict[str, Any]] = {}
     for path in sorted(SCORES_DIR.glob("*.json")):
         record = json.loads(path.read_text(encoding="utf-8"))
@@ -66,7 +86,7 @@ def load_scores() -> dict[str, dict[str, Any]]:
             raise ValueError(f"{path.name}: score record has no memory_id")
         if record.get("schema") != "memory-score.v1":
             raise ValueError(f"{path.name}: expected memory-score.v1")
-        scores[memory_id] = record
+        scores[memory_id] = {k: v for k, v in record.items() if k in declared}
     return scores
 
 
