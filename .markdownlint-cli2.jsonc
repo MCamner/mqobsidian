@@ -1,10 +1,31 @@
 {
   "config": {
+    "MD004": { "style": "consistent" },
     "MD013": false,
-    "MD024": {
-      "siblings_only": true
-    },
+    "MD024": { "siblings_only": true },
     "MD025": false,
-    "MD036": false
-  }
+    "MD036": false,
+    "MD060": false
+  },
+  // Lint hand-authored project prose only. The vault ships generated exports,
+  // curated agent-memory views, and Obsidian templates whose intentional
+  // placeholder/frontmatter syntax is not lintable prose.
+  "globs": ["**/*.md"],
+  "ignores": [
+    "node_modules/**",
+    ".venv/**",
+    // Generated: repo-context exports and agent entrypoints.
+    "examples/**",
+    // Generated context packs (repo-card, task-pack, integration-map, ...).
+    ".mq/**",
+    // Curated agent-memory views (hot/index) — regenerated, not prose.
+    "systems/**",
+    "memory/**",
+    // Obsidian templates: intentional {{placeholder}} / frontmatter syntax.
+    "templates/**",
+    // Agent/skill definitions embed example fences the linter mis-pairs.
+    ".claude/**",
+    ".agents/**",
+    ".github/ISSUE_TEMPLATE/**"
+  ]
 }

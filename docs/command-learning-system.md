@@ -98,53 +98,53 @@ användning och feedback
 
 Äger:
 
-* command observations
-* command-pattern-schema
-* command-pattern-kandidater
-* usage-signaler
-* feedback-policy
-* rankingvyer
-* `recommended.json`
-* read-only export av learn-lessons
+- command observations
+- command-pattern-schema
+- command-pattern-kandidater
+- usage-signaler
+- feedback-policy
+- rankingvyer
+- `recommended.json`
+- read-only export av learn-lessons
 
 Äger inte:
 
-* review-extraction
-* canonical learn-store
-* automatisk promotion av learn-lessons
-* exekvering av rekommenderade kommandon
+- review-extraction
+- canonical learn-store
+- automatisk promotion av learn-lessons
+- exekvering av rekommenderade kommandon
 
 ### mq-mcp
 
 Äger:
 
-* learn-extraction
-* candidate inbox
-* evidensvalidering
-* riskklassning
-* canonical learn-store
-* lesson promotion
-* hygiene och deduplicering
+- learn-extraction
+- candidate inbox
+- evidensvalidering
+- riskklassning
+- canonical learn-store
+- lesson promotion
+- hygiene och deduplicering
 
 ### mq-agent
 
 Äger:
 
-* orchestration mellan systemen
-* repo-path forwarding
-* command routing
-* approval-flöden
-* feedback-emission
+- orchestration mellan systemen
+- repo-path forwarding
+- command routing
+- approval-flöden
+- feedback-emission
 
 ### mqlaunch
 
 Äger:
 
-* mänsklig meny
-* visning
-* kopiering
-* preview
-* explicit confirmation
+- mänsklig meny
+- visning
+- kopiering
+- preview
+- explicit confirmation
 
 `mqlaunch` ska inte innehålla egen ranking, extraction eller learn-logik.
 
@@ -296,8 +296,8 @@ mqlaunch learn approve <candidate-id>
 
 Använd inte samma ord för båda systemen:
 
-* `commands` = observerat terminalbeteende och command patterns
-* `learn` = verifierade generaliserade lessons
+- `commands` = observerat terminalbeteende och command patterns
+- `learn` = verifierade generaliserade lessons
 
 ---
 
@@ -382,15 +382,15 @@ Behåll `memory/commands` som systemets insamling och mönsterdetektor.
 
 Gör därefter följande i ordning:
 
-* [ ] Byt operatörsnamn från `learn-promote` till tydliga `commands`- och `learn`-ytor.
-* [ ] Dokumentera `observations.jsonl` som canonical command-event store.
-* [ ] Dokumentera `patterns.jsonl` som curated command-pattern store.
-* [ ] Lägg till explicit command-feedback via `mq-agent`.
-* [ ] Låt `feedback.py` fortsätta producera proposals, aldrig skriva direkt.
-* [ ] Lägg till en read-only bridge som kan skapa en learn candidate från ett stabilt command pattern.
-* [ ] Låt `mq-mcp` verifiera och lagra den generaliserade lesson.
-* [ ] Exportera curated lessons ensriktat tillbaka till `mqobsidian`.
-* [ ] Lägg till drift- och freshness-check för exporterade vyer.
+- [ ] Byt operatörsnamn från `learn-promote` till tydliga `commands`- och `learn`-ytor.
+- [ ] Dokumentera `observations.jsonl` som canonical command-event store.
+- [ ] Dokumentera `patterns.jsonl` som curated command-pattern store.
+- [ ] Lägg till explicit command-feedback via `mq-agent`.
+- [ ] Låt `feedback.py` fortsätta producera proposals, aldrig skriva direkt.
+- [ ] Lägg till en read-only bridge som kan skapa en learn candidate från ett stabilt command pattern.
+- [ ] Låt `mq-mcp` verifiera och lagra den generaliserade lesson.
+- [ ] Exportera curated lessons ensriktat tillbaka till `mqobsidian`.
+- [ ] Lägg till drift- och freshness-check för exporterade vyer.
 
 Målarkitektur:
 

@@ -1,0 +1,25 @@
+name: Markdownlint
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  markdownlint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Rules and scope (globs/ignores) both live in .markdownlint-cli2.jsonc,
+      # so CI matches local `markdownlint-cli2`. Only hand-authored prose is
+      # linted; generated exports, agent-memory views, and Obsidian templates
+      # are out of scope by design.
+      - uses: DavidAnson/markdownlint-cli2-action@v20
+        with:
+          globs: "**/*.md"
