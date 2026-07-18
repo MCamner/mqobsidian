@@ -4,6 +4,13 @@
 
 ### Added
 
+- `release-check.sh` — canonical read-only releasability entrypoint conforming
+  to `repo_release_check.v1`. `--json` emits the machine-readable verdict
+  (`schema`, `repo`, `status`, `blockers`, `warnings`, `evidence`) and exits 0;
+  human mode prints per-check PASS/FAIL. Runs the Public Safe Check assertions
+  (sensitive-content, export scaffolding, token budget, agent entrypoints, unit
+  tests) minus the mutating context-export regeneration. Lets mq-agent's
+  `stack release --all --preflight` read mqobsidian's release verdict.
 - Atomic promotion transitions with a write-ahead journal: five locked verbs
   (promote/reject/defer/rollback/deprecate), fsynced intent journal with
   hash-verified snapshots, deterministic recovery, and append-only compensation.
