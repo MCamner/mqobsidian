@@ -1,0 +1,9 @@
+{
+  "repo": "mqobsidian",
+  "role": "truth-and-memory-source",
+  "version": "0.2.2",
+  "status": "active",
+  "contracts": [],
+  "release_mode": "pull_request",
+  "notes": "Candidate contracts found in prose only; contracts remain empty until owned surfaces are explicitly declared."
+}
