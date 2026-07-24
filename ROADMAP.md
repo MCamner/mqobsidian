@@ -4,8 +4,9 @@
 **Current direction:** v0.3.0 — declare the truth/memory contracts this repo
 already owns explicitly in `.mq/repo-contract.json`, and make those surfaces
 safe and predictable for consumers to read. The goal is better selection and
-clearer contracts, not more memory. The two blocks below (SSOT & Promotion
-Governance, CodeGraph MQ Integration) are **completed** and kept as history.
+clearer contracts, not more memory. The `v0.3.0` plan is stated below; the SSOT
+& Promotion Governance and CodeGraph MQ Integration blocks further down are
+**completed** and kept as history.
 
 `mqobsidian` is the single source of truth and durable memory for the MQ stack.
 Its job is to own the canonical structure of truth, inbox, promotion, and
@@ -27,6 +28,75 @@ other repos read or delegate to it.
 
 `mqobsidian` does **not** own: terminal UX, shell runtime authority,
 orchestration logic, review execution, or menu routing.
+
+## v0.3.0 — Explicit Truth Contracts and Consumer Readiness
+
+**Status:** Current
+**Priority:** P1
+**Type:** Contracts / Consumer readiness
+**Goal:** Make the contracts this repo owns explicit and predictable to consume.
+Better selection and clearer contracts — **not** more memory categories.
+
+### Landed
+
+- [x] `.mq/repo-contract.json` declares the 23 owned contracts, each backed by a
+  `schemas/<name>.v1.json` file (#53).
+- [x] Roadmap states current version + direction and marks the shipped blocks
+  completed (#52).
+
+### Already satisfied — do not rebuild
+
+This is the important honesty gate: most of the proposed v0.3.0 work already
+exists. Re-implementing it would repeat the exact drift this repo exists to
+prevent.
+
+- **Consumer read contract** — `docs/TRUTH_SURFACES.md` already enumerates every
+  canonical surface, its version, and its consumer (Delivery C / DEC-002).
+- **mq-agent consumption model** — `docs/mq-agent-integration.md` already exists.
+- **Public-safe guard** — `scripts/check-sensitive-content.py` already blocks
+  secrets/private paths in the public surface and runs in CI.
+- **Memory lifecycle states** — the canonical promotion axis
+  (`observed → candidate → promoted → deprecated → archived`, with the
+  `promote/reject/defer/rollback/deprecate` verbs) is already frozen in
+  `memory-score.v1`, `promotion-event.v1`, and `learn-record.v1` under
+  ADR-008 / DEC-002. v0.3.0 does **not** introduce a second state vocabulary.
+- **Freshness/drift** — `status-manifest.v1` and `inbox-manifest.v1` carry
+  `freshness_state` + `drift`; `truth-export-index.v1` exposes them per surface.
+
+### Remaining work
+
+Only one net-new gap survives the honesty gate.
+
+#### A. Context-pack proof metadata
+
+**Owner:** `mqobsidian` for the schema; `mq-agent` for the generator.
+
+The context-pack idea is strong but opaque: a generated pack shows what it
+included, never what it deliberately excluded or why. A consumer cannot tell a
+scoped pack from a lossy one.
+
+- [ ] extend `schemas/context-pack.v1.json` with additive `selected_surfaces`,
+  `excluded_surfaces` (each with an exclusion reason:
+  `out_of_scope | too_stale | too_large | raw_or_private | superseded |
+  verify_in_source`), and a compact `read_first` / `do_not_read` summary
+- [ ] mirror the fields in `templates/context-pack.md` and
+  `scripts/generate-context-pack.py`, and in `mq-agent`'s generator
+- [ ] add one public-safe example + validation; keep packs small (the existing
+  token budget still applies)
+
+Exit gate:
+
+- [ ] a generated pack explains both what it selected and what it excluded, with
+  a reason per exclusion, without growing past the token budget
+
+### Non-goals
+
+- do not fork the frozen `observed/candidate/promoted/deprecated/archived`
+  promotion axis or add a parallel scorer/queue (ADR-008 / DEC-002)
+- do not rebuild the consumer read contract, the mq-agent consumption doc, or
+  the public-safe guard — they exist
+- do not add memory categories without a declared consumer need
+- do not move orchestration, review execution, or terminal UX into this repo
 
 ## Single Source Of Truth And Promotion Governance
 
