@@ -65,29 +65,34 @@ prevent.
 
 ### Remaining work
 
-Only one net-new gap survives the honesty gate.
+None open — the one gap that survived the honesty gate is closed below.
 
-#### A. Context-pack proof metadata
+#### A. Context-pack proof metadata — Completed
 
-**Owner:** `mqobsidian` for the schema; `mq-agent` for the generator.
+**Owner:** `mqobsidian` (generator parity).
 
-The context-pack idea is strong but opaque: a generated pack shows what it
-included, never what it deliberately excluded or why. A consumer cannot tell a
-scoped pack from a lossy one.
+Corrected on implementation: the proof surface already existed. `context-pack.v1`
+carries `exclusions` (`{item, kind, reason}`, kind `forbidden|fallback|irrelevant`)
+plus the legacy flat `do_not_read`, and the template, the example, and the
+`mq-agent` generator already emit a structured `## Exclusions` section. The one
+lagging producer was this repo's own `scripts/generate-context-pack.py`, which
+still rendered a flat `## Do not read first` list — so mqobsidian could not emit
+the exclusion proof its own contract defines. No new schema fields were needed.
 
-- [ ] extend `schemas/context-pack.v1.json` with additive `selected_surfaces`,
-  `excluded_surfaces` (each with an exclusion reason:
-  `out_of_scope | too_stale | too_large | raw_or_private | superseded |
-  verify_in_source`), and a compact `read_first` / `do_not_read` summary
-- [ ] mirror the fields in `templates/context-pack.md` and
-  `scripts/generate-context-pack.py`, and in `mq-agent`'s generator
-- [ ] add one public-safe example + validation; keep packs small (the existing
-  token budget still applies)
+- [x] `scripts/generate-context-pack.py` emits `## Exclusions` at parity with the
+  schema, template, example, and mq-agent mirror; `--exclude KIND:ITEM[:REASON]`
+  adds structured entries, legacy `--do-not-read` folds in as `irrelevant`
+- [x] severity ordering + dedupe by kind+item; an unknown kind degrades to
+  `irrelevant` so a producer typo stays on-contract
+- [x] `tests/test_context_pack_exclusions.py` (stdlib unittest, runs in the
+  public-safe CI via `unittest discover`)
+- [~] no schema/example change — the `exclusions` proof already existed in
+  `context-pack.v1`; the gap was generator parity, not contract surface
 
 Exit gate:
 
-- [ ] a generated pack explains both what it selected and what it excluded, with
-  a reason per exclusion, without growing past the token budget
+- [x] this repo's generator explains what it excluded, with a kind + reason per
+  entry, within the existing token budget
 
 ### Non-goals
 
