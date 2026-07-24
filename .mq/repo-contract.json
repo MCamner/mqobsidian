@@ -3,7 +3,31 @@
   "role": "truth-and-memory-source",
   "version": "0.2.2",
   "status": "active",
-  "contracts": [],
+  "contracts": [
+    "status_manifest.v1",
+    "inbox_manifest.v1",
+    "views_manifest.v1",
+    "truth_export_index.v1",
+    "repo_memory_index.v1",
+    "memory_observation.v1",
+    "memory_score.v1",
+    "memory_score_manifest.v1",
+    "memory_evidence_manifest.v1",
+    "memory_query.v1",
+    "promotion_event.v1",
+    "promotion_policy.v1",
+    "workflow_observation.v1",
+    "decision_record.v1",
+    "learn_record.v1",
+    "repo_review.v1",
+    "endpoint_truth.v1",
+    "stack_truth.v1",
+    "feedback_signal.v1",
+    "context_pack.v1",
+    "context_card.v1",
+    "codegraph_contract_map.v1",
+    "codegraph_measurement.v1"
+  ],
   "release_mode": "pull_request",
-  "notes": "Candidate contracts found in prose only; contracts remain empty until owned surfaces are explicitly declared."
+  "notes": "Each declared contract is backed by an owned schema file under schemas/<name>.v1.json (dash form). Consumer repos may validate against these shapes but must not redefine them locally."
 }
