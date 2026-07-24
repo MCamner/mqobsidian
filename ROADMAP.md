@@ -1,5 +1,12 @@
 # Roadmap
 
+**Current version:** 0.2.2
+**Current direction:** v0.3.0 — declare the truth/memory contracts this repo
+already owns explicitly in `.mq/repo-contract.json`, and make those surfaces
+safe and predictable for consumers to read. The goal is better selection and
+clearer contracts, not more memory. The two blocks below (SSOT & Promotion
+Governance, CodeGraph MQ Integration) are **completed** and kept as history.
+
 `mqobsidian` is the single source of truth and durable memory for the MQ stack.
 Its job is to own the canonical structure of truth, inbox, promotion, and
 memory — and to export stable surfaces that other repos read, rather than each
@@ -23,7 +30,8 @@ orchestration logic, review execution, or menu routing.
 
 ## Single Source Of Truth And Promotion Governance
 
-**Status:** Proposed
+**Status:** Completed (A–C landed 2026-07-14; deferred: optional manifest
+templates, local live-vault materializer)
 **Priority:** P1
 **Type:** Memory / Truth model / Governance
 **Goal:** Make `mqobsidian` the canonical owner of truth structure, inbox
@@ -188,7 +196,8 @@ live-vault materializer (ADR-006 keeps materialized output local).*
 
 ## CodeGraph MQ Integration
 
-**Status:** Proposed
+**Status:** Completed (A–D landed 2026-07-14; deferred: gated `mq-agent`
+measurement command)
 **Priority:** P1
 **Type:** Source intelligence / Cross-repo contracts / Measurement
 **Goal:** Turn CodeGraph's per-repo source graph into a measured MQ workflow
@@ -429,6 +438,7 @@ item is the gated `mq-agent` measurement command (Delivery D).*
 
 ---
 
-*Roadmap aligned with verified reality on 2026-07-14: both blocks confirmed
-`Proposed` (no delivery files exist yet); CodeGraph block reconciled with the
-shipped Phase 4.5 foundation and ADR-009's memory boundary.*
+*Roadmap aligned with verified reality: both blocks are **Completed** — their
+delivery files (schemas, examples, validation) all exist under `schemas/`,
+`examples/`, and `scripts/validate-export.py`. Current direction is v0.3.0
+(explicit owned contracts), stated at the top.*
