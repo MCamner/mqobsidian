@@ -19,6 +19,76 @@ def bullet_lines(items: list[str], fallback: str) -> str:
     return "\n".join(f"* {item}" for item in items)
 
 
+# Negative-context kinds, ordered by severity. Mirrors the schema enum, the
+# template/example, and the mq-agent generator so both producers of a
+# context-pack.v1 emit the same `## Exclusions` proof.
+EXCLUSION_KINDS = ("forbidden", "fallback", "irrelevant")
+
+
+def coerce_exclusion(raw: object) -> dict[str, str] | None:
+    """Normalize one exclusion into `{item, kind, reason}`; drop unusable input.
+
+    Accepts a structured `{item, kind, reason?}` mapping or a bare string (legacy
+    `do_not_read` item), which maps to kind `irrelevant`. An unknown kind degrades
+    to `irrelevant` so a producer typo stays on-contract instead of emitting an
+    off-enum value.
+    """
+    if isinstance(raw, str):
+        item = raw.strip()
+        return {"item": item, "kind": "irrelevant", "reason": ""} if item else None
+    if isinstance(raw, dict):
+        item = str(raw.get("item", "")).strip()
+        if not item:
+            return None
+        kind = str(raw.get("kind", "irrelevant")).strip()
+        if kind not in EXCLUSION_KINDS:
+            kind = "irrelevant"
+        return {"item": item, "kind": kind, "reason": str(raw.get("reason", "")).strip()}
+    return None
+
+
+def merge_exclusions(*groups: list[object]) -> list[dict[str, str]]:
+    """Coerce, dedupe (by kind+item, first reason wins), order by kind severity."""
+    seen: set[tuple[str, str]] = set()
+    collected: list[dict[str, str]] = []
+    for group in groups:
+        for raw in group:
+            entry = coerce_exclusion(raw)
+            if entry is None:
+                continue
+            key = (entry["kind"], entry["item"])
+            if key in seen:
+                continue
+            seen.add(key)
+            collected.append(entry)
+    order = {kind: rank for rank, kind in enumerate(EXCLUSION_KINDS)}
+    return sorted(collected, key=lambda e: order[e["kind"]])
+
+
+def exclusion_lines(exclusions: list[dict[str, str]]) -> str:
+    if not exclusions:
+        return "* Broad repo scans unless the pack proves insufficient"
+    lines: list[str] = []
+    for entry in exclusions:
+        reason = f": {entry['reason']}" if entry["reason"] else ""
+        lines.append(f"* `{entry['kind']}` — {entry['item']}{reason}")
+    return "\n".join(lines)
+
+
+def parse_exclude_arg(value: str) -> dict[str, str] | str:
+    """Parse a `--exclude` CLI value.
+
+    `kind:item[:reason]` where `kind` is a known exclusion kind becomes a
+    structured entry. Anything else is returned as a bare item string (folded in
+    later as `irrelevant`), so a value like `note: keep it` is not mis-split.
+    """
+    head, sep, rest = value.partition(":")
+    if sep and head.strip() in EXCLUSION_KINDS:
+        item, _, reason = rest.partition(":")
+        return {"kind": head.strip(), "item": item.strip(), "reason": reason.strip()}
+    return value.strip()
+
+
 # Signals that a task is about source-code structure, where CodeGraph
 # (callers/callees, impact, code-flow, symbol search) beats broad grep/read.
 CODEGRAPH_TASK_HINTS = (
@@ -207,9 +277,11 @@ def render_pack(
     notes: list[str],
     do_not_read: list[str],
     codegraph_queries: list[str] | None = None,
+    exclusions: list[object] | None = None,
 ) -> str:
     generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     repo_line = repo or ""
+    pack_exclusions = merge_exclusions(exclusions or [], do_not_read)
     return f"""---
 schema: context-pack.v1
 target: {target}
@@ -237,9 +309,9 @@ summary: {summary}
 
 {bullet_lines(notes, "Keep the task pack focused on the current change")}
 {codegraph_section(codegraph_queries or [])}
-## Do not read first
+## Exclusions
 
-{bullet_lines(do_not_read, "Broad repo scans unless the pack proves insufficient")}
+{exclusion_lines(pack_exclusions)}
 """
 
 
@@ -255,7 +327,14 @@ def parse_args() -> ArgumentParser:
     parser.add_argument("--relevant-decision", action="append", default=[], help="Relevant decision or rule")
     parser.add_argument("--symbol", action="append", default=[], help="Named symbol for a CodeGraph callers/impact query")
     parser.add_argument("--note", action="append", default=[], help="Short operator note")
-    parser.add_argument("--do-not-read", action="append", default=[], help="Files or surfaces to avoid at first")
+    parser.add_argument("--do-not-read", action="append", default=[], help="Files or surfaces to avoid at first (folded into Exclusions as `irrelevant`)")
+    parser.add_argument(
+        "--exclude",
+        action="append",
+        default=[],
+        metavar="KIND:ITEM[:REASON]",
+        help="Structured exclusion; KIND is forbidden, fallback, or irrelevant",
+    )
     parser.add_argument(
         "--codegraph",
         choices=["auto", "on", "off"],
@@ -305,6 +384,7 @@ def main() -> int:
         notes=notes,
         do_not_read=do_not_read,
         codegraph_queries=codegraph_queries,
+        exclusions=[parse_exclude_arg(value) for value in args.exclude],
     )
 
     if args.output:
