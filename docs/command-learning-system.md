@@ -283,6 +283,22 @@ mqlaunch commands feedback <pattern-id> not-helped
 mqlaunch commands rebuild
 ```
 
+Repo-local intake, until the `mqlaunch commands` surface is wired:
+
+```bash
+python3 scripts/record_command.py <pattern-id> \
+  --command "<exact command>" \
+  --sanitized-command "<portable command>" \
+  --agent codex \
+  --task-type <type> \
+  --outcome worked \
+  --risk-class read-only \
+  --session-ref <session-id>
+```
+
+`record_command.py` validates the pattern id, task type, risk class and outcome
+before appending one event. It does not score, recommend or promote.
+
 ### General learn
 
 ```bash
