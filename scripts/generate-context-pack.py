@@ -158,13 +158,11 @@ def build_codegraph_queries(
     symbols: list[str],
     mode: str,
 ) -> list[str]:
-    """Concrete, bounded, copy-pasteable CodeGraph commands for a source task.
+    """Build bounded MCP tool intentions for a source-heavy task.
 
-    `mode` is auto (heuristic), on (force), or off (suppress). Returns an empty
-    list when suppressed, when the task is doc-shaped, or when no target repo is
-    known — so a documentation pack carries no CodeGraph noise. Every query
-    passes an explicit `-p <repo>` project path, and the list is capped at
-    `MAX_CODEGRAPH_QUERIES` so it can never become a token sink.
+    The returned strings are agent-facing guidance, not shell commands. Keeping
+    the existing function/result name preserves the context-pack API while
+    routing Codex and Claude through CodeGraph's MCP tools.
     """
     if mode == "off":
         return []
@@ -174,16 +172,24 @@ def build_codegraph_queries(
     if not target:
         return []
 
-    queries = [f'codegraph explore "{_sanitize_query(task)}" -p {target} --max-files 8']
+    queries = [
+        f"* `codegraph_context` — map task \"{_sanitize_query(task)}\" in `{target}` first."
+    ]
+    task_key = task.lower()
+    if any(token in task_key for token in ("trace", "code flow", "code-flow", "call graph")):
+        queries.append("* `codegraph_trace` — trace the end-to-end flow described by the task.")
     for symbol in symbols:
         symbol = symbol.strip()
         if not symbol:
             continue
-        queries.append(f"codegraph callers {symbol} -p {target} -l 20")
-        queries.append(f"codegraph impact {symbol} -p {target} -d 2")
+        queries.append(f"* `codegraph_callers` — inspect callers of `{symbol}`.")
+        queries.append(f"* `codegraph_impact` — inspect the impact of changing `{symbol}`.")
     for path in relevant_files:
         if path.split("/", 1)[0] == target and path.lower().endswith(SOURCE_EXTS):
-            queries.append(f"codegraph node {_repo_relative(path, target)} -p {target}")
+            queries.append(
+                f"* `codegraph_node` — inspect `{_repo_relative(path, target)}` "
+                "only if the context result omitted it."
+            )
 
     bounded: list[str] = []
     for query in queries:
@@ -195,19 +201,20 @@ def build_codegraph_queries(
 
 
 def codegraph_section(queries: list[str]) -> str:
-    """Render the optional `## CodeGraph queries` section, or empty when none."""
+    """Render optional MCP-native CodeGraph guidance, or empty when unused."""
     if not queries:
         return ""
     body = "\n".join(queries)
     return (
         "\n## CodeGraph queries\n\n"
-        "Bounded source-structure queries for this task; run from your MQ repos "
-        "root. Fall back to targeted source reads if the index is missing, "
-        "unsupported (shell/PowerShell), locked, or stale. CodeGraph never "
-        "replaces source tests or CLI verification.\n\n"
-        f"```bash\n{body}\n```\n"
+        "Use the installed CodeGraph MCP tools directly; these are tool "
+        "intentions, not shell commands. Treat source returned by CodeGraph as "
+        "already read and do not repeat it with a broad grep/read loop. Fall "
+        "back to targeted source reads only when the index is missing, the "
+        "language is unsupported, or the result reports missing/stale detail. "
+        "CodeGraph never replaces source tests or CLI verification.\n\n"
+        f"{body}\n"
     )
-
 
 def apply_task_defaults(
     task: str,

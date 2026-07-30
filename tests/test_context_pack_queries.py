@@ -32,13 +32,12 @@ class BuildCodegraphQueries(unittest.TestCase):
         )
         self.assertTrue(queries)
         self.assertLessEqual(len(queries), gcp.MAX_CODEGRAPH_QUERIES)
-        # every query passes an explicit project path
-        self.assertTrue(all(" -p mq-mcp" in q for q in queries))
-        self.assertTrue(queries[0].startswith('codegraph explore "trace callers of store_learn_record"'))
-        self.assertIn("codegraph callers store_learn_record -p mq-mcp -l 20", queries)
-        self.assertIn("codegraph impact store_learn_record -p mq-mcp -d 2", queries)
-        # source file -> repo-relative node query (leading repo prefix stripped)
-        self.assertIn("codegraph node runtime/memory/obsidian_writer.py -p mq-mcp", queries)
+        self.assertIn("`codegraph_context`", queries[0])
+        self.assertTrue(any("`codegraph_trace`" in q for q in queries))
+        self.assertTrue(any("`codegraph_callers`" in q and "`store_learn_record`" in q for q in queries))
+        self.assertTrue(any("`codegraph_impact`" in q and "`store_learn_record`" in q for q in queries))
+        self.assertTrue(any("`codegraph_node`" in q and "`runtime/memory/obsidian_writer.py`" in q for q in queries))
+        self.assertTrue(all(not q.startswith("codegraph ") for q in queries))
 
     def test_doc_task_emits_no_queries(self):
         queries = gcp.build_codegraph_queries(
@@ -97,10 +96,13 @@ class RenderSection(unittest.TestCase):
             relevant_decisions=[],
             notes=[],
             do_not_read=[],
-            codegraph_queries=["codegraph explore \"x\" -p mq-mcp --max-files 8"],
+            codegraph_queries=["* `codegraph_context` — map task \"x\" in `mq-mcp` first."],
         )
         self.assertIn("## CodeGraph queries", content)
-        self.assertIn("```bash", content)
+        self.assertIn("Use the installed CodeGraph MCP tools directly", content)
+        self.assertIn("Treat source returned by CodeGraph as already read", content)
+        self.assertNotIn("```bash", content)
+        self.assertNotIn("codegraph explore", content)
         self.assertIn("CodeGraph never replaces source tests or CLI verification", content)
 
     def test_no_section_when_no_queries(self):

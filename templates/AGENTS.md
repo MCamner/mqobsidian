@@ -83,11 +83,10 @@ Do not emit secrets, private paths, raw logs, chain-of-thought, or unevidenced o
 
 ## Source Intelligence
 
-If `.codegraph/` exists, prefer CodeGraph for source-structure questions before
-broad file scans: symbol lookup, callers/callees, impact analysis, code-flow.
-
-Do not use CodeGraph as durable MQ memory. Use `mqobsidian` context packs and
-cards for memory, repo boundaries, and prior verified work.
+If `.codegraph/` exists, use CodeGraph MCP before broad scans:
+`codegraph_context` first; use trace/explore/impact as the task requires.
+Treat returned source as read; use targeted reads only for missing, stale, or
+unsupported detail. Use `mqobsidian` for durable memory and repo boundaries.
 
 ## Writing Rules
 
