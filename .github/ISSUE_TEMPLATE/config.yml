@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security-sensitive issue
+    url: https://github.com/MCamner/mqobsidian/security/advisories/new
+    about: Use a private advisory for suspected secrets or sensitive data exposure.
+  - name: Read the MQ context contract
+    url: https://github.com/MCamner/mqobsidian/blob/main/docs/CONTEXT_CONTRACT.md
+    about: Check ownership and truth-boundary rules before filing an issue.
