@@ -77,11 +77,32 @@ Current measured effect:
 
 ```text
 context pack + cards: 222 lines
-broad first-read baseline: 4797 lines
-reduction: 95.4%
+broad first-read baseline: more than 6,000 lines
+reduction: more than 96%
 ```
 
 See [docs/context-effect.md](docs/context-effect.md).
+
+## Examples
+
+See [examples/sanitized-context-pack.md](examples/sanitized-context-pack.md) for
+a public-safe generated pack with explicit inclusions and exclusions.
+
+## Demo
+
+Run the context-effect measurement:
+
+```bash
+python3 scripts/measure-context-effect.py
+```
+
+Representative output (the broad baseline grows with the public docs):
+
+```text
+context_lines=222
+broad_baseline_lines=6200+
+reduction_percent=96.x
+```
 
 ## Public-Safe Rules
 
@@ -117,6 +138,18 @@ python3 scripts/measure-context-effect.py
 
 The value of `mqobsidian` is not more memory. The value is better selection.
 Agents should read the smallest useful surface first.
+
+## Roadmap
+
+See [docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md) for the
+implemented phases, current contracts, and remaining context-quality work.
+
+## Contributing
+
+Changes should preserve the durable-memory/runtime boundary and remain
+public-safe. Before opening a pull request, run the commands in
+[Validation](#validation). For schema or template changes, include a sanitized
+example and update the matching contract documentation.
 
 ## License
 
