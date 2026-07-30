@@ -200,23 +200,33 @@ surfaces. If upstream adds shell/PowerShell extraction, these surfaces move from
 
 ## How agents should use CodeGraph
 
-Prefer CodeGraph before broad grep/read loops. Use it when the task asks:
+Prefer CodeGraph MCP before broad grep/read loops when `.codegraph/` exists.
+The task pack describes tool intentions; Codex and Claude invoke the installed
+MCP tools directly rather than translating them into shell commands.
 
-* where is this implemented?
-* what calls this?
-* what breaks if this changes?
-* how does this flow from command to writer?
-* which tests are likely affected?
+| Intent | MCP tool |
+| --- | --- |
+| Map a task or feature first | `codegraph_context` |
+| Trace an end-to-end path | `codegraph_trace` |
+| Survey several related symbols | `codegraph_explore` |
+| Find a symbol | `codegraph_search` |
+| Walk one call edge | `codegraph_callers` / `codegraph_callees` |
+| Check blast radius before editing | `codegraph_impact` |
+| Inspect one symbol | `codegraph_node` |
+| Check index health | `codegraph_status` |
 
-Suggested query patterns for MQ tasks:
+Treat source returned by CodeGraph as already read. Do not re-open the same
+material or repeat the answer with a broad grep/read loop. Use targeted source
+reads only when CodeGraph omits required detail or reports stale/unsupported
+coverage.
+
+For terminal-only work, use supported CLI commands such as:
 
 ```bash
-codegraph explore "how does context export work"
-codegraph explore "how does brain_record_learning write memory"
+codegraph context "how does context export work"
 codegraph query "generate_context_pack"
 codegraph callers "generate_context_pack"
 codegraph impact "context_pack"
-codegraph node scripts/generate-context-pack.py
 codegraph affected $(git diff --name-only)
 ```
 
