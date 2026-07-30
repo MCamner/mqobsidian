@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="mqobsidian is the durable memory and context-contract layer for the MQ stack.">
+  <title>mqobsidian · Durable memory, explicit truth boundaries</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top">MQ / OBSIDIAN</a>
+    <nav aria-label="Primary navigation">
+      <a href="#model">Model</a>
+      <a href="#surfaces">Truth surfaces</a>
+      <a href="#proof">Proof</a>
+      <a href="https://github.com/MCamner/mqobsidian">GitHub</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <p class="eyebrow">MQ STACK · KNOWLEDGE LAYER</p>
+      <h1>Durable memory.<br><span>Explicit truth boundaries.</span></h1>
+      <p class="lede">
+        mqobsidian stores reviewed, reusable knowledge and compact context
+        surfaces. Live code and runtime state remain in the systems that own them.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/MCamner/mqobsidian#quick-start">Quick start</a>
+        <a class="button" href="TRUTH_SURFACES.md">Read the truth contract</a>
+      </div>
+      <dl class="metrics" aria-label="Verified repository signals">
+        <div><dt>README</dt><dd>100/100</dd></div>
+        <div><dt>Context reduction</dt><dd>&gt;96%</dd></div>
+        <div><dt>Public-safe tests</dt><dd>51 pass</dd></div>
+      </dl>
+    </section>
+
+    <section id="model" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">READ ORDER</p>
+        <h2>Smallest useful surface first</h2>
+        <p>Agents expand context only when the smaller surface is insufficient.</p>
+      </div>
+      <ol class="pipeline">
+        <li><strong>Task pack</strong><span>Task-specific routing</span></li>
+        <li><strong>Agent view</strong><span>Repo-level context</span></li>
+        <li><strong>Hot / index</strong><span>Current durable state</span></li>
+        <li><strong>Source repo</strong><span>Live truth verification</span></li>
+      </ol>
+      <div class="boundary">
+        <div>
+          <h3>mqobsidian owns</h3>
+          <p>Durable memory, schemas, templates, context packs, truth manifests,
+            and public-safe export rules.</p>
+        </div>
+        <div>
+          <h3>mqobsidian does not own</h3>
+          <p>Execution, orchestration, current CLI behavior, active runtime
+            state, or live review cognition.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="surfaces" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">VERSIONED CONTRACTS</p>
+        <h2>Consumer-facing truth surfaces</h2>
+      </div>
+      <div class="cards">
+        <article>
+          <p class="tag">ENTRYPOINT</p>
+          <h3>Truth export index</h3>
+          <p>Enumerates every exported surface, schema version, location,
+            freshness, and drift state.</p>
+          <a href="TRUTH_SURFACES.md">Read contract →</a>
+        </article>
+        <article>
+          <p class="tag">CONTEXT</p>
+          <h3>Task packs and cards</h3>
+          <p>Compact agent-readable context with explicit inclusions,
+            exclusions, and token budgets.</p>
+          <a href="CONTEXT_CONTRACT.md">Read contract →</a>
+        </article>
+        <article>
+          <p class="tag">EVIDENCE</p>
+          <h3>Validated observations</h3>
+          <p>Sanitized records feed review and ranking without becoming an
+            automatic execution path.</p>
+          <a href="workflow-observations.md">Read contract →</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="proof" class="section proof">
+      <div class="section-heading">
+        <p class="eyebrow">REAL OUTPUT</p>
+        <h2>Validation evidence, not mockups</h2>
+        <p>Captured from the repository's public-safe CLI checks.</p>
+      </div>
+      <figure>
+        <img src="screenshots/validation-checks.png"
+             alt="Terminal output showing mqobsidian export, sensitive-content, and token-budget checks passing">
+        <figcaption>Public-safe validation checks.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/truth-export-build.png"
+             alt="Terminal output showing the mqobsidian truth-export bundle building and validating">
+        <figcaption>Truth-export bundle build and validation.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section callout">
+      <p class="eyebrow">DESIGN RULE</p>
+      <blockquote>
+        The value of mqobsidian is not more memory.<br>
+        The value is better selection.
+      </blockquote>
+      <a class="button primary" href="https://github.com/MCamner/mqobsidian">Explore the repository</a>
+    </section>
+  </main>
+
+  <footer>
+    <span>mqobsidian · Apache-2.0</span>
+    <span>Memory is durable. Runtime truth stays live.</span>
+  </footer>
+</body>
+</html>
