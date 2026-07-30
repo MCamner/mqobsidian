@@ -3,7 +3,7 @@
 [![Public Safe Check](https://github.com/MCamner/mqobsidian/actions/workflows/public-safe-check.yml/badge.svg)](https://github.com/MCamner/mqobsidian/actions/workflows/public-safe-check.yml)
 [![Version](https://img.shields.io/badge/version-0.2.2-blue)](CHANGELOG.md)
 
-Durable memory layer for the MQ stack.
+Live site: <https://mcamner.github.io/mqobsidian/> — durable memory layer for the MQ stack.
 
 `mqobsidian` stores reviewed, reusable, agent-readable knowledge. It is optimized
 to reduce token usage through better read order, smaller context surfaces, and
@@ -103,6 +103,9 @@ context_lines=222
 broad_baseline_lines=6200+
 reduction_percent=96.x
 ```
+
+![Public-safe validation](docs/screenshots/validation-checks.png)
+![Truth-export build](docs/screenshots/truth-export-build.png)
 
 ## Public-Safe Rules
 
