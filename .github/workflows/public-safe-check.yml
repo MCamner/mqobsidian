@@ -30,6 +30,9 @@ jobs:
       - name: Check token budget
         run: python3 scripts/check-token-budget.py
 
+      - name: Check context front doors
+        run: python3 scripts/check-context-links.py
+
       - name: Run focused unit tests
         run: python3 -m unittest discover -s tests -q
 

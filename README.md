@@ -34,11 +34,11 @@ behavior, live review execution, and contracts in motion.
 When the task touches MQ memory, context, or prior stack work, read the smallest
 useful surface first and stop once the task is grounded:
 
-1. `.mq/context/task-pack.md`
+1. `.mq/context/task-pack.md`, but only when its `task` and `repo` match the current work; otherwise skip it or regenerate it
 2. `memory/learn/agent/mqobsidian.md`
 3. `systems/mqobsidian/hot.md`
 4. `systems/mqobsidian/index.md`
-5. relevant context cards or docs only when the pack is insufficient
+5. relevant context cards or docs only when the smaller surfaces are insufficient
 
 The full reading and truth-boundary rules live in
 [docs/CONTEXT_CONTRACT.md](docs/CONTEXT_CONTRACT.md).
@@ -134,6 +134,7 @@ unsanitized review output.
 python3 scripts/validate-export.py
 python3 scripts/check-sensitive-content.py
 python3 scripts/check-token-budget.py
+python3 scripts/check-context-links.py
 python3 scripts/measure-context-effect.py
 ```
 
