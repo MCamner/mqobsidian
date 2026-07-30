@@ -49,9 +49,15 @@ Those belong to source repos and tools such as `mq-agent`, `mq-mcp`, `mq-hal`,
 
 ## Standard read order
 
+### Task-pack applicability
+
+A task pack is first only when its `task` and `repo` match the current work.
+If either field describes another task or repository, skip the pack or
+regenerate it. Presence alone does not make a task pack applicable or current.
+
 For MQ stack work:
 
-1. task pack if one exists (`.mq/context/task-pack.md`)
+1. matching task pack (`.mq/context/task-pack.md`), if applicable
 2. repo agent view (`memory/learn/agent/<repo>.md`)
 3. repo `hot.md`
 4. repo `index.md`
