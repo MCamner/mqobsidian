@@ -1,55 +1,38 @@
 ---
 type: agent-view
-repo: mqobsidian
-status: active
-tags: [agent, context, durable-memory]
-updated: 2026-07-30
+system: mqobsidian
+generated: 2026-08-02
+generator: mq-agent agent-views rebuild
+sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md, memory/learn/repos/mqobsidian.md]
 ---
 
-# mqobsidian Agent View
+# mqobsidian — agent view
 
-## Role
+Compressed first-stop for agents (read-order step 0). Generated — do not
+edit by hand; re-run `mq-agent agent-views rebuild`.
 
-Durable memory layer and compact context-contract surface for the MQ stack.
+## Current state
 
-## Read first
+Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa. `mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. Budgetkontraktet och CI-vakten mot stale exempel är mergade till `main`. `mq-agent context export` är också mergat och läser budgetkontraktet från vaulten med dokumenterad fallback. Fem budgeterade…
 
-1. Use `.mq/context/task-pack.md` only when its `task` and `repo` match the current work.
-2. Read `systems/mqobsidian/hot.md` for current high-value context.
-3. Read `systems/mqobsidian/index.md` for the stable system map.
-4. Expand to a context card or focused durable note only when needed.
+## Active priorities
 
-## Owns
+- Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
+- Phase 11-kontraktet (11a negative context, 11b block-metadata, 11c feedback-loop) är klart här och producerat/konsumerat i mq-agent (PR #102)…
+- Samla fler effektmätningar från verkliga uppgifter och börja mata feedback-loopen.
 
-- reviewed durable memory
-- context schemas, templates, cards, and public-safe examples
-- token-budget and context-export contracts
-- compact routing surfaces for agents
+## Current blockers
 
-## Does not own
+- Inga bekräftade blockers.
+- Context surfaces kan växa till permanenta token-sänkor.
+- Hårdkodade MVP-defaults kan misstas för generell memory query.
+- Duplicerad source-repo-dokumentation i vaulten skapar drift.
 
-- live runtime, CLI, test, or implementation truth
-- orchestration and context selection
-- bounded tool execution
-- raw logs or unsanitized enterprise data
+## Relevant lessons
 
-## Avoid reading first
+- Document CodeGraph CLI query patterns in mqobsidian integration docs and test-run the tool
 
-- the full README
-- old release notes
-- the complete roadmap
-- unrelated reviews or source-repo documentation
+## Read next
 
-## Truth boundary
-
-Use this repo for durable memory, routing, schemas, templates, and reusable
-lessons. Verify current behavior in the owning source repo or tool before making
-runtime, CLI, test, or implementation claims.
-
-## Next useful files
-
-- `docs/CONTEXT_CONTRACT.md`
-- `docs/TOKEN_BUDGET.md`
-- `.mq/context-budgets.json`
-- `schemas/context-pack.v1.json`
-- `templates/context-pack.md`
+- [[systems/mqobsidian/hot]]
+- [[systems/mqobsidian/index]]

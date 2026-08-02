@@ -4,7 +4,7 @@ system: mqobsidian
 status: active
 max_words: 500
 tags: [hot, cache, active-context]
-updated: 2026-06-20
+updated: 2026-08-02
 owner:
 links_to: [index]
 ---
@@ -18,7 +18,7 @@ Systemets lilla arbetsminne. Bara det viktigaste.
 Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa.
 
 ## Current status
-`mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. Budgetkontraktet för context-export och CI-vakten mot stale exempel är mergade till `main`. `mq-agent context export` är lokalt implementerat och verifierat med 36 tester. Fem budgeterade `.mq/context/`-filer har rullats ut idempotent till nio repo; command-implementationen och övriga repo-exporter är ännu lokala.
+`mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. Budgetkontraktet och CI-vakten mot stale exempel är mergade till `main`. `mq-agent context export` är också mergat och läser budgetkontraktet från vaulten med dokumenterad fallback. Fem budgeterade `.mq/context/`-filer kan genereras idempotent för nio repo.
 
 ## Active blockers
 - Inga bekräftade blockers.
@@ -35,8 +35,8 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 
 ## Immediate next actions
 1. Håll [[index]] och denna hot-note små.
-2. Landa `mq-agent context export` som en avgränsad ändring utan orelaterat cockpit-arbete.
-3. Bestäm vilka repo-exporter som ska versionshanteras, sedan mät fler verkliga uppgifter.
+2. Håll repo-kortens `Current blockers` aktuella när blockerare är kända.
+3. Mät fler verkliga uppgifter och mata feedback-loopen med verifierade signaler.
 
 ## Critical links
 - [[index]]

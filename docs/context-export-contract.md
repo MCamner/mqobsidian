@@ -30,13 +30,16 @@ Both consumers read it. Do not hardcode budget numbers anywhere else.
 | `.mq/context-budgets.json` | authoritative budget contract (this repo) |
 | `scripts/generate-repo-context-export.py` | reference renderer + checker source (this repo) |
 | `scripts/check-token-budget.py` | enforces budgets against generated files (this repo) |
-| `mq-agent` `tools/context_export.py` | **designated consumer** — renders the same files; reads budgets from the vault contract once the companion change lands |
+| `mq-agent` `tools/context_export.py` | **designated consumer** — renders the same files and reads budgets from the vault contract |
 
 `mq-agent` is a consumer of this contract, not a second definition of it. Its
-context export is wired to read `.mq/context-budgets.json` from the vault and
-fall back to documented defaults when the vault predates the contract. Until that
-companion change is merged on `mq-agent`, its export keeps its own budget table;
-the fallback means neither side breaks while the two land independently.
+context export reads `.mq/context-budgets.json` from the vault and falls back to
+documented defaults when the vault predates the contract.
+
+`current-blockers.md` reads optional `## Current blockers` bullets from the
+repo's context card. If the section is absent or empty, the export says that no
+blockers are declared in the source card; this is not a claim that the live repo
+has no blockers. Runtime-sensitive blockers must still be verified in source.
 
 ## Ownership of generated agent surfaces
 
