@@ -3,7 +3,7 @@ type: reference
 system: mq-mcp
 status: active
 tags: [reference, commands, system]
-updated: 2026-06-17
+updated: 2026-08-02
 links_to: [index, overview]
 ---
 
@@ -724,3 +724,52 @@ mq-mcp validate
 ```bash
 ./scripts/upgrade.sh
 ```
+
+---
+
+# 12. MQ Stack Health and Reconciliation
+
+Läsande kontroll och säker städning av stackavvikelser. Se
+[[learn/mq-stack-health-reconciliation]] för verifierad bakgrund.
+
+## Baslinje
+
+```bash
+mqlaunch stack status
+mqlaunch doctor --json
+mqlaunch hal brief
+```
+
+`stack status` är den kanoniska stackbilden. `doctor --json` verifierar lokal
+miljö och `hal brief` ger en kort operatörssummering.
+
+## Repo-verifiering
+
+```bash
+mqlaunch hal repos
+git -C <repo> status --short --branch
+git -C <repo> diff --check
+```
+
+Använd registrerade repo-sökvägar; gissa inte privata sökvägar. Kontrollera
+dirty/clean, branch och upstream-avvikelse innan åtgärd.
+
+## PR- och CI-status
+
+```bash
+gh pr list --head <branch> --state all
+gh pr checks <pr-number> --watch
+```
+
+Läs `.mq/repo-contract.json` före publicering. Följ `release_mode`: direkt push
+endast för `direct`; använd PR och gröna kontroller för `pull_request`.
+
+## Slutkontroll
+
+```bash
+mqlaunch stack status
+git -C <repo> status --short --branch
+```
+
+Rapportera kvarvarande avvikelser separat. Ändra inte andra samtidiga
+arbetsgrenar.
