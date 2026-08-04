@@ -44,22 +44,19 @@ Stop reading as soon as the task is grounded.
 
 - Prefer task packs and agent views over full notes.
 - Prefer hot/index over pattern notes.
-- Do not scan the whole vault by default.
-- Do not open multiple pattern notes unless clearly needed.
-- Summarize instead of replaying long note bodies.
+- Do not scan the whole vault or several pattern notes by default.
+- Summarize instead of replaying note bodies.
 
 ## Rules
 
 - Do not duplicate logic owned by another MQ repo.
 - Prefer JSON contracts over free-text coupling.
-- Keep repo boundaries explicit.
-- Use `mqobsidian` only as durable memory, not runtime truth.
-- Verify current code behavior, tests, contracts, and CLI behavior in this repo.
+- Keep repo boundaries explicit; use `mqobsidian` as memory, not runtime truth.
+- Verify current code, tests, contracts, and CLI behavior in this repo.
 
 ## Durable Memory
 
-MQ-stack memory lives in `mqobsidian`. Use generated context packs before
-reading large docs.
+MQ-stack memory lives in `mqobsidian`; use context packs before large docs.
 
 `mqobsidian` is durable memory, not live runtime truth. If the task depends on
 current code behavior, tests, contracts, CLI behavior, or runtime state, verify
@@ -67,8 +64,7 @@ in this repo before making claims.
 
 ## Observation Emission
 
-After evidence-backed work reveals a reusable pattern, workflow, convention, or
-review finding, emit one observation:
+After evidence-backed work reveals a reusable pattern or finding, emit one observation:
 
 ```bash
 uv --directory <MQOBSIDIAN_VAULT_PATH>/memory run python commands/emit_observation.py \
@@ -88,13 +84,19 @@ If `.codegraph/` exists, use CodeGraph MCP before broad scans:
 Treat returned source as read; use targeted reads only for missing, stale, or
 unsupported detail. Use `mqobsidian` for durable memory and repo boundaries.
 
+## MQ Model Routing
+
+Before a non-trivial change, call `mq_route_inspect`; for cross-repo work also
+call `mq_context_pack`. Treat `mq_route_shadow` only as advisory evidence.
+Codex or Claude stays authoritative for medium/high-risk work. Verify against
+repo code/tests and escalate when the router reports an escalation condition.
+
 ## Writing Rules
 
 When creating notes, summaries, or exports:
 
 - separate facts, interpretation, and recommendation
-- keep outputs compact
-- preserve timestamps and provenance when relevant
+- keep outputs compact; preserve timestamps and provenance when relevant
 - prefer links over duplicated prose
 - avoid raw dumps
 
@@ -103,9 +105,8 @@ or machine-specific private paths.
 
 ## MQ Skills
 
-Use repo-local skills from `.agents/skills/` (Codex) and `.claude/skills/`
-(Claude Code); route by frontmatter `description`. Near-universal:
-`mq-writing-plans`, `mq-worktree-safe`, `mq-secrets-public-safe`.
+Use `.agents/skills/` (Codex) and `.claude/skills/` (Claude); route by frontmatter
+`description`. Common: `mq-writing-plans`, `mq-worktree-safe`, `mq-secrets-public-safe`.
 
 ## Codex Governor
 
