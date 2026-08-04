@@ -26,6 +26,7 @@ CANONICAL_SECTIONS = [
     "## Durable Memory",
     "## Observation Emission",
     "## Source Intelligence",
+    "## MQ Model Routing",
     "## Writing Rules",
     "## MQ Skills",
     "## Fallback Rule",
@@ -38,6 +39,11 @@ CANONICAL_CANARIES = [
     "--workflow",                      # required observation field
     "--evidence-excerpt",              # required observation evidence field
     "Do not store or copy secrets",   # secrets / private-path safety rule
+    "mq_route_inspect",               # deterministic route inspection
+    "mq_context_pack",                # equivalent task context for both agents
+    "mq_route_shadow",                # advisory local-model evidence only
+    "medium/high-risk",               # authoritative-agent boundary
+    "escalation condition",           # explicit escalation behavior
 ]
 
 LITERAL_PLACEHOLDERS = ["<REPO_NAME>", "<MQOBSIDIAN_VAULT_PATH>"]
