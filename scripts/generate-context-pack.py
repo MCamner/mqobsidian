@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from argparse import ArgumentParser
+from collections.abc import Sequence
 from datetime import datetime, timezone
 from pathlib import Path
 import sys
@@ -47,7 +48,7 @@ def coerce_exclusion(raw: object) -> dict[str, str] | None:
     return None
 
 
-def merge_exclusions(*groups: list[object]) -> list[dict[str, str]]:
+def merge_exclusions(*groups: Sequence[object]) -> list[dict[str, str]]:
     """Coerce, dedupe (by kind+item, first reason wins), order by kind severity."""
     seen: set[tuple[str, str]] = set()
     collected: list[dict[str, str]] = []

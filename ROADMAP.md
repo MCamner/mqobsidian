@@ -1,8 +1,11 @@
 # Roadmap
 
-**Current version:** 0.2.2
-**Current direction:** v0.3.0 — declare the truth/memory contracts this repo
-already owns explicitly in `.mq/repo-contract.json`, and make those surfaces
+**Current version:** 0.3.0
+**Current direction:** v0.3.0 release candidate — the truth/memory contract
+implementation and local release metadata are complete. Tagging and publishing
+remain explicit release actions. The delivered scope
+declares the contracts this repo already owns explicitly in
+`.mq/repo-contract.json` and makes those surfaces
 safe and predictable for consumers to read. The goal is better selection and
 clearer contracts, not more memory. The `v0.3.0` plan is stated below; the SSOT
 & Promotion Governance and CodeGraph MQ Integration blocks further down are
@@ -31,7 +34,7 @@ orchestration logic, review execution, or menu routing.
 
 ## v0.3.0 — Explicit Truth Contracts and Consumer Readiness
 
-**Status:** Current
+**Status:** Release candidate; tag and publication pending
 **Priority:** P1
 **Type:** Contracts / Consumer readiness
 **Goal:** Make the contracts this repo owns explicit and predictable to consume.
@@ -63,9 +66,15 @@ prevent.
 - **Freshness/drift** — `status-manifest.v1` and `inbox-manifest.v1` carry
   `freshness_state` + `drift`; `truth-export-index.v1` exposes them per surface.
 
-### Remaining work
+### Remaining implementation work
 
 None open — the one gap that survived the honesty gate is closed below.
+
+### Release gate
+
+- [x] Bump `VERSION`, README badge, changelog, and release metadata together.
+- [x] Run the complete public-safe validation suite against the release candidate.
+- [ ] Tag and publish `v0.3.0` only after CI is green.
 
 #### A. Context-pack proof metadata — Completed
 

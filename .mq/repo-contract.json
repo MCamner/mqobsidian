@@ -1,7 +1,7 @@
 {
   "repo": "mqobsidian",
   "role": "truth-and-memory-source",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "status": "active",
   "contracts": [
     "status_manifest.v1",

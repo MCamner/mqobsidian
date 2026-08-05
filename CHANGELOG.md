@@ -2,8 +2,16 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-05
+
 ### Added
 
+- Explicit ownership metadata for all 23 truth and memory contracts in
+  `.mq/repo-contract.json`.
+- Structured context-pack exclusion proof with kind, item, and reason.
+- A file-locked, append-only writer for schema-valid model-routing outcomes,
+  including negative escalation evidence without raw model output.
+- Shared Codex and Claude guidance for consuming model-routing contracts.
 - `release-check.sh` — canonical read-only releasability entrypoint conforming
   to `repo_release_check.v1`. `--json` emits the machine-readable verdict
   (`schema`, `repo`, `status`, `blockers`, `warnings`, `evidence`) and exits 0;
