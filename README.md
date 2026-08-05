@@ -123,7 +123,7 @@ unsanitized review output.
 - [docs/CONTEXT_CARDS.md](docs/CONTEXT_CARDS.md) — small reusable context-card model
 - [docs/context-export-contract.md](docs/context-export-contract.md) — `.mq/context` export ownership and budget source
 - [docs/memory-model.md](docs/memory-model.md) — durable memory layers and ownership
-- [docs/truth-export.md](docs/truth-export.md) — export and truth-boundary rules
+- [docs/truth-export.md](docs/truth-export.md) and [docs/ROUTING_OUTCOMES.md](docs/ROUTING_OUTCOMES.md) — truth-boundary and verified routing storage
 - [docs/roadmap-token-reduction.md](docs/roadmap-token-reduction.md) — longer roadmap
 - [schemas/context-pack.v1.json](schemas/context-pack.v1.json) — task-pack schema
 - [templates/context-pack.md](templates/context-pack.md) — task-pack template

@@ -1,0 +1,23 @@
+{
+  "schema": "mq.model-route-outcome.v1",
+  "decision_id": "route-sanitized-example",
+  "task_class": "docs-review",
+  "selected_route": "local-shadow",
+  "local_model": "local-model",
+  "authoritative_agent": "codex",
+  "attempted": true,
+  "model_output_received": true,
+  "schema_valid": true,
+  "verification": {
+    "status": "PASS",
+    "checks": [
+      "candidate-schema",
+      "task-class-match"
+    ]
+  },
+  "accepted_by_agent": false,
+  "accepted_by_operator": false,
+  "escalated": false,
+  "escalation_reason": null,
+  "recorded_at": "2026-08-04T12:00:00Z"
+}
