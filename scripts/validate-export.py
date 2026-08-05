@@ -5,13 +5,12 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
-import sys
 from typing import Any
 
 from jsonschema import Draft202012Validator
-
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
