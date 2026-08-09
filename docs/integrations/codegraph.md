@@ -206,8 +206,8 @@ MCP tools directly rather than translating them into shell commands.
 
 | Intent | MCP tool |
 | --- | --- |
-| Map a task or feature first | `codegraph_context` |
-| Trace an end-to-end path | `codegraph_trace` |
+| Map a task or feature first | `codegraph_explore` |
+| Trace an end-to-end path | `codegraph_explore` |
 | Survey several related symbols | `codegraph_explore` |
 | Find a symbol | `codegraph_search` |
 | Walk one call edge | `codegraph_callers` / `codegraph_callees` |

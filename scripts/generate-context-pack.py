@@ -174,11 +174,11 @@ def build_codegraph_queries(
         return []
 
     queries = [
-        f"* `codegraph_context` — map task \"{_sanitize_query(task)}\" in `{target}` first."
+        f"* `codegraph_explore` — map task \"{_sanitize_query(task)}\" in `{target}` first."
     ]
     task_key = task.lower()
     if any(token in task_key for token in ("trace", "code flow", "code-flow", "call graph")):
-        queries.append("* `codegraph_trace` — trace the end-to-end flow described by the task.")
+        queries.append("* `codegraph_explore` — trace the end-to-end flow described by the task.")
     for symbol in symbols:
         symbol = symbol.strip()
         if not symbol:

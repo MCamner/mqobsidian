@@ -419,7 +419,7 @@ Tasks:
 - [x] keep `--codegraph auto|on|off` and preserve non-source suppression
 - [x] cap query count and context size so CodeGraph cannot become a token sink
   (`MAX_CODEGRAPH_QUERIES = 5`; a real source pack is 57 lines vs the 200 budget)
-- [x] name the target repo in the primary `codegraph_context` intention
+- [x] name the target repo in the primary `codegraph_explore` intention
 - [x] fall back cleanly to targeted source reads when an index is missing,
   unsupported, locked, or stale (stated in the section guidance)
 - [x] never let CodeGraph replace source tests or CLI verification (stated in the
