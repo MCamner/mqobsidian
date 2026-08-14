@@ -29,11 +29,28 @@ sanitized durable summaries, not raw runtime output.
 
 Current brain-facing tools:
 
-- `brain_status` reports vault availability and top-level folders.
-- `brain_preview_memory_scores` previews `memory-score.v1` from real observations without writes.
-- `brain_apply_memory_scores` writes `memory-score.v1` records and appends `promotion-event.v1` audit when status changes.
-- `brain_record_*` writes decisions, reviews, sessions, and learned patterns.
-- `brain_promote_learning` moves verified learning notes into `learn/verified/`.
+| Tool | Class | Effect |
+| --- | --- | --- |
+| `brain_status` | read-only | Reports vault availability, top-level folders, and per-folder note counts. |
+| `brain_record_decision` | write (approval) | Writes an architecture decision record to `decisions/`. |
+| `brain_record_review` | write (approval) | Writes a sanitized code review summary to `reviews/`. |
+| `brain_record_session` | write (approval) | Writes a session note to `sessions/`. |
+| `brain_record_learning` | write (approval) | Writes a learned engineering pattern to `learn/`; updates in place rather than duplicating. |
+| `brain_promote_learning` | write (approval) | Validates required frontmatter and body sections, then promotes `learn/<slug>.md` into `learn/verified/`. |
+
+Every write tool requires user approval and targets the local vault. `mq-mcp`
+never writes to the tracked repository surface.
+
+### Scoring and promotion are not mq-mcp tools
+
+`mq-mcp` does not score observations or emit promotion events. `mqobsidian` owns
+the memory and promotion record contracts — including `memory-score.v1` and
+`promotion-event.v1` — and applies them through a local-only memory CLI that is
+not part of the published repository surface. `mq-agent` orchestrates ranking and
+promotion routing against those contracts but does not own them.
+
+See `docs/TRUTH_SURFACES.md` and `decisions/ADR-008-evidence-based-memory-architecture.md`
+for the per-contract ownership table.
 
 ## repo-signal
 

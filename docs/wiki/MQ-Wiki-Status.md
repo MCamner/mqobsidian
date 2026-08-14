@@ -1,5 +1,10 @@
 # MQ Wiki Status — 2026-06-29
 
+> [!warning] Ersatt 2026-08-10
+> Tabellen nedan är inaktuell. Alla nio wiki-remotes verifierades över nätverk
+> 2026-08-10 och samtliga svarar OK — inga UNKNOWN kvarstår. Versionerna i
+> tabellen är också gamla. Aktuell status: `mq-stack/wiki/index.md` i valvet.
+
 Stack-truth summary checked with `mqlaunch repos wiki-status` on
 2026-06-29 after fixing the local wiki-status fallback. A direct GitHub Wiki remote check for `mqobsidian` also resolved `HEAD` at `e85435a`.
 
@@ -39,8 +44,10 @@ remotes could not be verified from the current execution environment.
 
 - `mqobsidian/docs/wiki/Memory-Model.md` documents `memory-observation.v1`,
   `memory-score.v1`, and `promotion-event.v1`.
-- `mqobsidian/docs/wiki/Integrations.md` documents the `mq-mcp` brain tools for
-  previewing and applying memory scores.
+- The original 2026-06-29 note claimed `Integrations.md` documented `mq-mcp`
+  brain tools for previewing and applying memory scores. That was wrong: no such
+  tools exist in `mq-mcp`. Scoring and promotion are owned by `mqobsidian` and
+  applied through a local-only memory CLI. Corrected 2026-08-14.
 
 ## mqobsidian Repo Boundary
 
