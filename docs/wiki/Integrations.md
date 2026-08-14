@@ -49,8 +49,8 @@ the memory and promotion record contracts — including `memory-score.v1` and
 not part of the published repository surface. `mq-agent` orchestrates ranking and
 promotion routing against those contracts but does not own them.
 
-See `docs/TRUTH_SURFACES.md` and `decisions/ADR-008-evidence-based-memory-architecture.md`
-for the per-contract ownership table.
+See `docs/TRUTH_SURFACES.md` for the truth-surface boundary and where the
+per-contract ownership table is defined.
 
 ## repo-signal
 
