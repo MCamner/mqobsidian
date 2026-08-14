@@ -33,6 +33,10 @@ jobs:
       - name: Check context front doors
         run: python3 scripts/check-context-links.py
 
+      # docs/wiki is deployed to GitHub Pages, so a stale claim there is public.
+      - name: Check published wiki freshness
+        run: python3 scripts/check-wiki-freshness.py
+
       - name: Run focused unit tests
         run: python3 -m unittest discover -s tests -q
 

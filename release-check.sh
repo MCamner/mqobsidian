@@ -68,6 +68,9 @@ run "check-token-budget.py" python3 scripts/check-token-budget.py
 step "Agent entrypoints canonical"
 run "check-agent-entrypoints.py" python3 scripts/check-agent-entrypoints.py
 
+step "Published wiki matches release truth"
+run "check-wiki-freshness.py" python3 scripts/check-wiki-freshness.py
+
 step "Unit tests"
 run "unittest" python3 -m unittest discover -s tests -q
 

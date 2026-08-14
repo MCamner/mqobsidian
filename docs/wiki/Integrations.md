@@ -55,9 +55,13 @@ per-contract ownership table is defined.
 ## repo-signal
 
 `repo-signal` can provide readiness, docs quality, and repo intelligence
-signals. When configured for memory export, real inspect runs may emit
-`memory-observation.v1` records into `memory/observations/`. Exported records
-should stay compact and public-safe.
+signals. Memory export is opt-in and failure-isolated: when enabled, a real
+`inspect` run maps its top issue to one `memory-observation.v1` record appended
+to `memory/observations/repo-signal.observations.jsonl` in the vault. Exported
+records should stay compact and public-safe.
+
+An observation is a proposal, not a memory. Producing one does not promote it —
+scoring and promotion stay with `mqobsidian`.
 
 ## mq-hal
 
