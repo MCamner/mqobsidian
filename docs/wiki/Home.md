@@ -1,46 +1,50 @@
 # mqobsidian Wiki
 
-`mqobsidian` is the local-first durable memory layer for the MQ stack.
+This wiki is a pointer, not a content surface. Every page it used to carry was a
+second copy of a file that already had an owner in the repository, and the copies
+drifted: between v0.2.1 and v0.3.0 the wiki was edited twice while the repo
+shipped two releases.
 
-This wiki is synced from the current repository docs and compact stack truth
-notes. The repository remains the source of truth for schemas, templates,
-examples, and validation scripts.
+The repository is the source of truth. Read these instead.
 
-## Core Pages
+## Orientation
 
-- [Roadmap](Roadmap)
-- [Memory Model](Memory-Model)
-- [Truth Export](Truth-Export)
-- [Context Packs](Context-Packs)
-- [Integrations](Integrations)
-- [MQ Wiki Status](MQ-Wiki-Status)
-- [Changelog](Changelog)
+| Question | File |
+| --- | --- |
+| What is this repo and how do I start? | `README.md` |
+| What shipped, and when? | `CHANGELOG.md` |
+| What is planned, and what is explicitly a non-goal? | `ROADMAP.md` |
+| How is the system structured? | `docs/architecture.md` |
 
-## Role in the MQ Stack
+## Memory and truth
 
-```text
-signal -> review -> decision -> memory -> next action
-```
+| Question | File |
+| --- | --- |
+| What contracts does this repo own? | `.mq/repo-contract.json`, `docs/memory-model.md` |
+| Which surfaces answer "what is true right now"? | `docs/TRUTH_SURFACES.md` |
+| How does validated signal become durable memory? | `docs/truth-export.md` |
+| How does the context layer stay cheap? | `docs/context-budget.md`, `docs/roadmap-token-reduction.md` |
+| Is it actually reducing reads? | `docs/context-effect.md` |
 
-Responsibility split:
+## Integrations
 
-- `mq-agent` orchestrates workflows and exports stack truth.
-- `mq-mcp` executes bounded tools and owns runtime/review contracts.
-- `repo-signal` scores repo health and readiness.
-- `mq-hal` presents operator-facing summaries.
-- `mqobsidian` stores durable memory, schemas, templates, and compact context.
+| Repo | File |
+| --- | --- |
+| `mq-agent` | `docs/mq-agent-integration.md` |
+| `mq-mcp` | `docs/mq-mcp-integration.md` |
+| `repo-signal` | `docs/repo-signal-integration.md` |
+| `mq-ums` | `docs/mq-ums-integration.md` |
 
-## Source of Truth
+## Why this page is nearly empty
 
-The repository docs remain authoritative:
+`docs/wiki/` had no machine consumers. The published landing page
+(`docs/index.html`) never linked it, GitHub Pages serves these files unrendered,
+and no MQ tool reads the directory — `mqlaunch repos wiki-status` checks the wiki
+remote first and only falls back to this directory when the network check fails.
 
-- `README.md` for product status and public-safe scope.
-- `docs/memory-model.md` for durable memory layers.
-- `docs/truth-export.md` for export rules.
-- `docs/roadmap-token-reduction.md` for the context-pack roadmap.
-- `schemas/` and `templates/` for portable contracts.
+This page is kept so that fallback still resolves, and so anyone arriving here
+lands on the real docs.
 
-## Boundary
-
-`mqobsidian` does not execute workflows, own runtime gates, publish releases, or
-replace `mq-agent`, `mq-mcp`, or `mq-hal`.
+`scripts/check-docs-freshness.py` gates the contract list in
+`docs/memory-model.md` against `.mq/repo-contract.json` in CI, so the surface that
+replaced this one cannot drift the same way unnoticed.
