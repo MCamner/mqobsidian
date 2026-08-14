@@ -33,9 +33,10 @@ jobs:
       - name: Check context front doors
         run: python3 scripts/check-context-links.py
 
-      # docs/wiki is deployed to GitHub Pages, so a stale claim there is public.
-      - name: Check published wiki freshness
-        run: python3 scripts/check-wiki-freshness.py
+      # docs/memory-model.md is fed to agents by mq-mcp's semantic memory pack,
+      # so a stale contract list there reaches consumers, not just readers.
+      - name: Check published docs freshness
+        run: python3 scripts/check-docs-freshness.py
 
       - name: Run focused unit tests
         run: python3 -m unittest discover -s tests -q
