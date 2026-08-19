@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Added
+
+- `scripts/eval-retrieval.py` — selection-quality measurement. Everything the
+  repo measured until now answered "how little context did we send?"; nothing
+  answered "did we send the right context?". It scores `feedback-signal.v1`
+  records as a gold label set (`useful` = true positive, `noise` = false
+  positive, `missing` = false negative) and reports precision, recall, F1, pack
+  sufficiency, and per-block `keep`/`downgrade`/`widen-or-create`/`refresh`
+  verdicts. No new contract: the existing feedback vocabulary is the label set.
+  `stale` is kept out of precision and recall — it is a freshness verdict on a
+  correctly selected block, and the two axes stay separate. Rank metrics
+  (Recall@K, MRR) are deliberately not reported: the contract records judgments
+  as an unordered set, so any rank number would measure list order.
+
 ## [0.3.0] - 2026-08-05
 
 ### Added

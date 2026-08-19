@@ -58,6 +58,44 @@ existing inbox / research-triage flow), routed through the normal
 template-based note-creation path. The loop proposes; a human or an explicit
 command commits.
 
+## Measuring selection quality
+
+Accumulated judgments are also a **gold label set**, not only a source of
+proposals. `scripts/eval-retrieval.py` reads the same records and reports whether
+selection picked the *right* blocks:
+
+```bash
+python3 scripts/eval-retrieval.py --format markdown
+python3 scripts/eval-retrieval.py --repo mq-mcp
+```
+
+The mapping onto the retrieval confusion matrix is exactly the vocabulary above:
+
+| Judgment | Meaning for scoring |
+| --- | --- |
+| `useful` | true positive — selected and earned its place |
+| `noise` | false positive — selected and wasted tokens |
+| `missing` | false negative — needed but not selected |
+| `stale` | **not** a relevance signal; reported as its own `stale_rate` |
+
+So `precision = useful / (useful + noise)` and
+`recall = useful / (useful + missing)`. `stale` stays out of both because it is a
+freshness verdict on a correctly selected block, and this repo keeps the
+freshness and relevance axes separate on purpose.
+
+Rank metrics (Recall@K, MRR) are **not** reported. `feedback-signal.v1` records
+judgments as an unordered set with no rank field; a rank number derived from list
+order would measure serialization, not retrieval.
+
+This complements [`context-effect.md`](context-effect.md), which measures how
+*small* a pack is. A pack can be 96% smaller and still wrong — reduction and
+quality are different questions, and only the pair is meaningful.
+
+The per-block verdicts (`keep` / `downgrade` / `widen-or-create` / `refresh`)
+restate the promotion and downgrade rules above; they remain proposals for
+review, and a block with fewer than three judgments is reported as
+`insufficient-data` rather than acted on.
+
 ## No-publish guarantee
 
 The loop must never auto-publish:
