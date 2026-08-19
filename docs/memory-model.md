@@ -21,7 +21,7 @@ Per DEC-002, two layers are kept distinct:
 | `memory-observation.v1` | One evidence-bearing observation a repo emits when it notices a potentially reusable pattern. A proposal, not a memory. Producers: all MQ repos. |
 | `memory-score.v1` | Current ranking and promotion tier of one memory. `mqobsidian` is the sole producer. |
 | `promotion-event.v1` | Audit-trail event recorded when a memory changes tier. `mqobsidian` is the sole producer. |
-| `memory-query.v1` | A repo asking `mqobsidian` for relevant memory before or during a task. Read-only. |
+| `memory-query.v1` | A repo asking `mqobsidian` for relevant memory before or during a task. Read-only. Optional `repositories` widens one query across the stack; `repository` stays the asking repo. |
 | `workflow-observation.v1` | One sanitized workflow-run observation. `mqobsidian` owns the vocabulary; `mq-agent` emits records. |
 | `feedback-signal.v1` | One pack-usage feedback event. Kept separate from promotion. |
 | `decision-record.v1` | Architectural decisions and durable boundaries. |

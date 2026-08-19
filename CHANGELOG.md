@@ -15,6 +15,12 @@
   correctly selected block, and the two axes stay separate. Rank metrics
   (Recall@K, MRR) are deliberately not reported: the contract records judgments
   as an unordered set, so any rank number would measure list order.
+- `memory-query.v1` extended additively with optional `repositories`, so one
+  query can span the stack (routing evidence lives in mq-agent decisions,
+  mq-mcp contracts, and mq-hal feedback at once). `repository` still names the
+  asking repo; concern-scoped questions still use `tags`.
+- `memory-query.v1` and its example are now covered by `validate-export.py`,
+  which never validated them before.
 
 ## [0.3.0] - 2026-08-05
 
