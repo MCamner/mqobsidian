@@ -1,8 +1,8 @@
 ---
 schema: context-pack.v1
-target: claude
+target: codex
 task: fix mq-mcp brain writer paths
-generated_at: 2026-08-08T13:59:48+00:00
+generated_at: 2026-08-17T20:26:10+00:00
 repo: mq-mcp
 summary: Minimum context needed for: fix mq-mcp brain writer paths
 ---
@@ -42,7 +42,7 @@ summary: Minimum context needed for: fix mq-mcp brain writer paths
 
 Use the installed CodeGraph MCP tools directly; these are tool intentions, not shell commands. Treat source returned by CodeGraph as already read and do not repeat it with a broad grep/read loop. Fall back to targeted source reads only when the index is missing, the language is unsupported, or the result reports missing/stale detail. CodeGraph never replaces source tests or CLI verification.
 
-* `codegraph_context` — map task "fix mq-mcp brain writer paths" in `mq-mcp` first.
+* `codegraph_explore` — map task "fix mq-mcp brain writer paths" in `mq-mcp` first.
 * `codegraph_node` — inspect `runtime/memory/obsidian_writer.py` only if the context result omitted it.
 * `codegraph_node` — inspect `tests/test_obsidian_writer.py` only if the context result omitted it.
 
