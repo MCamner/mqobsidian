@@ -141,6 +141,24 @@ observation → scoring → curated-learn pipeline.
 The `mq-agent` measurement command is deferred until this record contract has
 settled in use (roadmap Delivery D).
 
+## What this measurement cannot tell you
+
+Every number on this page answers one question: *how little context did we send?*
+None of them answers *did we send the correct context?* — a pack that is 96%
+smaller and wrong measures identically to one that is 96% smaller and right.
+
+Selection quality is measured separately, from the Phase 11c feedback surface:
+
+```bash
+python3 scripts/eval-retrieval.py --format markdown
+```
+
+It reports precision, recall, and per-block verdicts from `feedback-signal.v1`
+records, and adds no contract to do it. See
+[`FEEDBACK_LOOP.md`](FEEDBACK_LOOP.md#measuring-selection-quality). Reduction and
+quality are only meaningful as a pair; optimizing this page alone rewards a pack
+that sends nothing.
+
 ## Next action
 
 Continue Phase 2 by tightening card content from verified repo boundaries, then

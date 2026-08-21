@@ -32,8 +32,8 @@ class BuildCodegraphQueries(unittest.TestCase):
         )
         self.assertTrue(queries)
         self.assertLessEqual(len(queries), gcp.MAX_CODEGRAPH_QUERIES)
-        self.assertIn("`codegraph_context`", queries[0])
-        self.assertTrue(any("`codegraph_trace`" in q for q in queries))
+        self.assertIn("`codegraph_explore`", queries[0])
+        self.assertTrue(any("`codegraph_explore`" in q for q in queries))
         self.assertTrue(any("`codegraph_callers`" in q and "`store_learn_record`" in q for q in queries))
         self.assertTrue(any("`codegraph_impact`" in q and "`store_learn_record`" in q for q in queries))
         self.assertTrue(any("`codegraph_node`" in q and "`runtime/memory/obsidian_writer.py`" in q for q in queries))
@@ -96,7 +96,7 @@ class RenderSection(unittest.TestCase):
             relevant_decisions=[],
             notes=[],
             do_not_read=[],
-            codegraph_queries=["* `codegraph_context` — map task \"x\" in `mq-mcp` first."],
+            codegraph_queries=["* `codegraph_explore` — map task \"x\" in `mq-mcp` first."],
         )
         self.assertIn("## CodeGraph queries", content)
         self.assertIn("Use the installed CodeGraph MCP tools directly", content)

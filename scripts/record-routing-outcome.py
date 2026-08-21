@@ -14,7 +14,6 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 
-
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = Path(os.environ.get("MQ_OBSIDIAN_DIR", ROOT)) / "routing" / "outcomes.jsonl"
 SENSITIVE_PATTERNS = (

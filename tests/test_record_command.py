@@ -8,7 +8,6 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "record_command.py"
 SPEC = importlib.util.spec_from_file_location("record_command", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None

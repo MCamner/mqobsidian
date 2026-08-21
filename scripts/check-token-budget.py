@@ -3,16 +3,15 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import fnmatch
 import sys
+from pathlib import Path
 
 from context_budgets import (
     CONTEXT_BUDGETS,
     EXPORTED_CONTEXT_FILES,
     LOCAL_CONTEXT_FILES,
 )
-
 
 ROOT = Path(__file__).resolve().parents[1]
 

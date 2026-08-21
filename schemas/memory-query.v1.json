@@ -31,6 +31,15 @@
       "type": "string",
       "minLength": 1
     },
+    "repositories": {
+      "type": "array",
+      "description": "Additional repositories the answer may draw from, for a question whose evidence is spread across the stack (e.g. routing: mq-agent decisions + mq-mcp contracts + mq-hal feedback). `repository` stays the asking/owning repo and is always in scope; this widens the search, it does not replace it. A concern-scoped question needs no new field — express it with `tags`. Optional and additive.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
     "workflow": {
       "type": "string"
     },

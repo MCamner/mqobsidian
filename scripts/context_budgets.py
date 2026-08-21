@@ -11,7 +11,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-
 _CONTRACT = Path(__file__).resolve().parents[1] / ".mq" / "context-budgets.json"
 _DATA = json.loads(_CONTRACT.read_text(encoding="utf-8"))
 

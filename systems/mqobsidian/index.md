@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-08-04
+updated: 2026-08-21
 owner:
 links_to: [hot]
 ---
@@ -14,18 +14,20 @@ links_to: [hot]
 Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade kontextyta.
 
 ## Current state
-`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`. Schema-giltiga routingutfall, inklusive negativa escalation records, kan nu lagras lokalt som append-only JSONL; routingpolicy och rapportering stannar i mq-agent.
+`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`. Release-branchen har nu kontrakt för stackövergripande memory queries och en lokal eval av selection quality; signalemission, routingpolicy och rapportering stannar i mq-agent.
 
 ## Current priorities
 1. Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
-2. Phase 11-kontraktet (11a negative context, 11b block-metadata, 11c feedback-loop) är klart här och producerat/konsumerat i mq-agent (PR #102); nästa producent-spår är mq-agent-emission av feedback-signaler.
-3. Samla verifierade routingutfall per task class inför en separat evidence review.
+2. Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
+3. Samla verifierade routingutfall per task class inför en separat evidence review; aktivera inte automatisk routing från otillräckligt underlag.
 
 ## Key links
 - [[hot]]
 - [[../../memory/learn/agent/mqobsidian]]
 - [[../../docs/roadmap-token-reduction]]
 - [[../../docs/context-budget]]
+- [[../../docs/context-effect]]
+- [[../../docs/FEEDBACK_LOOP]]
 - [[../../templates/context-pack]]
 
 ## Core notes
@@ -45,6 +47,8 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - Vilka repon får en beslutad publik agentyta (och därmed tracked `.mq/context/`)?
 
 ## Recent changes
+- 2026-08-19: Utökade `memory-query.v1` additivt med valfria `repositories` för stackövergripande frågor och lade kontraktet under exportvalidering.
+- 2026-08-19: Lade till `scripts/eval-retrieval.py` för precision, recall, F1, sufficiency och blockverdicts från `feedback-signal.v1`; freshness mäts separat från relevans.
 - 2026-08-04: Lade till en idempotent, fil-låst writer för schema-giltiga `PASS`-routingutfall; lokal historik är gitignorad och kan läsas direkt av `mq-agent route report`.
 - 2026-06-23: Phase 11c (feedback-loop) definierad: `feedback-signal.v1`-schema + sanerat exempel + `docs/FEEDBACK_LOOP.md`, gitignorad `feedback/`-yta, CI-validering, och no-auto-publish-garanti (lokal ADR-007). 11a/11b produceras/konsumeras nu i mq-agent (PR #102).
 - 2026-06-22: ADR-006 stänger exporter-frågan — public-safe `.mq/context/` trackas i målrepo; lokal regen är arbetsmetod; local-only-undantag speglar ADR-005 P6. Roadmapen fick Phase 11 (next context-quality layer: negative context, block-metadata, feedback-loop).
