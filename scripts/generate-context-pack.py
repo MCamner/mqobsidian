@@ -3,12 +3,11 @@
 
 from __future__ import annotations
 
+import sys
 from argparse import ArgumentParser
 from collections.abc import Sequence
 from datetime import datetime, timezone
 from pathlib import Path
-import sys
-
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TEMPLATE = ROOT / "templates" / "context-pack.md"

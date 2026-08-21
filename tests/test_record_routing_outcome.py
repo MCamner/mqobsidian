@@ -8,7 +8,6 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "record-routing-outcome.py"
 SPEC = importlib.util.spec_from_file_location("record_routing_outcome", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None

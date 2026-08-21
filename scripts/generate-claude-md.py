@@ -3,13 +3,12 @@
 
 from __future__ import annotations
 
+import sys
 from argparse import ArgumentParser
 from pathlib import Path
-import sys
 
 from agent_entrypoints import render_claude, write_entrypoint
 from mq_repos import CORE_MQ_REPOS
-
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TEMPLATE = ROOT / "templates" / "CLAUDE.md"

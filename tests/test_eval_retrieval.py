@@ -8,7 +8,6 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "eval-retrieval.py"
 SPEC = importlib.util.spec_from_file_location("eval_retrieval", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None

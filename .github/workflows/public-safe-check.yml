@@ -38,6 +38,17 @@ jobs:
       - name: Check published docs freshness
         run: python3 scripts/check-docs-freshness.py
 
+      # Pinned, not floating. Ruff's rule set changes between releases, and a
+      # gate whose rules move on their own is not reproducible: a bump could turn
+      # a green branch red without a single line of this repo changing. The rule
+      # selection lives in ruff.toml so it is the repo's decision rather than an
+      # editor extension's default — which is what it was before, silently.
+      - name: Lint Python (ruff, pinned)
+        run: |
+          python3 -m pip install ruff==0.16.4
+          ruff --version
+          ruff check .
+
       - name: Run focused unit tests
         run: python3 -m unittest discover -s tests -q
 

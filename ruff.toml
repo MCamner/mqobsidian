@@ -1,0 +1,32 @@
+# Ruff configuration for mqobsidian.
+#
+# This exists so the linted surface is the repo's decision rather than whatever
+# an editor extension happens to default to. Before it, VS Code reported findings
+# from rules this repo had never chosen: I001 hit 15 files in scripts/ and EXE001
+# hit 9, which looked like defects in whichever file was open but were the repo's
+# own long-standing style. A rule set nobody declared is not a standard.
+#
+# The selection below is deliberately narrow: every rule here is clean across
+# scripts/ and tests/ today, so the CI gate starts green and any future failure
+# is a real regression rather than a backlog.
+#
+# NOT selected, and why: ruff's wider families (PL*, SIM*, TRY*, C4*) currently
+# report four findings that are substantive rather than stylistic —
+# subprocess.run without check=, a file opened outside a context manager, a
+# TypeError/ValueError mix-up, and an unnecessary dict() call. Two of them may be
+# real bugs. Enabling those families would mean either fixing them under a lint
+# banner or suppressing them, and both are worse than reviewing them on their own
+# merits. Add a family here only once it is clean.
+
+line-length = 100
+target-version = "py311"
+
+[lint]
+select = [
+    "E4",    # pycodestyle: imports
+    "E7",    # pycodestyle: statement-level errors
+    "E9",    # pycodestyle: syntax / IO errors
+    "F",     # pyflakes: undefined names, unused imports
+    "I",     # isort: import order
+    "EXE",   # flake8-executable: shebang and exec-bit must agree
+]

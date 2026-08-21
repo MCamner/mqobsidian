@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-
 CORE_MQ_REPOS = [
     "mq-agent",
     "mq-mcp",

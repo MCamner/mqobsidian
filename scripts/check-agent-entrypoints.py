@@ -8,8 +8,8 @@ Writes nothing. Wired into the public-safe CI workflow.
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 from agent_entrypoints import check_rendered, render_agents, render_claude
 from mq_repos import CORE_MQ_REPOS
