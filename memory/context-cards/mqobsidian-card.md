@@ -2,7 +2,7 @@
 schema: context-card.v1
 repo: mqobsidian
 role: Durable memory layer and context compressor for the MQ stack
-updated_at: 2026-06-17T00:00:00Z
+updated_at: 2026-08-21T00:00:00Z
 freshness: current
 scope: repo
 publishability: public-safe
@@ -19,6 +19,7 @@ Durable memory layer and context compressor for the MQ stack.
 * reviewed durable memory notes
 * public-safe schemas, templates, and examples
 * context-pack and context-card contracts
+* durable memory-query and feedback-signal contracts
 * agent-readable routing surfaces
 * token-budget guardrails for context surfaces
 
