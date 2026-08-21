@@ -37,7 +37,6 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "schemas" / "feedback-signal.v1.json"
 DEFAULT_INPUT = Path(os.environ.get("MQ_OBSIDIAN_DIR", ROOT)) / "feedback"
@@ -185,7 +184,11 @@ def per_block(signals: list[dict[str, Any]], min_block_signals: int) -> list[dic
         for entry in signal.get("judgments", []):
             counts = tally.setdefault(entry["block"], Counter({j: 0 for j in JUDGMENTS}))
             counts[entry["judgment"]] += 1
-    rows = [
+    # Annotated, not inferred: the literal below is heterogeneous (str, int,
+    # str), so mypy joins the value types to `object` and then rejects the
+    # `-row["total"]` in the sort key. The declared return type does not
+    # propagate backwards into the comprehension.
+    rows: list[dict[str, Any]] = [
         {
             "block": block,
             **{judgment: counts[judgment] for judgment in JUDGMENTS},
