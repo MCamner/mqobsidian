@@ -19,7 +19,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install validation dependencies
-        run: python3 -m pip install -r requirements.txt
+        run: python3 -m pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Validate export scaffolding
         run: python3 scripts/validate-export.py
@@ -45,7 +45,6 @@ jobs:
       # editor extension's default — which is what it was before, silently.
       - name: Lint Python (ruff, pinned)
         run: |
-          python3 -m pip install ruff==0.16.4
           ruff --version
           ruff check .
 

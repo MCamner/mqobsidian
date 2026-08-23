@@ -5,9 +5,8 @@
 
 Live site: <https://mcamner.github.io/mqobsidian/> — durable memory layer for the MQ stack.
 
-`mqobsidian` stores reviewed, reusable, agent-readable knowledge. It is optimized
-to reduce token usage through better read order, smaller context surfaces, and
-clearer truth boundaries.
+`mqobsidian` stores reviewed, reusable, agent-readable knowledge. It reduces
+token usage through better read order, smaller surfaces, and clear truth boundaries.
 
 It is **not**:
 
@@ -40,8 +39,7 @@ useful surface first and stop once the task is grounded:
 4. `systems/mqobsidian/index.md`
 5. relevant context cards or docs only when the smaller surfaces are insufficient
 
-The full reading and truth-boundary rules live in
-[docs/CONTEXT_CONTRACT.md](docs/CONTEXT_CONTRACT.md).
+See [docs/CONTEXT_CONTRACT.md](docs/CONTEXT_CONTRACT.md) for the full rules.
 
 ## Truth boundary
 
@@ -131,6 +129,7 @@ unsanitized review output.
 ## Validation
 
 ```bash
+python3 -m pip install -r requirements.txt -r requirements-dev.txt
 python3 scripts/validate-export.py
 python3 scripts/check-sensitive-content.py
 python3 scripts/check-token-budget.py

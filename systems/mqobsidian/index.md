@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-08-21
+updated: 2026-08-23
 owner:
 links_to: [hot]
 ---
@@ -31,6 +31,8 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - [[../../templates/context-pack]]
 
 ## Core notes
+- [[../../summaries/2026-08-23-mqobsidian-health-and-validation]] — grön lokal validering, reproducerbar Ruff och verifierat evidensgap för retrieval/routing.
+- [[../../summaries/2026-08-23-mqobsidian-learn-command-and-search-fix]] — återställd learn/command-kontext och robust MCP-sökresultat i mq-agent.
 - [[../../README]] — publik roll och repo-layout.
 - [[../../schemas/context-pack.v1]] — task-pack contract.
 - [[../../examples/sanitized-context-pack]] — public-safe exempel.
@@ -47,6 +49,8 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - Vilka repon får en beslutad publik agentyta (och därmed tracked `.mq/context/`)?
 
 ## Recent changes
+- 2026-08-23: Gjorde Ruff 0.16.4 reproducerbar via dev-krav, återställde README-budgetmarginal och bekräftade att verkliga Phase 11c- och routingutfall ännu saknas; se [[../../summaries/2026-08-23-mqobsidian-health-and-validation]].
+- 2026-08-23: Återförde tre verifierade mqobsidian-lärdomar till canonical mq-mcp-store, regenererade command/agent-vyer och fixade `mq-agent learn search` för nästlade MCP-resultat; se [[../../summaries/2026-08-23-mqobsidian-learn-command-and-search-fix]].
 - 2026-08-19: Utökade `memory-query.v1` additivt med valfria `repositories` för stackövergripande frågor och lade kontraktet under exportvalidering.
 - 2026-08-19: Lade till `scripts/eval-retrieval.py` för precision, recall, F1, sufficiency och blockverdicts från `feedback-signal.v1`; freshness mäts separat från relevans.
 - 2026-08-04: Lade till en idempotent, fil-låst writer för schema-giltiga `PASS`-routingutfall; lokal historik är gitignorad och kan läsas direkt av `mq-agent route report`.
