@@ -1,7 +1,7 @@
 ---
 type: agent-view
 system: mqobsidian
-generated: 2026-08-21
+generated: 2026-08-22
 generator: mq-agent agent-views rebuild
 sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md, memory/learn/repos/mqobsidian.md]
 ---
@@ -30,7 +30,9 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 
 ## Relevant lessons
 
-- Document CodeGraph CLI query patterns in mqobsidian integration docs and test-run the tool
+- Document and verify CodeGraph CLI query patterns for mqobsidian
+- Prove the mqobsidian token-reduction MVP with one real context pack before broad rollout
+- Keep mqobsidian context-export cleanup ownership-based and idempotent
 
 ## Read next
 
