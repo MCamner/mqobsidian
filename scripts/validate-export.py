@@ -463,12 +463,14 @@ def main() -> int:
         SCHEMAS / "truth-export-index.v1.json",
         SCHEMAS / "promotion-event.v1.json",
         SCHEMAS / "memory-query.v1.json",
+        SCHEMAS / "notebook-pack.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
         TEMPLATES / "context-card.md",
         TEMPLATES / "AGENTS.md",
         TEMPLATES / "CLAUDE.md",
+        TEMPLATES / "notebook-pack.md",
     ]
     required = required_schemas + required_templates
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
@@ -536,6 +538,9 @@ def main() -> int:
     # full schema conformance plus no machine-specific paths.
     problems.extend(validate_manifest_example(
         EXAMPLES / "memory-query.example.json", parsed_schemas["memory-query.v1.json"]
+    ))
+    problems.extend(validate_manifest_example(
+        EXAMPLES / "notebook-pack.example.json", parsed_schemas["notebook-pack.v1.json"]
     ))
     problems.extend(validate_keyed_manifest(
         EXAMPLES / "memory-score-manifest.example.json",
