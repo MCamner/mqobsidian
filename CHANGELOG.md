@@ -8,6 +8,9 @@
   sanitized manifest example, validation coverage, and a deny-by-default
   NotebookLM bridge policy. mq-agent remains the generator and routing owner;
   generated packs and provider state stay local-only.
+- `.mq/notebooks.json` consumer profile declaring one narrow, public-safe
+  `mq-stack` selection. Materialized output is isolated under ignored
+  `.notebooklm/`; mqobsidian still contains no provider exporter or adapter.
 - `scripts/eval-retrieval.py` — selection-quality measurement. Everything the
   repo measured until now answered "how little context did we send?"; nothing
   answered "did we send the right context?". It scores `feedback-signal.v1`

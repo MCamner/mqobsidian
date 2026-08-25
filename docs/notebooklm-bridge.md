@@ -23,6 +23,18 @@ NotebookLM never writes directly to `decisions/`, `learn/`, `systems/`, or
 other canonical memory. Provider output may later enter the normal inbox and
 human-review flow as a provenance-bearing candidate only.
 
+## Consumer profile
+
+`.mq/notebooks.json` is configuration, not a new memory contract. It declares
+NotebookLM as an experimental read-only consumer, names the existing MQ
+contracts it consumes, and provides narrow include/exclude rules for each
+logical notebook.
+
+The first profile contains only `mq-stack`. Its allowlist targets reviewed,
+tracked Markdown surfaces; it does not include entire `systems/`, `memory/`, or
+vault roots. mq-agent may later consume the profile, but mqobsidian does not
+implement an exporter.
+
 ## Data boundary
 
 Selection is deny-by-default. A source must be explicitly allowlisted and carry
@@ -53,8 +65,9 @@ invalid.
 `generated_at` is excluded, so rebuilding unchanged inputs produces the same
 content hash. mq-agent is the only allowed generator identity.
 
-Generated packs and real notebook identifiers remain local-only. Only the
-schema, template, policy, and sanitized example are published from mqobsidian.
+Generated packs and real notebook identifiers remain under local-only
+`.notebooklm/`. Only the consumer profile, schema, template, policy, and
+sanitized example are published from mqobsidian.
 
 ## Safe workflow
 

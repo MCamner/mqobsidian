@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "provider": "notebooklm",
+  "status": "experimental",
+  "role": "consumer",
+  "write_back": false,
+  "output_root": ".notebooklm",
+  "consumes": [
+    "truth-export-index.v1",
+    "repo-memory-index.v1",
+    "context-pack.v1",
+    "notebook-pack.v1"
+  ],
+  "notebooks": {
+    "mq-stack": {
+      "purpose": "Cross-repository synthesis over reviewed, public-safe MQ architecture and memory contracts.",
+      "classification": "public-safe",
+      "include": [
+        "docs/architecture.md",
+        "docs/decision-records/*.md",
+        "docs/integrations/codegraph.md",
+        "docs/memory-model.md",
+        "memory/context-cards/*.md",
+        "systems/mqobsidian/index.md",
+        "systems/repo-signal/index.md"
+      ],
+      "exclude": [
+        ".codegraph/**",
+        ".notebooklm/**",
+        "inbox/**",
+        "memory/observations/**",
+        "reviews/**",
+        "sessions/**"
+      ]
+    }
+  }
+}

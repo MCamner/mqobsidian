@@ -1389,7 +1389,7 @@ sync implementation to `mqobsidian/scripts/`.
   per-file SHA-256, and a deterministic content hash.
 * [x] Add a canonical template and sanitized example in the existing published
   `templates/` and `examples/` surfaces.
-* [ ] Define local notebook declarations with explicit file/glob allowlists;
+* [x] Define local notebook declarations with explicit file/glob allowlists;
   broad roots such as all of `systems/` or `memory/learn/` are not valid
   defaults.
 * [x] Add deny rules as defense in depth, not as a substitute for allowlists.

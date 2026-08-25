@@ -7,7 +7,7 @@ import json
 import re
 import sys
 from datetime import datetime
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from jsonschema import Draft202012Validator
@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
 TEMPLATES = ROOT / "templates"
 EXAMPLES = ROOT / "examples"
+NOTEBOOK_PROFILE = ROOT / ".mq" / "notebooks.json"
 
 
 def read_frontmatter(path: Path) -> dict[str, object]:
@@ -441,6 +442,61 @@ def validate_measurement(path: Path, schema: dict[str, object]) -> list[str]:
     return problems
 
 
+def validate_notebook_profile(path: Path) -> list[str]:
+    """Validate the provider-neutral NotebookLM consumer configuration."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [f"{path.relative_to(ROOT)}: invalid JSON: {exc}"]
+    if not isinstance(data, dict):
+        return [f"{path.relative_to(ROOT)}: profile must be a JSON object"]
+
+    problems: list[str] = []
+    expected = {
+        "version": 1,
+        "provider": "notebooklm",
+        "status": "experimental",
+        "role": "consumer",
+        "write_back": False,
+        "output_root": ".notebooklm",
+    }
+    for key, value in expected.items():
+        if data.get(key) != value:
+            problems.append(f"{path.relative_to(ROOT)}: `{key}` must be {value!r}")
+
+    notebooks = data.get("notebooks")
+    if not isinstance(notebooks, dict) or not notebooks:
+        return problems + [f"{path.relative_to(ROOT)}: notebooks must be a non-empty object"]
+
+    forbidden_roots = {"*", "**", "systems", "systems/**", "memory", "memory/**"}
+    required_excludes = {
+        ".codegraph/**", ".notebooklm/**", "inbox/**",
+        "memory/observations/**", "reviews/**", "sessions/**",
+    }
+    for notebook_id, notebook in notebooks.items():
+        where = f"{path.relative_to(ROOT)}: notebooks.{notebook_id}"
+        if not isinstance(notebook, dict):
+            problems.append(f"{where} must be an object")
+            continue
+        includes = notebook.get("include")
+        if not isinstance(includes, list) or not includes:
+            problems.append(f"{where}.include must be a non-empty array")
+            includes = []
+        for item in includes:
+            if not isinstance(item, str):
+                problems.append(f"{where}.include entries must be strings")
+                continue
+            parts = PurePosixPath(item).parts
+            if item.startswith("/") or ".." in parts or "\\" in item:
+                problems.append(f"{where}.include contains unsafe path `{item}`")
+            if item.rstrip("/") in forbidden_roots:
+                problems.append(f"{where}.include is too broad: `{item}`")
+        excludes = notebook.get("exclude")
+        if not isinstance(excludes, list) or not required_excludes.issubset(set(excludes)):
+            problems.append(f"{where}.exclude is missing required private surfaces")
+    return problems
+
+
 def main() -> int:
     required_schemas = [
         SCHEMAS / "stack-truth.v1.json",
@@ -472,7 +528,7 @@ def main() -> int:
         TEMPLATES / "CLAUDE.md",
         TEMPLATES / "notebook-pack.md",
     ]
-    required = required_schemas + required_templates
+    required = required_schemas + required_templates + [NOTEBOOK_PROFILE]
     missing = [str(path.relative_to(ROOT)) for path in required if not path.exists()]
     if missing:
         print("missing required export file(s):")
@@ -490,6 +546,7 @@ def main() -> int:
         return 1
 
     problems: list[str] = []
+    problems.extend(validate_notebook_profile(NOTEBOOK_PROFILE))
     context_pack_schema = parsed_schemas["context-pack.v1.json"]
     for path in [EXAMPLES / "sanitized-context-pack.md", ROOT / ".mq" / "context" / "task-pack.md"]:
         if path.exists():

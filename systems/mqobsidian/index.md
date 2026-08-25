@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-08-23
+updated: 2026-08-25
 owner:
 links_to: [hot]
 ---
@@ -14,12 +14,13 @@ links_to: [hot]
 Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade kontextyta.
 
 ## Current state
-`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`. Release-branchen har nu kontrakt för stackövergripande memory queries och en lokal eval av selection quality; signalemission, routingpolicy och rapportering stannar i mq-agent.
+`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`. En experimentell NotebookLM consumer profile återanvänder befintliga truth/context-ytor och kompletteras av `notebook-pack.v1`; ingen provideradapter eller export körs från detta repo.
 
 ## Current priorities
 1. Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
 2. Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
 3. Samla verifierade routingutfall per task class inför en separat evidence review; aktivera inte automatisk routing från otillräckligt underlag.
+4. Håll NotebookLM read-only och lokal tills adapterbeteende, dataapproval och ett avgränsat `mq-stack`-experiment är verifierade.
 
 ## Key links
 - [[hot]]
@@ -28,6 +29,7 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - [[../../docs/context-budget]]
 - [[../../docs/context-effect]]
 - [[../../docs/FEEDBACK_LOOP]]
+- [[../../docs/notebooklm-bridge]]
 - [[../../templates/context-pack]]
 
 ## Core notes
@@ -35,6 +37,7 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - [[../../summaries/2026-08-23-mqobsidian-learn-command-and-search-fix]] — återställd learn/command-kontext och robust MCP-sökresultat i mq-agent.
 - [[../../README]] — publik roll och repo-layout.
 - [[../../schemas/context-pack.v1]] — task-pack contract.
+- [[../../schemas/notebook-pack.v1]] — provenance-kontrakt för valda externa synteskällor.
 - [[../../examples/sanitized-context-pack]] — public-safe exempel.
 - [[../mq-agent/index]] — orchestration och agent-view regeneration.
 - [[../mq-mcp/index]] — bounded MCP tools och runtime contracts.
@@ -43,12 +46,15 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - Context surfaces kan växa till permanenta token-sänkor.
 - Hårdkodade MVP-defaults kan misstas för generell memory query.
 - Duplicerad source-repo-dokumentation i vaulten skapar drift.
+- Extern syntes kan läcka felklassificerat material om allowlist eller operator approval kringgås.
 
 ## Open questions
 - Vilka verkliga uppgifter ska ingå i nästa mätbatch?
 - Vilka repon får en beslutad publik agentyta (och därmed tracked `.mq/context/`)?
+- Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval?
 
 ## Recent changes
+- 2026-08-25: Lade till `notebook-pack.v1`, read-only consumer profile i `.mq/notebooks.json`, lokal `.notebooklm/`-gräns och public-safe bridge-policy; ingen exporter eller adapter ingår.
 - 2026-08-23: Gjorde Ruff 0.16.4 reproducerbar via dev-krav, återställde README-budgetmarginal och bekräftade att verkliga Phase 11c- och routingutfall ännu saknas; se [[../../summaries/2026-08-23-mqobsidian-health-and-validation]].
 - 2026-08-23: Återförde tre verifierade mqobsidian-lärdomar till canonical mq-mcp-store, regenererade command/agent-vyer och fixade `mq-agent learn search` för nästlade MCP-resultat; se [[../../summaries/2026-08-23-mqobsidian-learn-command-and-search-fix]].
 - 2026-08-19: Utökade `memory-query.v1` additivt med valfria `repositories` för stackövergripande frågor och lade kontraktet under exportvalidering.

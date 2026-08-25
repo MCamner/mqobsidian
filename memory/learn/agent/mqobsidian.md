@@ -1,7 +1,7 @@
 ---
 type: agent-view
 system: mqobsidian
-generated: 2026-08-23
+generated: 2026-08-25
 generator: mq-agent agent-views rebuild
 sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md, memory/learn/repos/mqobsidian.md]
 ---
@@ -13,13 +13,14 @@ edit by hand; re-run `mq-agent agent-views rebuild`.
 
 ## Current state
 
-Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa. `mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. Release-branchen innehåller nu både stackövergripande `memory-query.v1` och en eval för selection quality från `feedback-signal.v1`. Reduktion och kvalitet mäts separat; automatisk routing eller publicering är inte aktiverad.
+Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa. `mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. En experimentell, read-only NotebookLM consumer profile och `notebook-pack.v1` finns nu som public-safe kontraktsyta. Ingen adapter, export, sync eller automatisk routing är aktiverad.
 
 ## Active priorities
 
 - Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
 - Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
 - Samla verifierade routingutfall per task class inför en separat evidence review; aktivera inte automatisk routing från otillräckligt underlag.
+- Håll NotebookLM read-only och lokal tills adapterbeteende, dataapproval och ett avgränsat `mq-stack`-experiment är verifierade.
 
 ## Current blockers
 
