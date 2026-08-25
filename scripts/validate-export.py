@@ -5,13 +5,12 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
-import sys
 from typing import Any
 
 from jsonschema import Draft202012Validator
-
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
@@ -463,6 +462,7 @@ def main() -> int:
         SCHEMAS / "views-manifest.v1.json",
         SCHEMAS / "truth-export-index.v1.json",
         SCHEMAS / "promotion-event.v1.json",
+        SCHEMAS / "memory-query.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
@@ -531,6 +531,11 @@ def main() -> int:
 
     problems.extend(validate_promotion_policy(
         EXAMPLES / "promotion-policy.example.json", parsed_schemas["promotion-policy.v1.json"]
+    ))
+    # A query is a record, not a manifest, but the check it needs is the same one:
+    # full schema conformance plus no machine-specific paths.
+    problems.extend(validate_manifest_example(
+        EXAMPLES / "memory-query.example.json", parsed_schemas["memory-query.v1.json"]
     ))
     problems.extend(validate_keyed_manifest(
         EXAMPLES / "memory-score-manifest.example.json",

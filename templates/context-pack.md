@@ -33,8 +33,8 @@ the entries below are tool intentions, not shell commands. Treat returned source
 as already read. Fall back to targeted source reads only for missing, stale, or
 unsupported detail. CodeGraph never replaces source tests or CLI verification.
 
-* `codegraph_context` — map the task first
-* `codegraph_trace` — trace an end-to-end flow
+* `codegraph_explore` — map the task first
+* `codegraph_explore` — trace an end-to-end flow
 * `codegraph_callers` / `codegraph_callees` — walk one call edge
 * `codegraph_impact` — check blast radius before editing
 * `codegraph_node` — inspect one symbol when context omitted it

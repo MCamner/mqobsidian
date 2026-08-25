@@ -1,7 +1,7 @@
 ---
 type: agent-view
 system: mqobsidian
-generated: 2026-08-02
+generated: 2026-08-23
 generator: mq-agent agent-views rebuild
 sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md, memory/learn/repos/mqobsidian.md]
 ---
@@ -13,13 +13,13 @@ edit by hand; re-run `mq-agent agent-views rebuild`.
 
 ## Current state
 
-Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa. `mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. Budgetkontraktet och CI-vakten mot stale exempel är mergade till `main`. `mq-agent context export` är också mergat och läser budgetkontraktet från vaulten med dokumenterad fallback. Fem budgeterade…
+Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa. `mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. Release-branchen innehåller nu både stackövergripande `memory-query.v1` och en eval för selection quality från `feedback-signal.v1`. Reduktion och kvalitet mäts separat; automatisk routing eller publicering är inte aktiverad.
 
 ## Active priorities
 
 - Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
-- Phase 11-kontraktet (11a negative context, 11b block-metadata, 11c feedback-loop) är klart här och producerat/konsumerat i mq-agent (PR #102)…
-- Samla fler effektmätningar från verkliga uppgifter och börja mata feedback-loopen.
+- Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
+- Samla verifierade routingutfall per task class inför en separat evidence review; aktivera inte automatisk routing från otillräckligt underlag.
 
 ## Current blockers
 
@@ -30,7 +30,9 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 
 ## Relevant lessons
 
-- Document CodeGraph CLI query patterns in mqobsidian integration docs and test-run the tool
+- Document and verify CodeGraph CLI query patterns for mqobsidian
+- Prove the mqobsidian token-reduction MVP with one real context pack before broad rollout
+- Keep mqobsidian context-export cleanup ownership-based and idempotent
 
 ## Read next
 

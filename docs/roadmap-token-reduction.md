@@ -1147,6 +1147,8 @@ This turns the idea into measurable architecture value.
 |     8 | CI token gates                | enforce small context                 |
 |     9 | Cross-repo integration        | real MQ-stack function                |
 |    10 | Measurement                   | prove reduction                       |
+|    11 | Context quality               | exclusions, metadata, feedback        |
+|    12 | NotebookLM synthesis bridge   | optional cross-document compression   |
 
 ## Definition of done
 
@@ -1311,3 +1313,180 @@ publishability map and the CI/regen drift gates inherit this decision.
 Phases 1-10 made packs *small*; Phase 11 makes them *right* — fewer wrong
 blocks pulled in, explicit exclusions, and a loop that keeps the gains real
 instead of cosmetic.
+
+## Phase 12 - Experimental NotebookLM Synthesis Bridge
+
+**Version target**
+
+`mqobsidian v0.4.0` (planned; current released version is `v0.3.0`)
+
+**Goal**
+
+Let Codex and Claude Code combine three bounded context sources without reading
+the whole vault or broad repository trees:
+
+```text
+CodeGraph   -> current code structure and call paths
+mqobsidian  -> reviewed decisions, history, risks, and lessons
+NotebookLM  -> synthesis across an explicitly exported source set
+                    |
+                    v
+             compact task context
+                    |
+                    v
+             Codex / Claude Code
+```
+
+NotebookLM is an optional external synthesis provider. It is not canonical
+memory, repository truth, a replacement for CodeGraph, or a required MQ runtime
+dependency.
+
+**Ownership boundary**
+
+* `mqobsidian` owns durable knowledge, notebook definitions, schemas,
+  templates, security policy, and sanitized examples.
+* `mq-agent` owns source selection, pack generation, provider routing, export,
+  sync orchestration, and fallback behavior.
+* CodeGraph owns current structural code discovery; its local index is never
+  copied into durable memory or a NotebookLM source pack.
+* `macos-scripts` may expose operator commands only after the contracts and
+  mq-agent workflow are stable.
+* NotebookLM may read approved exports and return synthesis. It never writes
+  directly to `decisions/`, `learn/`, or other canonical memory.
+
+### 12a - Provider baseline and data boundary
+
+Verify the third-party adapter before adding MQ implementation code. Browser-
+automated authentication and tool names are runtime facts and must not be
+assumed from documentation alone.
+
+* [ ] Record NotebookLM as `EXPERIMENTAL`, optional, and non-critical.
+* [ ] Verify the installed adapter's actual authentication, list, activate,
+  query, source-add, source-update, and source-remove capabilities.
+* [ ] Record the verified tool surface and adapter version without treating it
+  as a stable public MQ contract.
+* [ ] Define which data classifications may leave the local MQ environment.
+* [ ] Prohibit credentials, secrets, personal data, patient data, raw sessions,
+  inbox material, and unreviewed local-rich notes by default.
+* [ ] Require an explicit operator decision before any remote source mutation.
+* [ ] Document retention, removal, and incident handling for exported sources.
+* [ ] Prove that mqobsidian, semantic memory, repo-signal, and CodeGraph still
+  work when NotebookLM is unavailable.
+
+**Gate**
+
+No real MQ content is uploaded until adapter behavior and the data boundary are
+verified. If organizational approval for the material is absent, the phase
+stops at sanitized test data.
+
+### 12b - Declarative notebook and pack contracts
+
+Add a small contract surface to mqobsidian. Do not add an export compiler or
+sync implementation to `mqobsidian/scripts/`.
+
+* [ ] Define `schemas/notebook-pack.v1.json` with logical notebook ID,
+  generator identity, source provenance, classification, source revision,
+  per-file SHA-256, and a deterministic content hash.
+* [ ] Add a canonical template and sanitized example in the existing published
+  `templates/` and `examples/` surfaces.
+* [ ] Define local notebook declarations with explicit file/glob allowlists;
+  broad roots such as all of `systems/` or `memory/learn/` are not valid
+  defaults.
+* [ ] Add deny rules as defense in depth, not as a substitute for allowlists.
+* [ ] Constrain resolved paths to approved mqobsidian roots and reject path
+  traversal, symlinks escaping the vault, binaries, and oversized sources.
+* [ ] Keep generated packs and unsanitized notebook identifiers local-only and
+  gitignored.
+* [ ] Ensure timestamps do not affect the deterministic content hash.
+
+**Expected pack properties**
+
+```text
+reproducible
+provenance-preserving
+classification-aware
+read-only against source notes
+safe to preview before upload
+```
+
+### 12c - One-notebook proof
+
+Build only one `mq-stack` experiment through `mq-agent` before adding
+incremental sync or operator menus.
+
+* [ ] Generate a local `mq-stack` pack from a narrow reviewed allowlist.
+* [ ] Show a dry-run containing every selected source, classification, size,
+  hash, addition, change, and removal.
+* [ ] Run sensitive-content checks before remote upload.
+* [ ] Upload the approved pack manually or through an explicitly confirmed
+  mq-agent operation.
+* [ ] Prepare 5-10 fixed questions that require at least two independent
+  mqobsidian sources.
+* [ ] Verify answer claims against the original source paths and revisions.
+* [ ] Compare NotebookLM synthesis with direct compact-memory retrieval and a
+  raw-Markdown baseline.
+* [ ] Record usefulness, missing context, noise, latency, and context delivered
+  to Codex or Claude without storing full provider responses by default.
+
+**Success criteria**
+
+* [ ] NotebookLM gives materially useful cross-document synthesis on the fixed
+  question set.
+* [ ] Codex and Claude receive a smaller grounded result than the corresponding
+  broad source set.
+* [ ] Provenance is sufficient to verify every evaluated answer.
+* [ ] No forbidden or unapproved source is present in the remote notebook.
+* [ ] Provider failure leaves the existing MQ retrieval path usable.
+
+The existing 95.4% first-read reduction demonstrates the value of compact MQ
+context, not the value of NotebookLM. Phase 12 must measure its own incremental
+token benefit before claiming an additional saving.
+
+### 12d - Task routing for Codex and Claude
+
+Route by question type so the external provider is not called for work that a
+smaller local source can answer.
+
+```text
+code location / impact       -> CodeGraph
+decision / history / lesson  -> mqobsidian read order or memory query
+live behavior                -> source repo, tests, or bounded runtime tool
+cross-document synthesis     -> NotebookLM, when available and approved
+```
+
+* [ ] Add an optional `cross_document_synthesis` provider capability in
+  mq-agent; do not encode provider routing in mqobsidian.
+* [ ] Use mqobsidian agent views, hot/index notes, and context cards before
+  expanding to full notes.
+* [ ] Use CodeGraph before broad grep/read loops for source-heavy questions.
+* [ ] Call NotebookLM only when multiple approved documents must be compared or
+  synthesized.
+* [ ] Return a compact synthesis plus provenance, not the complete notebook
+  conversation, to Codex and Claude.
+* [ ] Fall back to existing retrieval when the adapter is unavailable, stale,
+  unauthorized, or unnecessary.
+* [ ] Run routing in shadow mode and collect real outcomes before enabling an
+  automatic policy.
+
+### 12e - Deferred automation
+
+These items remain explicitly deferred until the one-notebook proof passes.
+
+* [ ] Add incremental source status: `SYNCED`, `STALE`, `MISSING`, `ERROR`, and
+  `UNAVAILABLE`.
+* [ ] Add separate mq-agent `pack`, `diff`, and confirmed `sync` operations.
+* [ ] Add a bounded macos-scripts operator surface for status, pack, diff,
+  sync, ask, open, and doctor.
+* [ ] Allow reviewed repo-signal observations with repository commit provenance
+  while keeping observations distinct from documented decisions.
+* [ ] Accept NotebookLM output only as a provenance-bearing candidate insight
+  routed through the existing inbox and human review process.
+* [ ] Reassess provider stability and measured benefit before making any part
+  of the integration a supported MQ capability.
+
+**Definition of done**
+
+Phase 12 is complete only when one approved notebook passes the fixed question
+set, provenance and security gates pass, Codex and Claude can consume a compact
+result through mq-agent, fallback is demonstrated, and measured results show an
+incremental benefit over CodeGraph plus mqobsidian alone.

@@ -30,6 +30,10 @@ Those responsibilities stay with the operating repos:
 * `mq-hal` summarizes operator state
 * `mq-ums` owns enterprise endpoint workflows
 
+The boundary runs both ways: `mq-hal` routes next actions but does not generate
+context packs or write durable memory, and `mqlaunch` reads or delegates but
+never owns truth.
+
 ## Data flow
 
 ```text

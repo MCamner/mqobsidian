@@ -26,6 +26,11 @@
     // Agent/skill definitions embed example fences the linter mis-pairs.
     ".claude/**",
     ".agents/**",
-    ".github/ISSUE_TEMPLATE/**"
+    ".github/ISSUE_TEMPLATE/**",
+    // Preserved imports. The contract for _guides/ is that the body is never
+    // touched — each file records a body_sha256 so the preservation can be
+    // verified — so a lint rule here would be asking for the one edit the area
+    // exists to prevent. The area's own README is hand-authored and stays in.
+    "_guides/saved-guides-md-export/**"
   ]
 }

@@ -3,10 +3,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import re
 import sys
-
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCAN_DIRS = ["README.md", "docs", "schemas", "templates", "examples"]

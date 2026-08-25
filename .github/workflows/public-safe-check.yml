@@ -19,7 +19,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install validation dependencies
-        run: python3 -m pip install -r requirements.txt
+        run: python3 -m pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Validate export scaffolding
         run: python3 scripts/validate-export.py
@@ -32,6 +32,21 @@ jobs:
 
       - name: Check context front doors
         run: python3 scripts/check-context-links.py
+
+      # docs/memory-model.md is fed to agents by mq-mcp's semantic memory pack,
+      # so a stale contract list there reaches consumers, not just readers.
+      - name: Check published docs freshness
+        run: python3 scripts/check-docs-freshness.py
+
+      # Pinned, not floating. Ruff's rule set changes between releases, and a
+      # gate whose rules move on their own is not reproducible: a bump could turn
+      # a green branch red without a single line of this repo changing. The rule
+      # selection lives in ruff.toml so it is the repo's decision rather than an
+      # editor extension's default — which is what it was before, silently.
+      - name: Lint Python (ruff, pinned)
+        run: |
+          ruff --version
+          ruff check .
 
       - name: Run focused unit tests
         run: python3 -m unittest discover -s tests -q

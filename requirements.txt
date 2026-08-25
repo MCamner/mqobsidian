@@ -5,5 +5,7 @@
 # never inspected. That gap shipped `ebms_state` in the published bundle (#45).
 #
 # A partial schema engine that silently passes invalid data is worse than an
-# honest dependency. Pinned to a major to keep validation behaviour stable.
+# honest dependency. Runtime and typing packages are pinned to a major so the
+# validator stays checkable by both Python and mypy.
 jsonschema>=4.21,<5
+types-jsonschema>=4.21,<5

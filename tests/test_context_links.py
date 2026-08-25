@@ -1,8 +1,7 @@
-from pathlib import Path
-from tempfile import TemporaryDirectory
 import importlib.util
 import unittest
-
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "check-context-links.py"

@@ -3,11 +3,11 @@
 
 from __future__ import annotations
 
+import sys
 from argparse import ArgumentParser
+from collections.abc import Sequence
 from datetime import datetime, timezone
 from pathlib import Path
-import sys
-
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TEMPLATE = ROOT / "templates" / "context-pack.md"
@@ -47,7 +47,7 @@ def coerce_exclusion(raw: object) -> dict[str, str] | None:
     return None
 
 
-def merge_exclusions(*groups: list[object]) -> list[dict[str, str]]:
+def merge_exclusions(*groups: Sequence[object]) -> list[dict[str, str]]:
     """Coerce, dedupe (by kind+item, first reason wins), order by kind severity."""
     seen: set[tuple[str, str]] = set()
     collected: list[dict[str, str]] = []
@@ -173,11 +173,11 @@ def build_codegraph_queries(
         return []
 
     queries = [
-        f"* `codegraph_context` — map task \"{_sanitize_query(task)}\" in `{target}` first."
+        f"* `codegraph_explore` — map task \"{_sanitize_query(task)}\" in `{target}` first."
     ]
     task_key = task.lower()
     if any(token in task_key for token in ("trace", "code flow", "code-flow", "call graph")):
-        queries.append("* `codegraph_trace` — trace the end-to-end flow described by the task.")
+        queries.append("* `codegraph_explore` — trace the end-to-end flow described by the task.")
     for symbol in symbols:
         symbol = symbol.strip()
         if not symbol:

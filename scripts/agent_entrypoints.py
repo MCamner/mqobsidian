@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Shared helpers and guardrails for the MQ agent-entrypoint generators.
 
 Holds the canonical AGENTS.md contract (the sections that must survive any
@@ -9,9 +8,9 @@ clobber uncommitted / untracked agent files in a target repo.
 
 from __future__ import annotations
 
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 LINEAGE = "superset-v1"
 LINEAGE_MARKER = f"mq-template-lineage: {LINEAGE}"

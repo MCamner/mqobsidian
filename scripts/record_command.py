@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
 COMMANDS = ROOT / "memory" / "commands"
 PATTERNS = COMMANDS / "patterns" / "patterns.jsonl"

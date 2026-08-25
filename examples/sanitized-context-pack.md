@@ -38,7 +38,7 @@ summary: Focus on vault path standardization between mq-mcp legacy writers and m
 Use the installed CodeGraph MCP tools directly. Treat returned source as already
 read; fall back to targeted reads only for missing, stale, or unsupported detail.
 
-* `codegraph_context` — map task "Fix mq-mcp brain writer paths" in `mq-mcp` first
+* `codegraph_explore` — map task "Fix mq-mcp brain writer paths" in `mq-mcp` first
 * `codegraph_node` — inspect `runtime/memory/obsidian_writer.py` if context omitted it
 
 ## Exclusions

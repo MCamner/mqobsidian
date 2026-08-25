@@ -4,6 +4,34 @@
 
 ### Added
 
+- `scripts/eval-retrieval.py` — selection-quality measurement. Everything the
+  repo measured until now answered "how little context did we send?"; nothing
+  answered "did we send the right context?". It scores `feedback-signal.v1`
+  records as a gold label set (`useful` = true positive, `noise` = false
+  positive, `missing` = false negative) and reports precision, recall, F1, pack
+  sufficiency, and per-block `keep`/`downgrade`/`widen-or-create`/`refresh`
+  verdicts. No new contract: the existing feedback vocabulary is the label set.
+  `stale` is kept out of precision and recall — it is a freshness verdict on a
+  correctly selected block, and the two axes stay separate. Rank metrics
+  (Recall@K, MRR) are deliberately not reported: the contract records judgments
+  as an unordered set, so any rank number would measure list order.
+- `memory-query.v1` extended additively with optional `repositories`, so one
+  query can span the stack (routing evidence lives in mq-agent decisions,
+  mq-mcp contracts, and mq-hal feedback at once). `repository` still names the
+  asking repo; concern-scoped questions still use `tags`.
+- `memory-query.v1` and its example are now covered by `validate-export.py`,
+  which never validated them before.
+
+## [0.3.0] - 2026-08-05
+
+### Added
+
+- Explicit ownership metadata for all 23 truth and memory contracts in
+  `.mq/repo-contract.json`.
+- Structured context-pack exclusion proof with kind, item, and reason.
+- A file-locked, append-only writer for schema-valid model-routing outcomes,
+  including negative escalation evidence without raw model output.
+- Shared Codex and Claude guidance for consuming model-routing contracts.
 - `release-check.sh` — canonical read-only releasability entrypoint conforming
   to `repo_release_check.v1`. `--json` emits the machine-readable verdict
   (`schema`, `repo`, `status`, `blockers`, `warnings`, `evidence`) and exits 0;
