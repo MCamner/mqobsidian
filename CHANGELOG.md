@@ -11,6 +11,12 @@
 - `.mq/notebooks.json` consumer profile declaring one narrow, public-safe
   `mq-stack` selection. Materialized output is isolated under ignored
   `.notebooklm/`; mqobsidian still contains no provider exporter or adapter.
+- Five-question `MQ Stack Intelligence` evaluation with explicit local
+  baselines, provenance/abstention scoring, and separate reviewed mqobsidian
+  versus deferred, revision-bound CodeGraph source lanes.
+- `notebook-pack.v1` revisions now require a `dirty` flag, so a manifest can no
+  longer imply that a source is commit-bound when its SHA-256 describes
+  uncommitted working-tree content.
 - `scripts/eval-retrieval.py` — selection-quality measurement. Everything the
   repo measured until now answered "how little context did we send?"; nothing
   answered "did we send the right context?". It scores `feedback-signal.v1`

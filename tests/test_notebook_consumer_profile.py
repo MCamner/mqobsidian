@@ -48,6 +48,22 @@ class NotebookConsumerProfile(unittest.TestCase):
         for notebook in self.profile["notebooks"].values():
             self.assertTrue(required.issubset(set(notebook["exclude"])))
 
+    def test_first_notebook_has_reviewed_and_deferred_observed_lanes(self):
+        notebook = self.profile["notebooks"]["mq-stack-intelligence"]
+        self.assertEqual(notebook["display_name"], "MQ Stack Intelligence")
+        self.assertEqual(
+            notebook["source_lanes"]["reviewed"],
+            {"provider": "mqobsidian", "status": "active"},
+        )
+        self.assertEqual(
+            notebook["source_lanes"]["observed"],
+            {
+                "provider": "codegraph",
+                "status": "deferred",
+                "requires_revision": True,
+            },
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

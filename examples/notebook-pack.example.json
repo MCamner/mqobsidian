@@ -1,7 +1,7 @@
 {
   "schema": "notebook-pack.v1",
   "notebook": {
-    "id": "mq-stack",
+    "id": "mq-stack-intelligence",
     "purpose": "Cross-document synthesis over reviewed MQ architecture and decisions."
   },
   "generated_at": "2026-08-25T18:30:00Z",
@@ -17,7 +17,8 @@
       "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "revision": {
         "repository": "mqobsidian",
-        "commit": "b44cfa8"
+        "commit": "b44cfa8",
+        "dirty": true
       }
     },
     {
@@ -27,7 +28,8 @@
       "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       "revision": {
         "repository": "mqobsidian",
-        "commit": "b44cfa8"
+        "commit": "b44cfa8",
+        "dirty": false
       }
     }
   ],

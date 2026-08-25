@@ -12,9 +12,21 @@
     "notebook-pack.v1"
   ],
   "notebooks": {
-    "mq-stack": {
+    "mq-stack-intelligence": {
+      "display_name": "MQ Stack Intelligence",
       "purpose": "Cross-repository synthesis over reviewed, public-safe MQ architecture and memory contracts.",
       "classification": "public-safe",
+      "source_lanes": {
+        "reviewed": {
+          "provider": "mqobsidian",
+          "status": "active"
+        },
+        "observed": {
+          "provider": "codegraph",
+          "status": "deferred",
+          "requires_revision": true
+        }
+      },
       "include": [
         "docs/architecture.md",
         "docs/decision-records/*.md",

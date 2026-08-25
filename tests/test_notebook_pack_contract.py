@@ -44,6 +44,27 @@ class NotebookPackContract(unittest.TestCase):
         candidate["generator"]["name"] = "mqobsidian"
         self.assertTrue(list(self.validator.iter_errors(candidate)))
 
+    def test_revision_records_working_tree_cleanliness(self):
+        """A commit-stamped source must be able to declare it was dirty.
+
+        Without this, a manifest can claim a source came from commit X while
+        its sha256 describes uncommitted working-tree content.
+        """
+        candidate = json.loads(json.dumps(self.example))
+        candidate["sources"][0]["revision"]["dirty"] = True
+        self.assertEqual(list(self.validator.iter_errors(candidate)), [])
+
+    def test_revision_dirty_must_be_boolean(self):
+        candidate = json.loads(json.dumps(self.example))
+        candidate["sources"][0]["revision"]["dirty"] = "yes"
+        self.assertTrue(list(self.validator.iter_errors(candidate)))
+
+    def test_revision_must_declare_dirty(self):
+        """Omitting the flag is not allowed: silence would read as clean."""
+        candidate = json.loads(json.dumps(self.example))
+        candidate["sources"][0]["revision"].pop("dirty", None)
+        self.assertTrue(list(self.validator.iter_errors(candidate)))
+
 
 if __name__ == "__main__":
     unittest.main()
