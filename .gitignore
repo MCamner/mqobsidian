@@ -71,7 +71,6 @@ __pycache__/
 # The bundle is a build artifact; schemas and examples are the tracked contract.
 /exports/
 
-# Local NotebookLM state and generated packs. Only schemas, templates, policy,
-# and sanitized examples are publishable.
-/notebook-packs/
-/notebooklm/
+# Local NotebookLM state and generated packs. Only the consumer profile,
+# schemas, templates, policy, and sanitized examples are publishable.
+/.notebooklm/
