@@ -1360,15 +1360,15 @@ Verify the third-party adapter before adding MQ implementation code. Browser-
 automated authentication and tool names are runtime facts and must not be
 assumed from documentation alone.
 
-* [ ] Record NotebookLM as `EXPERIMENTAL`, optional, and non-critical.
+* [x] Record NotebookLM as `EXPERIMENTAL`, optional, and non-critical.
 * [ ] Verify the installed adapter's actual authentication, list, activate,
   query, source-add, source-update, and source-remove capabilities.
 * [ ] Record the verified tool surface and adapter version without treating it
   as a stable public MQ contract.
-* [ ] Define which data classifications may leave the local MQ environment.
-* [ ] Prohibit credentials, secrets, personal data, patient data, raw sessions,
+* [x] Define which data classifications may leave the local MQ environment.
+* [x] Prohibit credentials, secrets, personal data, patient data, raw sessions,
   inbox material, and unreviewed local-rich notes by default.
-* [ ] Require an explicit operator decision before any remote source mutation.
+* [x] Require an explicit operator decision before any remote source mutation.
 * [ ] Document retention, removal, and incident handling for exported sources.
 * [ ] Prove that mqobsidian, semantic memory, repo-signal, and CodeGraph still
   work when NotebookLM is unavailable.
@@ -1384,18 +1384,18 @@ stops at sanitized test data.
 Add a small contract surface to mqobsidian. Do not add an export compiler or
 sync implementation to `mqobsidian/scripts/`.
 
-* [ ] Define `schemas/notebook-pack.v1.json` with logical notebook ID,
+* [x] Define `schemas/notebook-pack.v1.json` with logical notebook ID,
   generator identity, source provenance, classification, source revision,
   per-file SHA-256, and a deterministic content hash.
-* [ ] Add a canonical template and sanitized example in the existing published
+* [x] Add a canonical template and sanitized example in the existing published
   `templates/` and `examples/` surfaces.
 * [ ] Define local notebook declarations with explicit file/glob allowlists;
   broad roots such as all of `systems/` or `memory/learn/` are not valid
   defaults.
-* [ ] Add deny rules as defense in depth, not as a substitute for allowlists.
+* [x] Add deny rules as defense in depth, not as a substitute for allowlists.
 * [ ] Constrain resolved paths to approved mqobsidian roots and reject path
   traversal, symlinks escaping the vault, binaries, and oversized sources.
-* [ ] Keep generated packs and unsanitized notebook identifiers local-only and
+* [x] Keep generated packs and unsanitized notebook identifiers local-only and
   gitignored.
 * [ ] Ensure timestamps do not affect the deterministic content hash.
 

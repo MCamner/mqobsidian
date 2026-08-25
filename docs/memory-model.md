@@ -1,6 +1,6 @@
 # mqobsidian Memory Model
 
-This repo models MQ memory as structured, reviewable layers. It owns 23
+This repo models MQ memory as structured, reviewable layers. It owns 24
 contracts, each declared in `.mq/repo-contract.json` and backed by a
 `schemas/<name>.v1.json` file. Consumer repos may validate against these shapes
 but must not redefine them locally.
@@ -53,6 +53,7 @@ See `docs/TRUTH_SURFACES.md` for the surface boundary and freshness markers.
 | --- | --- |
 | `context-pack.v1` | Small task-scoped context bundles for Codex and Claude Code. |
 | `context-card.v1` | Compact per-repo card feeding pack generation. |
+| `notebook-pack.v1` | Deterministic, provenance-bearing source set for optional external synthesis. |
 
 ## CodeGraph metadata
 
