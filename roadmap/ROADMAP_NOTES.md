@@ -2,7 +2,7 @@
 
 # ROADMAP_NOTES
 
-_Updated 2026-06-27._
+_Updated 2026-08-25._
 
 ## Current state
 
@@ -24,9 +24,13 @@ Priority:
 Acquire more real data — do not build the next abstraction layer yet.
 ```
 
-Today, exactly **one** producer actually emits during real work (command-pattern,
-~7 real observations). repo-signal / mq-mcp / mq-agent emit nothing yet — the
-"producer #2" used so far is **synthetic fixtures** (`memory/fixtures/`).
+Today, **three** producers have emitted during real work: Claude, Codex, and
+repo-signal. The local observation surface contains 15 real observations
+(Claude 9, Codex 2, repo-signal 4). Synthetic fixtures under
+`memory/fixtures/` remain architecture tests and do not count as evidence.
+
+The producer gate is complete. The binding gap is cross-producer overlap: no
+`proposed_memory_key` currently appears from two independent producers.
 
 ## Two tracks (decision 2026-06-27)
 
@@ -42,14 +46,27 @@ promotions, ≥1 merge conflict).
 
 ## What advances things from here
 
-1. **Real data, slowly** — run normal work (roadmap, reviews, PRs, Atlas sessions);
-   let the command-pattern producer accumulate genuine observations.
-2. **Optionally, one real emitter** — if volume stays too low, wire a genuine
-   `memory-observation.v1` emitter into repo-signal (the deferred cross-repo step).
-   That is the only thing that makes the multi-producer data _real_.
-3. **Stress-tests, in parallel** — labelled fixtures in `memory/fixtures/` to pin
-   down DD-001 (downgrade/feedback binding) and DD-003 (cross-producer merge).
-   These inform design, never readiness.
+1. [ ] **Real data, slowly** — continue normal roadmap, review, PR, and Atlas
+   work. Current volume is 15/25 real observations; do not run empty work only
+   to increase the count.
+2. [x] **One real emitter** — repo-signal has an opt-in, failure-isolated
+   `memory-observation.v1` emitter and has produced four real observations.
+3. [x] **Stress-tests, in parallel** — labelled fixtures under
+   `memory/fixtures/` exercise DD-001 (downgrade/feedback binding) and DD-003
+   (cross-producer merge). They inform design but never readiness.
+
+## Current readiness — 2026-08-25
+
+| Gate | Target | Actual | Status |
+|------|-------:|-------:|:------:|
+| Real producers | ≥3 | 3 | ✅ |
+| Real observations | ≥25 | 15 | ❌ |
+| Shared `memory_id` / proposed key | ≥5 | 0 | ❌ |
+| Cross-producer promotions | ≥3 | 0 | ❌ |
+| Real merge conflict | ≥1 | 0 | ❌ |
+
+A real repo-signal inspection of mqobsidian on 2026-08-25 returned public
+readiness 16/16 and no issue. The emitter correctly wrote no observation.
 
 ## CodeGraph boundary (ADR-009, 2026-06-27)
 
