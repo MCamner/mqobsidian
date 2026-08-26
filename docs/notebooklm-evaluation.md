@@ -77,3 +77,64 @@ Proceed beyond the manual one-notebook proof only if:
 
 If the candidate does not beat the local baselines, keep NotebookLM optional
 and do not build incremental sync, automatic routing, or write-back.
+
+## Result — 2026-08-26
+
+Executed against all three baselines. Candidate: 22 sources from
+`notebook-pack.v1` at commit `2b06cafa`, content hash `ee051683`, no forbidden
+source present.
+
+| Question | NotebookLM | Compact MQ | MQ + CodeGraph |
+| --- | ---: | ---: | ---: |
+| 1 Responsibilities | 7 | 7 | 7 |
+| 2 Contracts | 7 | 7 | 7 |
+| 3 Roadmap gaps | 7 | 7 | 7 |
+| 4 Code contradictions | 7 | 7 | 8 |
+| 5 Gates | 6 | 8 | 8 |
+| **Total** | **34** | **36** | **37** |
+
+Context delivered: 1704 lines to the provider, 250 lines locally (agent view
+41, hot 55, index 80, codegraph card 58, plus a contract table). Questions 3–5
+were grounded after 176 lines; only 1 and 2 required expansion.
+
+### Where the differences are
+
+**Question 5 — the candidate lost a groundedness point to a factual error.**
+It claimed manifests require "verification that the working directory is not
+dirty". The schema requires `dirty` to be *declared*, not to be false. It read
+the sentence in `systems/mqobsidian/index.md` and turned a disclosure rule into
+a gate. Both baselines read the same sentence and did not.
+
+**Question 4 — CodeGraph won the only point.** All three correctly abstained
+from claiming anything about current code. CodeGraph could then actually look:
+`validate_notebook_profile` in `scripts/validate-export.py` is a validator, not
+an exporter, and no networking library is imported anywhere in `scripts/`. That
+is an observed fact neither of the other two could produce.
+
+**Questions 1–3 were a draw** — same claims, same sources, more words.
+
+### Verdict: gate fails
+
+The gate requires the candidate to improve cross-source completeness or
+compactness *without* reducing groundedness or correct abstention. The outcome
+was the inverse: lower groundedness (one factual error no baseline made) and
+7x worse compactness. No question was answered better than locally.
+
+Per this document's own rule, NotebookLM stays optional. Do not build
+incremental sync, automatic routing, or write-back. Roadmap **12f** (cross-repo
+contract distribution) is debt that should not be paid: it existed to serve a
+consumer that has not earned it.
+
+### Limits of this measurement
+
+Two, stated so the result is not over-read:
+
+1. **Not blind.** The same agent scored the candidate and the baselines.
+2. **The corpus was pre-compressed.** All 22 sources are reviewed, distilled
+   vault material — context cards exist precisely to compress repo knowledge.
+   Asking a synthesis provider to beat local retrieval on the artifacts local
+   retrieval already produced is close to a rigged comparison. The provider's
+   plausible strength is synthesis over material that has *not* been distilled.
+
+A fair retest is specified in `12g`. This result stands for the reviewed
+corpus, not for NotebookLM in general.

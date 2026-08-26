@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-08-25
+updated: 2026-08-26
 owner:
 links_to: [hot]
 ---
@@ -51,9 +51,10 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 ## Open questions
 - Vilka verkliga uppgifter ska ingå i nästa mätbatch?
 - Vilka repon får en beslutad publik agentyta (och därmed tracked `.mq/context/`)?
-- Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval?
+- Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval? (Teknisk nytta är nu mätt och utebliven; frågan kvarstår organisatoriskt.)
 
 ## Recent changes
+- 2026-08-26: Körde NotebookLM-proven mot alla tre baslinjer: 34/40 mot 36 och 37. Beslutsgaten faller — provider förblir valfri, ingen sync/routing/write-back, och skuld 12f ska inte betalas. Ett faktafel i kandidatens svar (dirty som gate i stället för deklaration) och 1704 levererade rader mot 250 lokalt. Rättvist omtest på odestillerat material specas i roadmap 12g; se [[../../docs/notebooklm-evaluation]].
 - 2026-08-25: Lade till `notebook-pack.v1`, read-only `mq-stack-intelligence`-profil, fem fasta evalfrågor och lokal `.notebooklm/`-gräns; CodeGraph-lanen är revision-bunden och fortsatt deferred. `revision` kräver nu `dirty`, så ett manifest inte kan påstå commit-bundet innehåll när sha256 beskriver ocommittat arbetsträd.
 - 2026-08-23: Gjorde Ruff 0.16.4 reproducerbar via dev-krav, återställde README-budgetmarginal och bekräftade att verkliga Phase 11c- och routingutfall ännu saknas; se [[../../summaries/2026-08-23-mqobsidian-health-and-validation]].
 - 2026-08-23: Återförde tre verifierade mqobsidian-lärdomar till canonical mq-mcp-store, regenererade command/agent-vyer och fixade `mq-agent learn search` för nästlade MCP-resultat; se [[../../summaries/2026-08-23-mqobsidian-learn-command-and-search-fix]].
