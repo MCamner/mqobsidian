@@ -1416,28 +1416,37 @@ incremental sync or operator menus.
 
 * [x] Generate a local `mq-stack-intelligence` pack from a narrow reviewed allowlist.
   Verified in preview against the real vault: 22 sources, nothing written.
-* [ ] Show a dry-run containing every selected source, classification, size,
+* [x] Show a dry-run containing every selected source, classification, size,
   hash, addition, change, and removal.
-* [ ] Run sensitive-content checks before remote upload.
-* [ ] Upload the approved pack manually or through an explicitly confirmed
-  mq-agent operation.
+* [x] Run sensitive-content checks before remote upload. One real hit
+  (`/Users/mansys/repo-signal` quoted inside DEC-004) — already public on
+  GitHub and passed by the repo's own gate; four were false positives on the
+  repo's own "token reduction" vocabulary.
+* [x] Upload the approved pack manually or through an explicitly confirmed
+  mq-agent operation. Manual; the exporter has no network code.
 * [x] Prepare 5-10 fixed questions that require at least two independent
   mqobsidian sources.
-* [ ] Verify answer claims against the original source paths and revisions.
-* [ ] Compare NotebookLM synthesis with direct compact-memory retrieval and a
-  raw-Markdown baseline.
-* [ ] Record usefulness, missing context, noise, latency, and context delivered
+* [x] Verify answer claims against the original source paths and revisions.
+  One claim was false: the candidate turned `revision.dirty` from a disclosure
+  rule into a "working tree must be clean" gate.
+* [x] Compare NotebookLM synthesis with direct compact-memory retrieval and a
+  raw-Markdown baseline. 34 / 36 / 37 of 40; see
+  `docs/notebooklm-evaluation.md`.
+* [x] Record usefulness, missing context, noise, latency, and context delivered
   to Codex or Claude without storing full provider responses by default.
+  1704 lines to the provider against 250 locally.
 
 **Success criteria**
 
-* [ ] NotebookLM gives materially useful cross-document synthesis on the fixed
-  question set.
-* [ ] Codex and Claude receive a smaller grounded result than the corresponding
-  broad source set.
-* [ ] Provenance is sufficient to verify every evaluated answer.
-* [ ] No forbidden or unapproved source is present in the remote notebook.
-* [ ] Provider failure leaves the existing MQ retrieval path usable.
+* [ ] **Not met.** NotebookLM scored 34/40 against 36 (compact MQ) and 37
+  (MQ + CodeGraph). No question was answered better than locally.
+* [ ] **Not met.** The provider consumed 1704 lines to answer what compact
+  retrieval answered on 250.
+* [x] Met, but only after a fix: source headers shipped as HTML comments,
+  which NotebookLM rejected as invalid and which no reader could cite
+  (mq-agent #208).
+* [x] Met. 22 allowlisted sources, all `public-safe`, all commit-bound.
+* [x] Met by construction: the baselines are the normal read path.
 
 The existing 95.4% first-read reduction demonstrates the value of compact MQ
 context, not the value of NotebookLM. Phase 12 must measure its own incremental
@@ -1491,15 +1500,42 @@ Invariant:
 mqobsidian remains the sole contract owner.
 ```
 
-This is accepted debt, not a blocker: the gap is visible, locally testable, and
-mechanical to repair. Do not build distribution infrastructure before the
-one-notebook proof shows the sources are worth distributing.
+**Do not pay this debt.** The one-notebook proof (12c, 2026-08-26) found the
+consumer does not beat local retrieval, so there is nothing worth distributing
+to it. The vendored copy plus its local drift test is the correct permanent
+resting place until a consumer earns more. Revisit only if 12g changes the
+verdict.
 
 * [ ] Decide a distribution mechanism (published package, generated export
   surface, or CI-enforced sync) without moving contract ownership.
 * [ ] Fail a consumer's CI on drift, not only a developer's local run.
 * [ ] Keep consumer repos able to validate the contract and unable to redefine
   it.
+
+### 12g - Fair retest on undistilled material
+
+The 12c result is valid for the corpus it used and no wider. All 22 sources
+were reviewed, pre-compressed vault artifacts — context cards exist precisely
+to compress repo knowledge into a few hundred lines. Asking a synthesis
+provider to beat local retrieval on the artifacts local retrieval already
+produced tests the wrong thing: the compression had already happened, so the
+only remaining variable was word count.
+
+The provider's plausible strength is the opposite case: many long documents
+nobody has distilled, where the local baseline is not a context card but a
+grep loop across raw text.
+
+* [ ] Assemble a corpus local retrieval has *not* already compressed — raw
+  `inbox/` captures, full source-repo docs, long external references — sized
+  where a compact card does not yet exist.
+* [ ] Keep the same five-dimension scoring and the same abstention rule, so
+  the two runs stay comparable.
+* [ ] Make the baseline honest: the local comparison must be the real cost of
+  answering from that raw material, not a card that summarizes it.
+* [ ] Score blind if practical — the 12c run had the same agent scoring
+  candidate and baselines.
+* [ ] Accept a null result. If the provider does not win on undistilled
+  material either, close Phase 12 rather than looking for a third corpus.
 
 ### 12e - Deferred automation
 

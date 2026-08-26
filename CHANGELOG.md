@@ -17,6 +17,10 @@
 - `notebook-pack.v1` revisions now require a `dirty` flag, so a manifest can no
   longer imply that a source is commit-bound when its SHA-256 describes
   uncommitted working-tree content.
+- NotebookLM one-notebook proof executed against all three baselines: 34/40
+  against 36 (compact MQ) and 37 (MQ + CodeGraph). The decision gate fails, so
+  the provider stays optional and roadmap 12f is debt that should not be paid.
+  A fair retest on undistilled material is specified as 12g.
 - `scripts/eval-retrieval.py` — selection-quality measurement. Everything the
   repo measured until now answered "how little context did we send?"; nothing
   answered "did we send the right context?". It scores `feedback-signal.v1`

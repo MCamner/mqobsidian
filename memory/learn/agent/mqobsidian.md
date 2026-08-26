@@ -1,7 +1,7 @@
 ---
 type: agent-view
 system: mqobsidian
-generated: 2026-08-25
+generated: 2026-08-26
 generator: mq-agent agent-views rebuild
 sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md, memory/learn/repos/mqobsidian.md]
 ---

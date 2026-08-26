@@ -4,7 +4,7 @@ system: mqobsidian
 status: active
 max_words: 500
 tags: [hot, cache, active-context]
-updated: 2026-08-25
+updated: 2026-08-26
 owner:
 links_to: [index]
 ---
@@ -34,7 +34,8 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 - `scripts/eval-retrieval.py` mäter precision, recall och F1 från lokala feedback-signaler utan att ändra kontrakt eller publicera rådata.
 - `memory-query.v1` kan ange flera `repositories`; `repository` är fortsatt det frågande repot.
 - `.mq/notebooks.json` deklarerar en smal `mq-stack-intelligence`-allowlist; materialiserad output hör hemma i gitignorerade `.notebooklm/`.
-- `notebook-pack.v1` kräver `revision.dirty`; consumer-repon får validera kontraktet men inte omdefiniera det (mq-agent vendorar en kopia — skuld 12f).
+- `notebook-pack.v1` kräver `revision.dirty`; consumer-repon får validera kontraktet men inte omdefiniera det (mq-agent vendorar en kopia).
+- NotebookLM-proven är kört: 34/40 mot 36 (kompakt MQ) och 37 (MQ+CodeGraph). Gaten faller — ingen sync, routing eller write-back. Skuld 12f ska inte betalas.
 - `mq-agent` äger eventuell NotebookLM selection, pack-generation, routing och sync; se [[../../docs/notebooklm-bridge]].
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
 - `routing/outcomes.jsonl` är gitignorad durable evidence och behåller mq-agents outcome-kontrakt oförändrat.
