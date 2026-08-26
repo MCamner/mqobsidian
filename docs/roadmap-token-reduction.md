@@ -1393,11 +1393,11 @@ sync implementation to `mqobsidian/scripts/`.
   broad roots such as all of `systems/` or `memory/learn/` are not valid
   defaults.
 * [x] Add deny rules as defense in depth, not as a substitute for allowlists.
-* [ ] Constrain resolved paths to approved mqobsidian roots and reject path
+* [x] Constrain resolved paths to approved mqobsidian roots and reject path
   traversal, symlinks escaping the vault, binaries, and oversized sources.
 * [x] Keep generated packs and unsanitized notebook identifiers local-only and
   gitignored.
-* [ ] Ensure timestamps do not affect the deterministic content hash.
+* [x] Ensure timestamps do not affect the deterministic content hash.
 
 **Expected pack properties**
 
@@ -1411,16 +1411,17 @@ safe to preview before upload
 
 ### 12c - One-notebook proof
 
-Build only one `mq-stack` experiment through `mq-agent` before adding
+Build only one `mq-stack-intelligence` experiment through `mq-agent` before adding
 incremental sync or operator menus.
 
-* [ ] Generate a local `mq-stack` pack from a narrow reviewed allowlist.
+* [x] Generate a local `mq-stack-intelligence` pack from a narrow reviewed allowlist.
+  Verified in preview against the real vault: 22 sources, nothing written.
 * [ ] Show a dry-run containing every selected source, classification, size,
   hash, addition, change, and removal.
 * [ ] Run sensitive-content checks before remote upload.
 * [ ] Upload the approved pack manually or through an explicitly confirmed
   mq-agent operation.
-* [ ] Prepare 5-10 fixed questions that require at least two independent
+* [x] Prepare 5-10 fixed questions that require at least two independent
   mqobsidian sources.
 * [ ] Verify answer claims against the original source paths and revisions.
 * [ ] Compare NotebookLM synthesis with direct compact-memory retrieval and a
@@ -1467,6 +1468,38 @@ cross-document synthesis     -> NotebookLM, when available and approved
   unauthorized, or unnecessary.
 * [ ] Run routing in shadow mode and collect real outcomes before enabling an
   automatic policy.
+
+### 12f - Cross-repo contract distribution (P2)
+
+`notebook-pack.v1` is the first mqobsidian contract a consumer repo validates
+against in its own test suite. mq-agent currently keeps a byte copy of the
+schema as a test fixture, checked against this vault by a drift test that can
+only run where the vault is reachable.
+
+```text
+Current:
+mqobsidian schema
+       | manual copy
+mq-agent vendored fixture
+
+Target:
+mqobsidian schema
+       | deterministic distribution
+mq-agent consumer validation
+
+Invariant:
+mqobsidian remains the sole contract owner.
+```
+
+This is accepted debt, not a blocker: the gap is visible, locally testable, and
+mechanical to repair. Do not build distribution infrastructure before the
+one-notebook proof shows the sources are worth distributing.
+
+* [ ] Decide a distribution mechanism (published package, generated export
+  surface, or CI-enforced sync) without moving contract ownership.
+* [ ] Fail a consumer's CI on drift, not only a developer's local run.
+* [ ] Keep consumer repos able to validate the contract and unable to redefine
+  it.
 
 ### 12e - Deferred automation
 

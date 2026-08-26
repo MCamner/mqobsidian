@@ -33,7 +33,8 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 - Aktuell orienteringsmätning visar 222 kontextrader mot 4797 breda baseline-rader (95,4 % minskning); CodeGraph-mätningar redovisas separat i [[../../docs/context-effect]].
 - `scripts/eval-retrieval.py` mäter precision, recall och F1 från lokala feedback-signaler utan att ändra kontrakt eller publicera rådata.
 - `memory-query.v1` kan ange flera `repositories`; `repository` är fortsatt det frågande repot.
-- `.mq/notebooks.json` deklarerar en smal `mq-stack`-allowlist; materialiserad output hör hemma i gitignorerade `.notebooklm/`.
+- `.mq/notebooks.json` deklarerar en smal `mq-stack-intelligence`-allowlist; materialiserad output hör hemma i gitignorerade `.notebooklm/`.
+- `notebook-pack.v1` kräver `revision.dirty`; consumer-repon får validera kontraktet men inte omdefiniera det (mq-agent vendorar en kopia — skuld 12f).
 - `mq-agent` äger eventuell NotebookLM selection, pack-generation, routing och sync; se [[../../docs/notebooklm-bridge]].
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
 - `routing/outcomes.jsonl` är gitignorad durable evidence och behåller mq-agents outcome-kontrakt oförändrat.

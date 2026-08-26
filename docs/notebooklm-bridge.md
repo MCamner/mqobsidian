@@ -30,10 +30,16 @@ NotebookLM as an experimental read-only consumer, names the existing MQ
 contracts it consumes, and provides narrow include/exclude rules for each
 logical notebook.
 
-The first profile contains only `mq-stack`. Its allowlist targets reviewed,
-tracked Markdown surfaces; it does not include entire `systems/`, `memory/`, or
-vault roots. mq-agent may later consume the profile, but mqobsidian does not
-implement an exporter.
+The first profile contains only `mq-stack-intelligence`, displayed as
+**MQ Stack Intelligence**. Its allowlist targets reviewed, tracked Markdown
+surfaces; it does not include entire `systems/`, `memory/`, or vault roots.
+mq-agent may later consume the profile, but mqobsidian does not implement an
+exporter.
+
+The profile separates two source lanes. `reviewed` content comes from
+mqobsidian and is active. `observed` content comes from CodeGraph, requires a
+repository revision, and remains deferred until mq-agent can export it without
+misclassifying graph output as a decision or memory observation.
 
 ## Data boundary
 
@@ -60,6 +66,12 @@ A denylist is defense in depth, not permission. It cannot widen the allowlist.
 vault-relative path, kind, classification, SHA-256, and optional repository
 revision. Absolute paths, parent traversal, and Windows path separators are
 invalid.
+
+A revision must declare `dirty`. The SHA-256 describes the working tree, so a
+commit alone would imply the content is commit-bound even when it is not. When
+`dirty` is true, the named commit does not explain the hash, and the source is
+not reproducible from the repository at that revision. The flag is required
+rather than optional: an omitted flag would read as clean.
 
 `content_hash` is calculated from canonical source metadata and source content.
 `generated_at` is excluded, so rebuilding unchanged inputs produces the same
@@ -109,6 +121,7 @@ Do not upload real MQ content until all are true:
 - a dry-run shows every addition, change, and removal
 - the operator explicitly approves the remote mutation
 
-The first proof uses one `mq-stack` notebook and 5–10 fixed questions. Measure
-its incremental value over CodeGraph plus compact mqobsidian retrieval before
-building incremental sync or automatic routing.
+The first proof uses one `mq-stack-intelligence` notebook and the five fixed
+questions in `docs/notebooklm-evaluation.md`. Measure its incremental value over
+CodeGraph plus compact mqobsidian retrieval before building incremental sync or
+automatic routing.

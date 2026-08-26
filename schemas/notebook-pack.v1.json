@@ -83,7 +83,7 @@
           },
           "revision": {
             "type": "object",
-            "required": ["repository", "commit"],
+            "required": ["repository", "commit", "dirty"],
             "properties": {
               "repository": {
                 "type": "string",
@@ -92,6 +92,10 @@
               "commit": {
                 "type": "string",
                 "pattern": "^[a-f0-9]{7,64}$"
+              },
+              "dirty": {
+                "description": "True when this source had uncommitted working-tree changes, so sha256 does not describe the named commit.",
+                "type": "boolean"
               }
             },
             "additionalProperties": false

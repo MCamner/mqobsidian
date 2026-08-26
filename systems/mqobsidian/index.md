@@ -54,7 +54,7 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval?
 
 ## Recent changes
-- 2026-08-25: Lade till `notebook-pack.v1`, read-only consumer profile i `.mq/notebooks.json`, lokal `.notebooklm/`-gräns och public-safe bridge-policy; ingen exporter eller adapter ingår.
+- 2026-08-25: Lade till `notebook-pack.v1`, read-only `mq-stack-intelligence`-profil, fem fasta evalfrågor och lokal `.notebooklm/`-gräns; CodeGraph-lanen är revision-bunden och fortsatt deferred. `revision` kräver nu `dirty`, så ett manifest inte kan påstå commit-bundet innehåll när sha256 beskriver ocommittat arbetsträd.
 - 2026-08-23: Gjorde Ruff 0.16.4 reproducerbar via dev-krav, återställde README-budgetmarginal och bekräftade att verkliga Phase 11c- och routingutfall ännu saknas; se [[../../summaries/2026-08-23-mqobsidian-health-and-validation]].
 - 2026-08-23: Återförde tre verifierade mqobsidian-lärdomar till canonical mq-mcp-store, regenererade command/agent-vyer och fixade `mq-agent learn search` för nästlade MCP-resultat; se [[../../summaries/2026-08-23-mqobsidian-learn-command-and-search-fix]].
 - 2026-08-19: Utökade `memory-query.v1` additivt med valfria `repositories` för stackövergripande frågor och lade kontraktet under exportvalidering.
