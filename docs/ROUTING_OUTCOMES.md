@@ -10,6 +10,11 @@ policy. Those responsibilities remain in `mq-agent`.
 - Producer and schema owner: `mq-agent`
 - Authoritative schema: `schemas/model_route_outcome.schema.json` in `mq-agent`
 - Durable local surface: `routing/outcomes.jsonl` in `mqobsidian`
+- **The surface is not filled automatically.** `mq-agent` writes its own
+  outcomes to `~/.mq-agent/route-outcomes.jsonl` (or `MQ_AGENT_ROUTE_OUTCOMES`).
+  Nothing copies them here — the write gate below must be run. A vault with
+  no `routing/` directory means the transfer has never happened, not that no
+  routing has occurred.
 - Consumer: `mq-agent route report`
 - Public surface: this contract document and one sanitized example only
 
@@ -67,6 +72,16 @@ Point mq-agent's read-only report at the vault-owned file:
 MQ_AGENT_ROUTE_OUTCOMES="$MQ_OBSIDIAN_DIR/routing/outcomes.jsonl" \
   mq-agent route report --json
 ```
+
+To transfer outcomes mq-agent has already recorded locally:
+
+```bash
+while IFS= read -r line; do
+  echo "$line" | python3 scripts/record-routing-outcome.py
+done < ~/.mq-agent/route-outcomes.jsonl
+```
+
+Identical records are idempotent, so re-running is safe.
 
 Reports must continue to distinguish attempted, schema-valid, verified,
 agent-accepted, operator-accepted, and escalated outcomes. Stored evidence does

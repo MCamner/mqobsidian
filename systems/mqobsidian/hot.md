@@ -4,7 +4,7 @@ system: mqobsidian
 status: active
 max_words: 500
 tags: [hot, cache, active-context]
-updated: 2026-08-26
+updated: 2026-08-27
 owner:
 links_to: [index]
 ---
@@ -38,7 +38,7 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 - NotebookLM-proven är kört: 34/40 mot 36 (kompakt MQ) och 37 (MQ+CodeGraph). Gaten faller — ingen sync, routing eller write-back. Skuld 12f ska inte betalas.
 - `mq-agent` äger eventuell NotebookLM selection, pack-generation, routing och sync; se [[../../docs/notebooklm-bridge]].
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
-- `routing/outcomes.jsonl` är gitignorad durable evidence och behåller mq-agents outcome-kontrakt oförändrat.
+- `routing/outcomes.jsonl` är gitignorad durable evidence och behåller mq-agents outcome-kontrakt oförändrat. Ytan fylls inte automatiskt: `mq-agent` skriver till `~/.mq-agent/route-outcomes.jsonl`, och `scripts/record-routing-outcome.py` måste köras för att föra över posterna hit.
 
 ## Immediate next actions
 1. Håll [[index]] och denna hot-note små.
