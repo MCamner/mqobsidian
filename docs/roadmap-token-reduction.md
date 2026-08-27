@@ -1438,8 +1438,26 @@ incremental sync or operator menus.
 
 **Success criteria**
 
+These are the criteria, stated independently of any run so `12g` can be scored
+against the same instrument. The decision rules, the 2-point margin, and the
+blinding procedure live in `docs/notebooklm-evaluation.md`; do not restate them
+here, and do not edit these lines to record an outcome.
+
+* The candidate does not score lower than the best local baseline on summed
+  groundedness, and not lower on summed correct abstention.
+* The candidate exceeds the best local baseline by at least 2 points on summed
+  cross-source completeness or on summed compactness.
+* Every source in the pack is readable and citable by the provider.
+* Every source is allowlisted, `public-safe`, and commit-bound.
+* The baselines are the normal local read path, not a construct built for the
+  comparison.
+
+**Outcome, run of 2026-08-26: gate fails.**
+
 * [ ] **Not met.** NotebookLM scored 34/40 against 36 (compact MQ) and 37
-  (MQ + CodeGraph). No question was answered better than locally.
+  (MQ + CodeGraph). No question was answered better than locally. It lost a
+  groundedness point on question 5 that no baseline lost, which fails the
+  first criterion on its own.
 * [ ] **Not met.** The provider consumed 1704 lines to answer what compact
   retrieval answered on 250.
 * [x] Met, but only after a fix: source headers shipped as HTML comments,
@@ -1448,11 +1466,20 @@ incremental sync or operator menus.
 * [x] Met. 22 allowlisted sources, all `public-safe`, all commit-bound.
 * [x] Met by construction: the baselines are the normal read path.
 
+The run recorded per-question totals only, never the per-dimension table the
+criteria are written over. The verdict therefore stands on the groundedness
+loss, which is visible in the totals; the completeness and compactness criteria
+are unevaluable for this run. `12g` must record the full table.
+
 The existing 95.4% first-read reduction demonstrates the value of compact MQ
 context, not the value of NotebookLM. Phase 12 must measure its own incremental
 token benefit before claiming an additional saving.
 
 ### 12d - Task routing for Codex and Claude
+
+**Blocked on 12g.** Do not implement any item below until the provider has
+both won the quality gate and shown a unique cross-source capability. The
+routing table is a design, not a commitment.
 
 Route by question type so the external provider is not called for work that a
 smaller local source can answer.
@@ -1500,6 +1527,10 @@ Invariant:
 mqobsidian remains the sole contract owner.
 ```
 
+**Do not optimise the pack before the gate is won.** The 1704-to-250 line gap
+is real, but shrinking it now would tune infrastructure for a provider that may
+be removed. Pack size is a 12d concern at the earliest.
+
 **Do not pay this debt.** The one-notebook proof (12c, 2026-08-26) found the
 consumer does not beat local retrieval, so there is nothing worth distributing
 to it. The vendored copy plus its local drift test is the correct permanent
@@ -1525,11 +1556,86 @@ The provider's plausible strength is the opposite case: many long documents
 nobody has distilled, where the local baseline is not a context card but a
 grep loop across raw text.
 
+**12g is the last attempt, and it runs exactly once.** If the provider ties or
+loses, Phase 12 closes. Three rules keep the experiment honest, and breaking any
+of them invalidates the run rather than extending it:
+
+* No third corpus. Losing on undistilled material ends the question; it does
+  not license a search for material the provider wins on.
+* No prompt-tuning loop. The questions and the phrasing are fixed before the
+  run and are not adjusted between baselines or after seeing a score.
+* No new scoring model. The five dimensions, the abstention rule, and the
+  decision gate in `docs/notebooklm-evaluation.md` are used unchanged, so 12c
+  and 12g remain comparable.
+
+**Corpora.** Not whole repos and not the whole vault -- the point is to give
+cross-document synthesis material it could plausibly beat local retrieval on.
+
+```text
+Corpus A - mqobsidian compact          the current baseline, unchanged
+Corpus B - rawer MQ documentation      README, ROADMAP, published decision
+                                       records, architecture docs, contract
+                                       docs, integration docs -- tracked only
+Corpus C - B + CodeGraph observations
+```
+
+**Corpus eligibility.** A source qualifies only if it is:
+
+```text
+- tracked by Git
+- public-safe
+- truthfully revision-provenanced
+- already inside the repo's publication boundary
+```
+
+Excluded regardless of benchmark value:
+
+```text
+- gitignored durable memory
+- local learn/
+- local reviews/
+- unpublished decisions/
+```
+
+Two independent reasons, either sufficient. The provenance would be false: the
+exporter stamps every source with the vault's HEAD, and gitignored files are
+invisible to `git status`, so they would carry `dirty: false` and look
+commit-bound while not being in the repository at all. And the export would
+cross a deliberate publication boundary -- local durable memory would leave for
+an external provider. A benchmark is not a reason to move that boundary.
+
+**Do not extend the exporter to provenance-mark gitignored memory in order to
+enable this test.** That is precisely the debt 12f exists to prevent: building
+capability so an experiment can continue. If the remaining public-safe corpus
+turns out too close to the compact baseline to be a meaningful test, that is a
+legitimate **null result** for 12g. Close Phase 12 rather than opening the
+private memory surface.
+
+**Passing the score is necessary but not sufficient to open 12d.** A total of
+38/40 against 36 and 37 would still be too weak on its own, because the provider
+costs 6-7x the context material plus an additional provider, auth path,
+dependency, routing branch, and failure mode. To justify that, the run must also
+produce at least one *unique correct cross-source finding* -- a real relation
+across a decision, an architecture document, and a CodeGraph observation -- that
+compact MQ retrieval misses. A higher number with no unique capability is a more
+expensive way to reach the same answer.
+
+**If 12g ties or fails, keep what was built.** `notebook-pack.v1`, the exporter,
+the provenance chain, and the public-safe gates stay as a working *optional
+export capability*, correctly classified as such -- not an active MQ
+intelligence provider, and not wired into any read path. Building an integration
+and then falsifying it is the intended outcome of a proof; the failure mode to
+avoid is letting it into the architecture merely because the implementation
+already exists.
+
 * [ ] Assemble a corpus local retrieval has *not* already compressed — raw
   `inbox/` captures, full source-repo docs, long external references — sized
   where a compact card does not yet exist.
 * [ ] Keep the same five-dimension scoring and the same abstention rule, so
   the two runs stay comparable.
+* [ ] Record the full per-question, per-dimension, per-baseline table. The 12c
+  run recorded totals only, which left its own gate unevaluable; a second
+  unevaluable run would make the comparison worthless.
 * [ ] Make the baseline honest: the local comparison must be the real cost of
   answering from that raw material, not a card that summarizes it.
 * [ ] Score blind if practical — the 12c run had the same agent scoring

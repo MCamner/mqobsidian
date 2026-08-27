@@ -44,6 +44,46 @@
         "reviews/**",
         "sessions/**"
       ]
+    },
+    "mq-docs-undistilled": {
+      "display_name": "MQ Documentation (undistilled)",
+      "purpose": "Corpus B for roadmap 12g: rawer tracked MQ documentation that local retrieval has not already compressed, so cross-document synthesis is tested on undistilled material.",
+      "classification": "public-safe",
+      "source_lanes": {
+        "reviewed": {
+          "provider": "mqobsidian",
+          "status": "active"
+        },
+        "observed": {
+          "provider": "codegraph",
+          "status": "deferred",
+          "requires_revision": true
+        }
+      },
+      "include": [
+        "README.md",
+        "ROADMAP.md",
+        "docs/*.md",
+        "docs/architecture/*.md",
+        "docs/decision-records/*.md",
+        "docs/integrations/*.md",
+        "docs/notes/*.md",
+        "docs/plans/*.md",
+        "docs/wiki/*.md"
+      ],
+      "exclude": [
+        "docs/notebooklm-evaluation.md",
+        ".codegraph/**",
+        ".notebooklm/**",
+        "inbox/**",
+        "learn/**",
+        "reviews/**",
+        "decisions/**",
+        "memory/observations/**",
+        "memory/**",
+        "systems/**",
+        "sessions/**"
+      ]
     }
   }
 }

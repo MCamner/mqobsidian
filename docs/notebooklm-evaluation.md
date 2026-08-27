@@ -62,21 +62,109 @@ estimate.
 | Correct abstention | 0–1 | Missing observed/runtime evidence is stated, not guessed. |
 | Compactness | 0–1 | Delivers the answer without unnecessary source or transcript content. |
 
-Maximum: 8 points per question, 40 total.
+Maximum: 8 points per question, 40 total (2 + 2 + 2 + 1 + 1).
+
+**Record every dimension, never only the per-question total.** The decision gate
+below is stated per dimension, so per-question totals cannot decide it. Two
+systems can tie on a question while failing on different dimensions, and a total
+hides which. Each run must produce one row per question *per baseline*:
+
+| Question | Baseline | Ground | Complete | Prov | Abstain | Compact | Total |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+
+Scoring compactness once for a whole run is not permitted: it is a per-answer
+dimension, and a run-level judgement makes the per-question totals unreadable.
 
 ## Decision gate
 
-Proceed beyond the manual one-notebook proof only if:
+Proceed beyond the manual one-notebook proof only if **all** of the following
+hold. Let `D(system)` be a dimension summed over the five questions, and let the
+comparison baseline be the *best-scoring* local baseline on that dimension.
+
+Preconditions — any failure voids the run:
 
 - all five questions are executed against all available baselines
 - no forbidden source reaches the provider
 - every material claim in the evaluated answers is traceable
 - provider failure leaves compact MQ retrieval usable
-- NotebookLM improves cross-source completeness or compactness without reducing
-  groundedness or correct abstention
+- scoring followed the blinding procedure below
+
+Decision, evaluated arithmetically from the dimension table:
+
+1. `D(groundedness)` of the candidate is **not lower** than the baseline's.
+2. `D(correct abstention)` of the candidate is **not lower** than the baseline's.
+3. The candidate exceeds the baseline by **at least 2 points** on
+   `D(cross-source completeness)` or on `D(compactness)`.
+
+The 2-point margin on rule 3 is deliberate. Each dimension is scored in whole
+points across five questions by one human-directed judgement; a 1-point edge is
+inside the noise of a single borderline call and is not evidence of a better
+system. Rules 1 and 2 have no margin because they are safety properties, not
+performance ones: any measurable loss of groundedness or abstention disqualifies.
+
+**Blinding.** Score each answer without knowing which system produced it: strip
+system labels, shuffle the answers per question, and score all three before
+revealing the mapping. A run scored unblinded is still recorded, but must state
+so and cannot by itself justify proceeding.
 
 If the candidate does not beat the local baselines, keep NotebookLM optional
 and do not build incremental sync, automatic routing, or write-back.
+
+### Unique cross-source finding
+
+Frozen before the 12g run so it cannot be fitted to the results:
+
+```text
+Unique cross-source finding =
+a correct, source-supported conclusion requiring evidence
+from at least two distinct source documents/types,
+not present in the competing compact-MQ answer,
+and not merely a more detailed restatement of the same conclusion.
+```
+
+The finding must be verifiable back against the actual sources. A conclusion
+that cannot be traced to the cited documents does not count, however impressive
+it reads.
+
+### 12g decision procedure
+
+Applied only after blind scoring is complete and the mapping is revealed. All
+conditions compose with the dimension rules above; none replaces them.
+
+```text
+NotebookLM < 38/40
+  -> FAIL / close Phase 12
+
+NotebookLM >= 38/40
+but no unique verified cross-source finding
+  -> FAIL / close Phase 12
+
+NotebookLM >= 38/40
++ unique verified cross-source finding
++ strictly beats compact MQ
+  -> PASS / 12d may open
+```
+
+A tie closes the phase. If NotebookLM scores 39, compact MQ 39, and CodeGraph
+38, Phase 12 still closes: the roadmap rule is that ties and losses end the
+question, and a provider costing 6-7x the context material must win to earn its
+failure modes.
+
+### Blind scoring protocol for 12g
+
+The agent that produces the answers does not score them. Self-blinding is not
+blinding.
+
+1. Run A, B, and C once each. No prompt changes between systems or after
+   seeing any output.
+2. Save every answer raw, with the corpus id, content hash, commit, and the
+   questions as asked.
+3. Present the questions with the three answers labelled `Response X`,
+   `Response Y`, `Response Z`, ordered independently per question, to a scorer
+   who is not the producing agent.
+4. Keep the `X/Y/Z -> system` mapping local and undisclosed until scoring ends.
+5. Score against this document's frozen rubric.
+6. Only then reveal the mapping and apply the decision procedure above.
 
 ## Result — 2026-08-26
 
@@ -120,6 +208,11 @@ compactness *without* reducing groundedness or correct abstention. The outcome
 was the inverse: lower groundedness (one factual error no baseline made) and
 7x worse compactness. No question was answered better than locally.
 
+The verdict survives the gate's later repair. Rule 1 is a safety property with
+no margin, and the candidate lost a groundedness point on question 5 that no
+baseline lost -- so the run fails on rule 1 alone, whatever the unrecorded
+dimension table would have shown for rules 2 and 3.
+
 Per this document's own rule, NotebookLM stays optional. Do not build
 incremental sync, automatic routing, or write-back. Roadmap **12f** (cross-repo
 contract distribution) is debt that should not be paid: it existed to serve a
@@ -127,10 +220,23 @@ consumer that has not earned it.
 
 ### Limits of this measurement
 
-Two, stated so the result is not over-read:
+Three, stated so the result is not over-read:
 
-1. **Not blind.** The same agent scored the candidate and the baselines.
-2. **The corpus was pre-compressed.** All 22 sources are reviewed, distilled
+1. **The dimension table was never recorded.** Only per-question totals exist,
+   so the verdict above was reached from prose, not arithmetic, and no later
+   reader can recompute it. The gate is stated per dimension; this run cannot
+   be re-evaluated against it, and cannot be compared dimension-by-dimension
+   with the `12g` retest. Two facts are recoverable from the totals and are
+   worth naming, because they show what a total hides:
+   - The candidate lost exactly one point on each of questions 1-4. If that
+     point is compactness -- which it must be, at 1704 lines against 250 --
+     then the candidate scored *perfectly* on the other four dimensions there.
+   - Compact MQ also lost exactly one point on each of questions 1-4, and it
+     cannot lose compactness. The document never says what it lost. So
+     "questions 1-3 were a draw" is a numeric tie between two systems failing
+     on different dimensions, not an equivalence.
+2. **Not blind.** The same agent scored the candidate and the baselines.
+3. **The corpus was pre-compressed.** All 22 sources are reviewed, distilled
    vault material — context cards exist precisely to compress repo knowledge.
    Asking a synthesis provider to beat local retrieval on the artifacts local
    retrieval already produced is close to a rigged comparison. The provider's
