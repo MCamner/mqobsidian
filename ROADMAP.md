@@ -74,7 +74,13 @@ covering tests, per CodeGraph's blast radius.
   fails against the old behaviour.
 - [ ] Amend `hot.md:29` and `:32` to describe what is actually true, whichever
   way the first two land -- the current wording will keep reading as a violation.
-- [ ] Add covering tests for `export_repo` and `render_pack`.
+- [ ] Add covering tests for `export_repo` and `render_pack`, including an
+  explicit ownership invariant: an export run may only create, modify or delete
+  names in `EXPORTED_CONTEXT_FILES`. Asserting the invariant over the whole
+  directory before and after a run protects the entire export surface against a
+  recurrence, not just `--clean`. The root cause was a duplicated truth -- the
+  five names were hardcoded in `outputs` while the contract list sat unused --
+  so the test should fail if the two ever diverge again.
 
 ## v0.3.0 — Explicit Truth Contracts and Consumer Readiness
 
