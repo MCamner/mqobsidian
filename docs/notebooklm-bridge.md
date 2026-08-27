@@ -60,6 +60,29 @@ Never export by default:
 
 A denylist is defense in depth, not permission. It cannot widen the allowlist.
 
+### Gitignored durable memory never exports
+
+The publication boundary is the export boundary. A source that git ignores does
+not become eligible by being reviewed, well-written, or useful to a provider:
+
+```text
+tracked, public-safe truth surfaces   ->  export allowed
+gitignored durable memory             ->  never exported
+  learn/  reviews/  unpublished decisions/  memory/  systems/
+```
+
+Two independent reasons, either sufficient. **Provenance would be false:** the
+exporter stamps every source with the vault's HEAD commit, and gitignored files
+are invisible to `git status`, so they would be written as `dirty: false` and
+read as commit-bound while not existing in the repository at all. **And the
+boundary is deliberate:** this material is local by design, so exporting it
+moves durable memory to an external provider.
+
+Do not extend the exporter to provenance-mark ignored material in order to make
+it exportable. Benchmark value is not a reason to move this boundary; if a
+measurement needs the private surface to succeed, the correct outcome is that
+the measurement fails.
+
 ## Pack contract
 
 `schemas/notebook-pack.v1.json` describes the manifest. Every source has a

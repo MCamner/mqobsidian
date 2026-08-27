@@ -18,7 +18,7 @@ Systemets lilla arbetsminne. Bara det viktigaste.
 Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa.
 
 ## Current status
-`mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. En experimentell, read-only NotebookLM consumer profile och `notebook-pack.v1` finns nu som public-safe kontraktsyta. Ingen adapter, export, sync eller automatisk routing är aktiverad.
+`mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. NotebookLM-spåret är stängt efter två mätningar; `notebook-pack.v1` och exportören står kvar som exportinfrastruktur utan konsument. Ingen adapter, sync eller automatisk routing är aktiverad.
 
 ## Active blockers
 - Inga bekräftade blockers.
@@ -35,8 +35,8 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 - `memory-query.v1` kan ange flera `repositories`; `repository` är fortsatt det frågande repot.
 - `.mq/notebooks.json` deklarerar en smal `mq-stack-intelligence`-allowlist; materialiserad output hör hemma i gitignorerade `.notebooklm/`.
 - `notebook-pack.v1` kräver `revision.dirty`; consumer-repon får validera kontraktet men inte omdefiniera det (mq-agent vendorar en kopia).
-- NotebookLM-proven är kört: 34/40 mot 36 (kompakt MQ) och 37 (MQ+CodeGraph). Gaten faller — ingen sync, routing eller write-back. Skuld 12f ska inte betalas.
-- `mq-agent` äger eventuell NotebookLM selection, pack-generation, routing och sync; se [[../../docs/notebooklm-bridge]].
+- **Phase 12 är stängd.** 12g:s rättvisa omtest gav 17/40 mot 40 (kompakt MQ) och 39 (MQ+CodeGraph) — sämre än 12c trots 21x materialet. NotebookLM är omklassificerad till *optional export capability*, inte provider; 12d och 12e är stängda, 12f betalas inte. Kontrakt, exportör och grindar behålls som exportinfrastruktur.
+- `mq-agent` äger eventuell NotebookLM selection, pack-generation, routing och sync; se [[../../docs/notebooklm-bridge]]. Gitignorerad varaktig minnesyta exporteras aldrig — publiceringsgränsen är exportgränsen.
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
 - `routing/outcomes.jsonl` är gitignorad durable evidence och behåller mq-agents outcome-kontrakt oförändrat. Ytan fylls inte automatiskt: `mq-agent` skriver till `~/.mq-agent/route-outcomes.jsonl`, och `scripts/record-routing-outcome.py` måste köras för att föra över posterna hit.
 
@@ -44,7 +44,7 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 1. Håll [[index]] och denna hot-note små.
 2. Samla verkliga `feedback-signal.v1`-utfall innan selection quality används för beslut.
 3. Samla verifierade routingutfall per task class utan att aktivera automatisk routing.
-4. Verifiera NotebookLM-adapter och dataapproval innan någon verklig MQ-källa lämnar den lokala miljön.
+4. Ta ägarskapsdivergensen i [[../../ROADMAP]]: context selection körs i detta repo trots att regeln lägger den hos mq-agent, och repots `--clean` gör `rmtree` medan hot:32 beskriver mq-agents säkra variant.
 
 ## Critical links
 - [[index]]

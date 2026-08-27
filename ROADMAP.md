@@ -32,6 +32,48 @@ other repos read or delegate to it.
 `mqobsidian` does **not** own: terminal UX, shell runtime authority,
 orchestration logic, review execution, or menu routing.
 
+### Open divergence: context selection lives on both sides
+
+Surfaced by the CodeGraph baseline during the 12g evaluation and verified
+directly in source afterwards. Tracked here rather than in Phase 12: this is an
+ownership question, and it outlived the phase that found it.
+
+The reviewed rule is that `mq-agent` owns context selection, pack generation and
+export (`systems/mqobsidian/hot.md:29`), and that this repo "kor inte workflows"
+(`systems/mqobsidian/index.md:17`). Three things in the code do not match that
+as written:
+
+1. **Selection logic runs here.** `scripts/generate-context-pack.py` classifies
+   a task against `CODEGRAPH_TASK_HINTS`/`CODEGRAPH_TASK_SUPPRESS`
+   (`task_is_source_heavy`, :135), builds bounded per-task queries
+   (`build_codegraph_queries`, :153, capped by `MAX_CODEGRAPH_QUERIES`, :132)
+   and renders the pack (`render_pack`, :276). The same task-pack query logic is
+   mirrored in mq-agent's `context_pack.py`, so the two must be edited together.
+2. **A second exporter exists here.** `scripts/generate-repo-context-export.py`
+   writes to `output_root/<repo>/.mq/context` (`export_repo`, :147). Its default
+   `--output-dir` is `examples/repo-context-exports`, so by default it stays
+   inside this repo; it reaches a live sibling repo only when `--output-dir` is
+   passed explicitly.
+3. **The two exporters have different `--clean` semantics, and only the safe one
+   is documented.** `hot.md:32` states that `--clean` removes the export's five
+   owned files and preserves `task-pack.md` and unknown files. That describes
+   mq-agent's exporter, which removes only names in its owned list. This repo's
+   script instead calls `shutil.rmtree(context_dir)` on the whole directory.
+   Aimed at a live repo with `--output-dir`, it would delete `task-pack.md` and
+   any unknown file -- the opposite of what the vault documents.
+
+Finding 3 is the one with real consequences; 1 and 2 are a migration that was
+never finished (`index.md:68` records that export landed in mq-agent, and
+ADR-006 makes local regeneration a working method). None of these scripts has
+covering tests, per CodeGraph's blast radius.
+
+- [ ] Decide whether the reference generators stay here or move to mq-agent.
+- [ ] Either align this repo's `--clean` with the owned-files semantics, or
+  restrict its `--output-dir` so it cannot target a live repo.
+- [ ] Amend `hot.md:29` and `:32` to describe what is actually true, whichever
+  way the first two land -- the current wording will keep reading as a violation.
+- [ ] Add covering tests for `export_repo` and `render_pack`.
+
 ## v0.3.0 — Explicit Truth Contracts and Consumer Readiness
 
 **Status:** Release candidate; tag and publication pending
