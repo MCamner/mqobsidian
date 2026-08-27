@@ -166,6 +166,21 @@ blinding.
 5. Score against this document's frozen rubric.
 6. Only then reveal the mapping and apply the decision procedure above.
 
+**A bad answer is a result, not a reason to retry.** Only a technical failure
+may be re-run: timeout, authentication error, or an empty response from the
+provider. Record every such failure and its retry. A semantically poor,
+incomplete, or wrong answer is scored as given -- re-running it would let the
+experiment select its own outcome.
+
+**The producing agent must be cold.** For 12g the local baselines are produced
+by an agent with no session history of the candidate corpus. An agent that has
+read, or written, the raw documents answers from memory rather than from the
+compact surface, which inflates the baseline and biases against the provider.
+Under the tie-closes-the-phase rule that bias can close the phase on false
+grounds, so it is not a harmless limitation. The cold agent receives the
+questions and the permitted retrieval surface, never the 12c results, the
+candidate answers, or this document's rubric.
+
 ## Result — 2026-08-26
 
 Executed against all three baselines. Candidate: 22 sources from
