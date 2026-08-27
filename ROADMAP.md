@@ -62,9 +62,15 @@ as written:
    Aimed at a live repo with `--output-dir`, it would delete `task-pack.md` and
    any unknown file -- the opposite of what the vault documents.
 
-Finding 3 is fixed; 1 and 2 are a migration that was never finished (`index.md:68` records that export landed in mq-agent, and
-ADR-006 makes local regeneration a working method). None of these scripts has
-covering tests, per CodeGraph's blast radius.
+Finding 3 is fixed; 1 and 2 are a migration that was never finished
+(`index.md:68` records that export landed in mq-agent, and ADR-006 makes local
+regeneration a working method).
+
+CodeGraph's blast radius flagged these symbols as having no covering tests.
+That was accurate for `export_repo` and wrong for `render_pack`, which is
+exercised from `tests/test_context_pack_queries.py` and
+`tests/test_context_pack_exclusions.py`. Treat that signal as a lead, not a
+finding -- the same rule ADR-009 states for CodeGraph output generally.
 
 - [ ] Decide whether the reference generators stay here or move to mq-agent.
 - [x] Align this repo's `--clean` with the owned-files semantics. It now
@@ -74,13 +80,14 @@ covering tests, per CodeGraph's blast radius.
   fails against the old behaviour.
 - [ ] Amend `hot.md:29` and `:32` to describe what is actually true, whichever
   way the first two land -- the current wording will keep reading as a violation.
-- [ ] Add covering tests for `export_repo` and `render_pack`, including an
-  explicit ownership invariant: an export run may only create, modify or delete
-  names in `EXPORTED_CONTEXT_FILES`. Asserting the invariant over the whole
-  directory before and after a run protects the entire export surface against a
-  recurrence, not just `--clean`. The root cause was a duplicated truth -- the
-  five names were hardcoded in `outputs` while the contract list sat unused --
-  so the test should fail if the two ever diverge again.
+- [x] Add covering tests for `export_repo`, including an explicit ownership
+  invariant: an export run may only create, modify or delete names in
+  `EXPORTED_CONTEXT_FILES`. Asserted over the whole directory before and after a
+  run, so the entire export surface is protected against a recurrence, not just
+  `--clean`, and files added to a target repo later are covered without anyone
+  updating the test. A third test pins the written set to the contract list,
+  which kills the duplicated truth that caused the defect. All three fail under
+  mutation. `render_pack` already had coverage.
 
 ## v0.3.0 — Explicit Truth Contracts and Consumer Readiness
 
