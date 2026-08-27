@@ -3,12 +3,11 @@
 
 from __future__ import annotations
 
-import shutil
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-from context_budgets import CONTEXT_BUDGETS, RENDERED_BUDGET_ORDER
+from context_budgets import CONTEXT_BUDGETS, EXPORTED_CONTEXT_FILES, RENDERED_BUDGET_ORDER
 from mq_repos import CORE_MQ_REPOS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -148,7 +147,13 @@ def export_repo(repo: str, output_root: Path, clean: bool = False) -> list[Path]
     card_file, card_text = read_card(repo)
     context_dir = output_root / repo / ".mq" / "context"
     if clean and context_dir.exists():
-        shutil.rmtree(context_dir)
+        # Remove only the files this exporter owns. `--output-dir` can point at a
+        # live repo, where the directory also holds a per-task `task-pack.md` that
+        # mq-agent owns, and whatever else that repo keeps there. Wiping the
+        # directory would delete both, which is the opposite of what
+        # systems/mqobsidian/hot.md:32 documents.
+        for name in EXPORTED_CONTEXT_FILES:
+            (context_dir / name).unlink(missing_ok=True)
     context_dir.mkdir(parents=True, exist_ok=True)
 
     outputs = {
