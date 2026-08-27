@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-08-26
+updated: 2026-08-27
 owner:
 links_to: [hot]
 ---
@@ -46,6 +46,7 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - Context surfaces kan växa till permanenta token-sänkor.
 - Hårdkodade MVP-defaults kan misstas för generell memory query.
 - Duplicerad source-repo-dokumentation i vaulten skapar drift.
+- Kontrakt kan vara kompletta i båda ändar utan att sömmen körs; en tom yta betyder inte att inget hänt.
 - Extern syntes kan läcka felklassificerat material om allowlist eller operator approval kringgås.
 
 ## Open questions
@@ -54,6 +55,7 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval? (Teknisk nytta är nu mätt och utebliven; frågan kvarstår organisatoriskt.)
 
 ## Recent changes
+- 2026-08-27: Slöt två tomma sömmar. `feedback-signal.v1` hade kontrakt i båda ändar men ingen producent — `mq-agent context feedback` emitterar nu poster (mq-agent #209), och `scripts/eval-retrieval.py` har data för första gången. Routingutfallen fanns hela tiden i `~/.mq-agent/route-outcomes.jsonl`; de 130 posterna är nu överförda till `routing/outcomes.jsonl` via write-gaten. Routing är `NOT_ELIGIBLE` på verifieringsgrad 0,434, inte på datamängd: 72 av 74 eskaleringar är `verification-failed`, och grinden kräver att varje evidence-item är ordagrant — uppmätt 70 % korrekta citat ger 33 % godkända svar.
 - 2026-08-26: Körde NotebookLM-proven mot alla tre baslinjer: 34/40 mot 36 och 37. Beslutsgaten faller — provider förblir valfri, ingen sync/routing/write-back, och skuld 12f ska inte betalas. Ett faktafel i kandidatens svar (dirty som gate i stället för deklaration) och 1704 levererade rader mot 250 lokalt. Rättvist omtest på odestillerat material specas i roadmap 12g; se [[../../docs/notebooklm-evaluation]].
 - 2026-08-25: Lade till `notebook-pack.v1`, read-only `mq-stack-intelligence`-profil, fem fasta evalfrågor och lokal `.notebooklm/`-gräns; CodeGraph-lanen är revision-bunden och fortsatt deferred. `revision` kräver nu `dirty`, så ett manifest inte kan påstå commit-bundet innehåll när sha256 beskriver ocommittat arbetsträd.
 - 2026-08-23: Gjorde Ruff 0.16.4 reproducerbar via dev-krav, återställde README-budgetmarginal och bekräftade att verkliga Phase 11c- och routingutfall ännu saknas; se [[../../summaries/2026-08-23-mqobsidian-health-and-validation]].
