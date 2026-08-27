@@ -62,14 +62,16 @@ as written:
    Aimed at a live repo with `--output-dir`, it would delete `task-pack.md` and
    any unknown file -- the opposite of what the vault documents.
 
-Finding 3 is the one with real consequences; 1 and 2 are a migration that was
-never finished (`index.md:68` records that export landed in mq-agent, and
+Finding 3 is fixed; 1 and 2 are a migration that was never finished (`index.md:68` records that export landed in mq-agent, and
 ADR-006 makes local regeneration a working method). None of these scripts has
 covering tests, per CodeGraph's blast radius.
 
 - [ ] Decide whether the reference generators stay here or move to mq-agent.
-- [ ] Either align this repo's `--clean` with the owned-files semantics, or
-  restrict its `--output-dir` so it cannot target a live repo.
+- [x] Align this repo's `--clean` with the owned-files semantics. It now
+  unlinks only the names in `EXPORTED_CONTEXT_FILES` instead of calling
+  `shutil.rmtree` on the directory, so `task-pack.md` and unknown files in a
+  target repo survive. Covered by `tests/test_repo_context_export.py`, which
+  fails against the old behaviour.
 - [ ] Amend `hot.md:29` and `:32` to describe what is actually true, whichever
   way the first two land -- the current wording will keep reading as a violation.
 - [ ] Add covering tests for `export_repo` and `render_pack`.
