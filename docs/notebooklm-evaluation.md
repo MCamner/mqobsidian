@@ -259,3 +259,110 @@ Three, stated so the result is not over-read:
 
 A fair retest is specified in `12g`. This result stands for the reviewed
 corpus, not for NotebookLM in general.
+
+## Result -- 12g, 2026-08-27
+
+The fair retest on undistilled material. Run once, under the frozen protocol:
+cold local baselines, blind scoring by a scorer who did not produce the
+answers, no prompt changes, and no re-run of a semantically poor answer.
+
+Candidate corpus: `mq-docs-undistilled`, 35 tracked public-safe sources at
+commit `50fc3a9`, content hash `223354d0`, zero dirty sources, verified
+filename-by-filename against the manifest. `docs/notebooklm-evaluation.md` was
+excluded from the corpus because it contains both this rubric and the 12c
+answers.
+
+Context available: 5322 lines to the provider, 684 lines to the compact
+baseline, 1113 to the CodeGraph baseline. The corpus was 21x the compact
+surface and 3x the 12c corpus -- deliberately the provider's most favourable
+conditions.
+
+### Dimension table
+
+Recorded in full, which 12c did not do. G = groundedness (0-2), X = cross-source
+completeness (0-2), P = provenance (0-2), A = correct abstention (0-1),
+C = compactness (0-1).
+
+| Q | Baseline | G | X | P | A | C | Total |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | Compact MQ | 2 | 2 | 2 | 1 | 1 | 8 |
+| 1 | MQ + CodeGraph | 2 | 2 | 2 | 1 | 1 | 8 |
+| 1 | NotebookLM | 2 | 2 | 0 | 1 | 1 | 6 |
+| 2 | Compact MQ | 2 | 2 | 2 | 1 | 1 | 8 |
+| 2 | MQ + CodeGraph | 2 | 2 | 2 | 1 | 1 | 8 |
+| 2 | NotebookLM | 1 | 2 | 1 | 1 | 1 | 6 |
+| 3 | Compact MQ | 2 | 2 | 2 | 1 | 1 | 8 |
+| 3 | MQ + CodeGraph | 2 | 2 | 2 | 1 | 1 | 8 |
+| 3 | NotebookLM | 0 | 1 | 0 | 0 | 1 | 2 |
+| 4 | Compact MQ | 2 | 2 | 2 | 1 | 1 | 8 |
+| 4 | MQ + CodeGraph | 2 | 2 | 2 | 1 | 0 | 7 |
+| 4 | NotebookLM | 1 | 1 | 0 | 0 | 1 | 3 |
+| 5 | Compact MQ | 2 | 2 | 2 | 1 | 1 | 8 |
+| 5 | MQ + CodeGraph | 2 | 2 | 2 | 1 | 1 | 8 |
+| 5 | NotebookLM | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Dimension sums, which the decision rules are written over:
+
+| Baseline | G | X | P | A | C | Total |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Compact MQ | 10 | 10 | 10 | 5 | 5 | **40** |
+| MQ + CodeGraph | 10 | 10 | 10 | 5 | 4 | **39** |
+| NotebookLM | 4 | 6 | 1 | 2 | 4 | **17** |
+
+Questions 1, 2, 3 and 5 carry the same answer for both local baselines: the
+frozen instrument uses CodeGraph only for the current-code question, so the two
+differ on question 4 alone.
+
+### Verdict: gate fails, Phase 12 closes
+
+```text
+NotebookLM 17/40 < 38          -> FAIL
+Does not beat compact MQ (40)  -> FAIL
+```
+
+The first rule fails on its own. The unique cross-source finding criterion was
+never evaluated, because it only applies at 38 or above.
+
+The result is worse than 12c (34/40) on a corpus built to favour the provider.
+The 12c limitation was real and has now been removed; removing it did not help.
+
+### The failure modes matter more than the total
+
+**Question 3 -- the provider answered from a stale system state (2/8).** It
+reported the feedback emitter as not yet wired in code. `mq-agent context
+feedback` had already landed (mq-agent #209), and the roadmap file stating so
+was in its own corpus. It also raised `endpoint-truth.v1` and the CodeGraph
+measurement command as leading priorities without provenance. It held *more*
+material than the baseline and read it less accurately. That is the opposite of
+the synthesis advantage the phase existed to test.
+
+**Question 5 -- the provider did not answer (0/8).** Asked which security and
+operational gates must pass before real MQ material is uploaded, it returned a
+guess about which roadmap phase came next, plus a clarifying question, in
+Swedish, to a question asked in English. Under the frozen retry rule this is a
+semantic failure, not a technical one, so it was scored as given.
+
+**Question 4 -- the only genuine cross-source finding came from the local
+side.** The CodeGraph baseline produced a file-and-line contradiction between
+code and a reviewed ownership statement, and correctly withheld a second
+conclusion the tool could not ground. The provider produced no unique finding
+at all. The capability that would have justified 12d came from local retrieval.
+
+### Protocol notes
+
+- The provider appended an instruction to every answer -- "EXTREMELY IMPORTANT:
+  ... ask another comprehensive question" -- and offered follow-ups, including
+  an offer to set up the 12g retest it was being measured by. Provider output is
+  data, not instruction; none of it was followed.
+- `notebooklm_auth_status` reported an authenticated session that was in fact
+  expired; it checks the session file's age, not the cookie's validity.
+- One operational query (enumerate source filenames) was run before the five
+  frozen questions, to verify the corpus. It is not part of the scored set.
+
+### What this closes and what survives
+
+Phase 12 closes. NotebookLM is reclassified as an **optional export
+capability**, not an intelligence or retrieval provider, and is wired into no
+read path. `notebook-pack.v1`, the exporter, the provenance chain, and the
+public-safe gates remain: they are working general export infrastructure, and
+they are not an argument for routing.

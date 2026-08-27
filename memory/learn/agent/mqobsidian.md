@@ -13,14 +13,14 @@ edit by hand; re-run `mq-agent agent-views rebuild`.
 
 ## Current state
 
-Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa. `mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. En experimentell, read-only NotebookLM consumer profile och `notebook-pack.v1` finns nu som public-safe kontraktsyta. Ingen adapter, export, sync eller automatisk routing är aktiverad.
+Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa. `mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. NotebookLM-spåret är stängt efter två mätningar; `notebook-pack.v1` och exportören står kvar som exportinfrastruktur utan konsument. Ingen adapter, sync eller automatisk routing är aktiverad.
 
 ## Active priorities
 
 - Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
 - Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
 - Samla verifierade routingutfall per task class inför en separat evidence review; aktivera inte automatisk routing från otillräckligt underlag.
-- Håll NotebookLM read-only och lokal tills adapterbeteende, dataapproval och ett avgränsat `mq-stack`-experiment är verifierade.
+- Lös ägarskapsdivergensen: context selection körs i detta repo trots att regeln lägger den hos mq-agent, och repots exportör…
 
 ## Current blockers
 

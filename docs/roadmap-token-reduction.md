@@ -1477,9 +1477,10 @@ token benefit before claiming an additional saving.
 
 ### 12d - Task routing for Codex and Claude
 
-**Blocked on 12g.** Do not implement any item below until the provider has
-both won the quality gate and shown a unique cross-source capability. The
-routing table is a design, not a commitment.
+**Closed -- not proceeding (2026-08-27).** 12g failed at 17/40 against a 38
+threshold, so no item below will be implemented. The routing table stays as a
+record of the design that was considered and rejected on evidence. Reopening it
+requires a new provider or a new measurement, not a re-reading of this one.
 
 Route by question type so the external provider is not called for work that a
 smaller local source can answer.
@@ -1531,7 +1532,10 @@ mqobsidian remains the sole contract owner.
 is real, but shrinking it now would tune infrastructure for a provider that may
 be removed. Pack size is a 12d concern at the earliest.
 
-**Do not pay this debt.** The one-notebook proof (12c, 2026-08-26) found the
+**Do not pay this debt.** 12g settled this permanently: the consumer this debt
+would have served lost twice and Phase 12 is closed.
+
+ The one-notebook proof (12c, 2026-08-26) found the
 consumer does not beat local retrieval, so there is nothing worth distributing
 to it. The vendored copy plus its local drift test is the correct permanent
 resting place until a consumer earns more. Revisit only if 12g changes the
@@ -1640,12 +1644,44 @@ already exists.
   answering from that raw material, not a card that summarizes it.
 * [ ] Score blind if practical — the 12c run had the same agent scoring
   candidate and baselines.
-* [ ] Accept a null result. If the provider does not win on undistilled
+* [x] Accept a null result. If the provider does not win on undistilled
   material either, close Phase 12 rather than looking for a third corpus.
+
+**Outcome, run of 2026-08-27: gate fails. Phase 12 is closed.**
+
+```text
+Compact MQ       40/40
+MQ + CodeGraph   39/40
+NotebookLM       17/40   -> below the frozen 38 threshold
+```
+
+Run once under the frozen protocol: 35 tracked public-safe sources at commit
+`50fc3a9`, cold local baselines, blind scoring by a scorer who did not produce
+the answers, no prompt changes, no re-run of a semantically poor answer. The
+corpus was 21x the compact surface and 3x the 12c corpus -- the provider's most
+favourable conditions. The result was *worse* than 12c's 34/40. The unique
+cross-source finding criterion was never evaluated, because it applies only at
+38 or above.
+
+The two failure modes matter more than the total, and both are recorded in
+`docs/notebooklm-evaluation.md`:
+
+* **Stale system state (Q3, 2/8).** The provider reported the feedback emitter
+  as unwired while the roadmap file saying otherwise sat in its own corpus. It
+  held more material than the baseline and read it less accurately.
+* **No answer (Q5, 0/8).** Asked which gates must pass before upload, it
+  guessed at the next roadmap phase and asked a clarifying question instead.
+
+The only genuine cross-source finding in the run came from the CodeGraph
+baseline, not the provider. It is tracked separately in `ROADMAP.md`; it is an
+ownership question, not a Phase 12 result.
 
 ### 12e - Deferred automation
 
-These items remain explicitly deferred until the one-notebook proof passes.
+**Closed -- not proceeding (2026-08-27).** These items were deferred until the
+proof passed. It failed twice: 34/40 on reviewed material (12c) and 17/40 on
+undistilled material (12g). Automation for a provider that lost both runs is
+not deferred work, it is cancelled work.
 
 * [ ] Add incremental source status: `SYNCED`, `STALE`, `MISSING`, `ERROR`, and
   `UNAVAILABLE`.
@@ -1665,3 +1701,20 @@ Phase 12 is complete only when one approved notebook passes the fixed question
 set, provenance and security gates pass, Codex and Claude can consume a compact
 result through mq-agent, fallback is demonstrated, and measured results show an
 incremental benefit over CodeGraph plus mqobsidian alone.
+
+**Phase 12 is closed as not done (2026-08-27).** The provenance and security
+gates passed; the incremental benefit did not exist. Two measured runs, 34/40
+and 17/40, both below the local baselines. Codex and Claude were never wired to
+consume a result, and will not be.
+
+**What NotebookLM is now:** an *optional export capability*. `notebook-pack.v1`,
+the exporter, the provenance chain with `revision.dirty`, and the public-safe
+allowlist gates are kept, because they are working general export
+infrastructure that any future external consumer would need. They are not an
+argument for routing, and their existence is not a reason to revisit this
+decision. Nothing reads from NotebookLM; no read path routes to it.
+
+Closing a phase this way is the intended outcome of a proof, not a loss. The
+integration was built, measured under a frozen instrument, and falsified. The
+failure mode worth avoiding was letting it into the architecture because the
+implementation already existed.
