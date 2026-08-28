@@ -22,17 +22,13 @@ class ExecutionOutcomeContractTests(unittest.TestCase):
 
     def test_runtime_provenance_fields_are_required(self) -> None:
         for field in (
-            "execution_id",
-            "timestamp",
+            "run_id",
+            "runtime",
             "task_class",
-            "selected_route",
-            "selected_model",
-            "context_sources",
-            "context_size",
-            "duration_ms",
-            "result_status",
-            "fallback_used",
-            "retry_count",
+            "result",
+            "exit_status",
+            "latency_ms",
+            "recorded_at",
         ):
             with self.subTest(field=field):
                 mutated = dict(self.example)

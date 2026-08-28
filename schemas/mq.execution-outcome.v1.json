@@ -1,56 +1,70 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "mq.execution-outcome.v1",
-  "description": "Observed result of one MQ execution. Records runtime facts for later inspection; it does not score, promote, or change routing.",
+  "description": "The outcome of one agent run. Routing, model and context are optional measured dimensions; absent counters are unknown, not zero.",
   "type": "object",
-  "required": [
-    "schema",
-    "execution_id",
-    "timestamp",
-    "task_class",
-    "selected_route",
-    "selected_model",
-    "context_sources",
-    "context_size",
-    "duration_ms",
-    "result_status",
-    "fallback_used",
-    "retry_count"
-  ],
+  "additionalProperties": false,
+  "required": ["schema", "run_id", "runtime", "task_class", "result", "exit_status", "latency_ms", "recorded_at"],
   "properties": {
-    "schema": { "const": "mq.execution-outcome.v1" },
-    "execution_id": { "type": "string", "minLength": 1 },
-    "timestamp": { "type": "string", "format": "date-time" },
-    "task_class": { "type": "string", "minLength": 1 },
-    "selected_route": { "type": "string", "minLength": 1 },
-    "selected_model": { "type": "string", "minLength": 1 },
-    "context_sources": {
-      "type": "array",
-      "items": { "type": "string", "minLength": 1 },
-      "uniqueItems": true
-    },
-    "context_size": { "type": "integer", "minimum": 0 },
-    "duration_ms": { "type": "integer", "minimum": 0 },
-    "result_status": {
-      "type": "string",
-      "enum": ["succeeded", "partial", "failed", "cancelled"]
-    },
-    "fallback_used": { "type": "boolean" },
-    "retry_count": { "type": "integer", "minimum": 0 },
-    "quality_signal": {
-      "type": "string",
-      "enum": ["accepted", "rejected", "unknown"]
-    },
-    "usage": {
+    "schema": {"const": "mq.execution-outcome.v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "runtime": {"enum": ["swarm", "executor", "task-runner", "agent"]},
+    "task_class": {"enum": ["audit", "ci", "docs", "release", "release-check", "signal", "task", "unclassified"]},
+    "result": {"enum": ["PASS", "FAIL", "SKIPPED"]},
+    "exit_status": {"enum": ["ok", "error", "aborted", "skipped"]},
+    "latency_ms": {"type": "integer", "minimum": 0},
+    "route": {
       "type": "object",
+      "additionalProperties": false,
+      "required": ["selected", "policy", "confidence"],
       "properties": {
-        "input_tokens": { "type": "integer", "minimum": 0 },
-        "output_tokens": { "type": "integer", "minimum": 0 },
-        "cost": { "type": "number", "minimum": 0 },
-        "currency": { "type": "string", "minLength": 1 }
-      },
-      "additionalProperties": false
-    }
-  },
-  "additionalProperties": false
+        "selected": {"type": "string", "minLength": 1},
+        "policy": {"enum": ["static", "learned", "none"]},
+        "confidence": {"oneOf": [{"type": "null"}, {"type": "number", "minimum": 0, "maximum": 1}]}
+      }
+    },
+    "model": {"type": ["string", "null"]},
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources", "size"],
+      "properties": {
+        "sources": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 80}, "uniqueItems": true},
+        "size": {"type": "integer", "minimum": 0}
+      }
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "status": {"enum": ["ok", "error", "skipped", "dry-run"]},
+          "latency_ms": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "skills": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "tool_calls": {"type": "integer", "minimum": 0},
+    "retries": {"type": "integer", "minimum": 0},
+    "fallbacks": {"type": "integer", "minimum": 0},
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {"input": {"type": "integer", "minimum": 0}, "output": {"type": "integer", "minimum": 0}}
+    },
+    "cost": {"type": "number", "minimum": 0},
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind"],
+        "properties": {"kind": {"type": "string", "minLength": 1, "maxLength": 80}}
+      }
+    },
+    "recorded_at": {"type": "string", "format": "date-time"}
+  }
 }
