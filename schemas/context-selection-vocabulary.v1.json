@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mqobsidian.local/schemas/context-selection-vocabulary.v1.json",
+  "title": "context-selection-vocabulary.v1",
+  "description": "The vocabulary that decides whether a task is source-heavy, and the bound on how many CodeGraph queries a pack may carry. mqobsidian owns these words because they describe the stack's own semantics; mq-agent owns the act of applying them to a task (DEC-005). Consumers read this contract and must not keep a second copy of the values.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "source_heavy_hints", "source_heavy_suppress", "max_codegraph_queries"],
+  "properties": {
+    "schema": {"const": "context-selection-vocabulary.v1"},
+    "description": {"type": "string", "minLength": 1},
+    "source_heavy_hints": {
+      "description": "Lowercase substrings that mark a task as source-heavy. Matched against the lowercased task text.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "pattern": "^[^A-Z]*$"}
+    },
+    "source_heavy_suppress": {
+      "description": "Lowercase substrings that veto the source-heavy classification even when a hint matches. Suppression wins, so a documentation task never pulls source queries.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "pattern": "^[^A-Z]*$"}
+    },
+    "max_codegraph_queries": {
+      "description": "Upper bound on CodeGraph queries emitted into one pack. A budget, not a target.",
+      "type": "integer",
+      "minimum": 1
+    }
+  }
+}

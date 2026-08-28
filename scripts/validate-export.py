@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
 TEMPLATES = ROOT / "templates"
 EXAMPLES = ROOT / "examples"
+SELECTION_VOCABULARY = ROOT / ".mq" / "context-selection-vocabulary.json"
 NOTEBOOK_PROFILE = ROOT / ".mq" / "notebooks.json"
 
 
@@ -442,6 +443,29 @@ def validate_measurement(path: Path, schema: dict[str, object]) -> list[str]:
     return problems
 
 
+def validate_selection_vocabulary(path: Path, schema: dict[str, object]) -> list[str]:
+    """Validate the published context-selection vocabulary (DEC-005).
+
+    Schema-valid is not sufficient: a hint that is also a suppressor can never
+    classify anything, so the contract would be self-defeating while passing.
+    """
+    problems = validate_manifest_example(path, schema)
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return problems
+    hints = set(data.get("source_heavy_hints") or [])
+    suppress = set(data.get("source_heavy_suppress") or [])
+    overlap = sorted(hints & suppress)
+    if overlap:
+        problems.append(
+            f"{path.relative_to(ROOT)}: {', '.join(overlap)} appear in both "
+            "source_heavy_hints and source_heavy_suppress; suppression always wins, "
+            "so these can never classify a task"
+        )
+    return problems
+
+
 def validate_notebook_profile(path: Path) -> list[str]:
     """Validate the provider-neutral NotebookLM consumer configuration."""
     try:
@@ -520,6 +544,7 @@ def main() -> int:
         SCHEMAS / "promotion-event.v1.json",
         SCHEMAS / "memory-query.v1.json",
         SCHEMAS / "notebook-pack.v1.json",
+        SCHEMAS / "context-selection-vocabulary.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
@@ -547,6 +572,9 @@ def main() -> int:
 
     problems: list[str] = []
     problems.extend(validate_notebook_profile(NOTEBOOK_PROFILE))
+    problems.extend(validate_selection_vocabulary(
+        SELECTION_VOCABULARY, parsed_schemas["context-selection-vocabulary.v1.json"]
+    ))
     context_pack_schema = parsed_schemas["context-pack.v1.json"]
     for path in [EXAMPLES / "sanitized-context-pack.md", ROOT / ".mq" / "context" / "task-pack.md"]:
         if path.exists():
