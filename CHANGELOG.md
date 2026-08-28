@@ -2,7 +2,35 @@
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.3.0] - 2026-08-28
+
 ### Added
+
+- Explicit ownership metadata for all 23 truth and memory contracts in
+  `.mq/repo-contract.json`.
+- Structured context-pack exclusion proof with kind, item, and reason.
+- A file-locked, append-only writer for schema-valid model-routing outcomes,
+  including negative escalation evidence without raw model output.
+- Shared Codex and Claude guidance for consuming model-routing contracts.
+- `release-check.sh` — canonical read-only releasability entrypoint conforming
+  to `repo_release_check.v1`. `--json` emits the machine-readable verdict
+  (`schema`, `repo`, `status`, `blockers`, `warnings`, `evidence`) and exits 0;
+  human mode prints per-check PASS/FAIL. Runs the Public Safe Check assertions
+  (sensitive-content, export scaffolding, token budget, agent entrypoints, unit
+  tests) minus the mutating context-export regeneration. Lets mq-agent's
+  `stack release --all --preflight` read mqobsidian's release verdict.
+- Atomic promotion transitions with a write-ahead journal: five locked verbs
+  (promote/reject/defer/rollback/deprecate), fsynced intent journal with
+  hash-verified snapshots, deterministic recovery, and append-only compensation.
+  Exposed as bounded commands in the local-only memory CLI; preview by default.
+- `promotion-event.v1` extended additively with `source_evidence_refs`,
+  `journal_id`, `verb`, and `compensates`, and wired into `validate-export.py` —
+  it was never validated before.
+- `jsonschema` dependency for real schema enforcement (DEC-003), installed in CI.
+- DEC-003 (strict schema enforcement) and DEC-004 (evidence producer contract
+  before a generalized adapter) decision records.
 
 - Experimental `notebook-pack.v1` contract, canonical source template,
   sanitized manifest example, validation coverage, and a deny-by-default
@@ -38,34 +66,37 @@
   asking repo; concern-scoped questions still use `tags`.
 - `memory-query.v1` and its example are now covered by `validate-export.py`,
   which never validated them before.
+- `mq.execution-outcome.v1` — the execution observation contract, a public-safe
+  example, export validation, and a contract test. One record per agent run;
+  routing is a field on the record rather than its subject, so route, skill and
+  tool evaluation read one contract instead of growing separate telemetry
+  formats. A counter the runtime does not measure is absent, not zero.
+- `context-budget.v1` — the schema the artifact already declared but that never
+  existed. `.mq/context-budgets.json` is now validated against it and declared
+  among the repo's contracts (25 -> 26), with semantic invariants a schema
+  cannot express: a rendered or consumed file without a budget is rejected
+  instead of failing later as a `KeyError`.
+- `.mq/context-selection-vocabulary.json` — the context-selection heuristic
+  published as a declarative contract, with DEC-005 recording the boundary:
+  mqobsidian publishes the vocabulary, mq-agent keeps every runtime selection
+  decision. Replaces a duplicated selection vocabulary maintained in two repos.
+- A contract test requiring every `.mq` artifact to be schema-backed and
+  declared, so an artifact can no longer ship validated-by-nothing.
+- A verified learn note recording repo-signal's uv tool installation.
 
-## [0.3.0] - 2026-08-05
+### Changed
 
-### Added
-
-- Explicit ownership metadata for all 23 truth and memory contracts in
-  `.mq/repo-contract.json`.
-- Structured context-pack exclusion proof with kind, item, and reason.
-- A file-locked, append-only writer for schema-valid model-routing outcomes,
-  including negative escalation evidence without raw model output.
-- Shared Codex and Claude guidance for consuming model-routing contracts.
-- `release-check.sh` — canonical read-only releasability entrypoint conforming
-  to `repo_release_check.v1`. `--json` emits the machine-readable verdict
-  (`schema`, `repo`, `status`, `blockers`, `warnings`, `evidence`) and exits 0;
-  human mode prints per-check PASS/FAIL. Runs the Public Safe Check assertions
-  (sensitive-content, export scaffolding, token budget, agent entrypoints, unit
-  tests) minus the mutating context-export regeneration. Lets mq-agent's
-  `stack release --all --preflight` read mqobsidian's release verdict.
-- Atomic promotion transitions with a write-ahead journal: five locked verbs
-  (promote/reject/defer/rollback/deprecate), fsynced intent journal with
-  hash-verified snapshots, deterministic recovery, and append-only compensation.
-  Exposed as bounded commands in the local-only memory CLI; preview by default.
-- `promotion-event.v1` extended additively with `source_evidence_refs`,
-  `journal_id`, `verb`, and `compensates`, and wired into `validate-export.py` —
-  it was never validated before.
-- `jsonschema` dependency for real schema enforcement (DEC-003), installed in CI.
-- DEC-003 (strict schema enforcement) and DEC-004 (evidence producer contract
-  before a generalized adapter) decision records.
+- `docs/wiki/` retired as a content surface. Contract truth moved into `docs/`
+  and the freshness gate now targets it, so the consumed page is the gated one.
+- CodeGraph guidance states intentions rather than tool names, and the docs no
+  longer claim mq-agent generates surfaces it does not.
+- Phase 12 closed. The 12g NotebookLM run scored 17/40 against a gate of 38 on
+  21x the material; 12d and 12e are closed with it. NotebookLM stays optional.
+- The roadmap now records execution-intelligence delivery against what mq-agent
+  actually ships, with `systems/mqobsidian/{hot,index}.md` and the generated
+  agent view rebuilt to match.
+- The linted surface is the repo's decision rather than the editor's, and local
+  validation is reproducible against the CI-pinned toolchain.
 
 ### Fixed
 
@@ -81,6 +112,16 @@
   errors. Replaced with a real JSON-Schema engine.
 - The existing jsonschema-based test skipped itself whenever the library was
   absent, which was always, in CI.
+- `--clean` in `scripts/generate-repo-context-export.py` called
+  `shutil.rmtree` on the whole context directory. Aimed at a live repo with
+  `--output-dir`, it would have deleted `task-pack.md` and any unknown file —
+  the opposite of what the vault documents. It now unlinks only the names it
+  owns, covered by a test that fails against the old behaviour.
+- `roadmap/ROADMAP_NOTES.md` was tracked despite declaring itself local-only
+  and being covered by `.gitignore`. Untracked without deleting the local file.
+- The routing evidence seam: validated outcomes accumulated in
+  `~/.mq-agent/route-outcomes.jsonl` but never reached `routing/outcomes.jsonl`,
+  so the evidence surface read empty while the data existed.
 
 ## [0.2.2] - 2026-07-16
 
