@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
 TEMPLATES = ROOT / "templates"
 EXAMPLES = ROOT / "examples"
+CONTEXT_BUDGETS_CONTRACT = ROOT / ".mq" / "context-budgets.json"
 SELECTION_VOCABULARY = ROOT / ".mq" / "context-selection-vocabulary.json"
 NOTEBOOK_PROFILE = ROOT / ".mq" / "notebooks.json"
 
@@ -443,6 +444,29 @@ def validate_measurement(path: Path, schema: dict[str, object]) -> list[str]:
     return problems
 
 
+def validate_context_budgets(path: Path, schema: dict[str, object]) -> list[str]:
+    """Validate the published line-budget contract, structure and coverage.
+
+    Coverage is the part a schema cannot state: every consumer indexes the map
+    as `CONTEXT_BUDGETS[name]`, so a name rendered or consumed without a budget
+    is a KeyError at run time rather than a readable failure here.
+    """
+    problems = validate_manifest_example(path, schema)
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return problems
+    budgets = data.get("budgets") or {}
+    rendered = data.get("rendered_order") or []
+    missing = [name for name in rendered if name not in budgets]
+    if missing:
+        problems.append(
+            f"{path.relative_to(ROOT)}: rendered_order names {', '.join(missing)} "
+            "with no budget; every rendered row must have one"
+        )
+    return problems
+
+
 def validate_selection_vocabulary(path: Path, schema: dict[str, object]) -> list[str]:
     """Validate the published context-selection vocabulary (DEC-005).
 
@@ -545,6 +569,7 @@ def main() -> int:
         SCHEMAS / "memory-query.v1.json",
         SCHEMAS / "notebook-pack.v1.json",
         SCHEMAS / "context-selection-vocabulary.v1.json",
+        SCHEMAS / "context-budget.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
@@ -572,6 +597,9 @@ def main() -> int:
 
     problems: list[str] = []
     problems.extend(validate_notebook_profile(NOTEBOOK_PROFILE))
+    problems.extend(validate_context_budgets(
+        CONTEXT_BUDGETS_CONTRACT, parsed_schemas["context-budget.v1.json"]
+    ))
     problems.extend(validate_selection_vocabulary(
         SELECTION_VOCABULARY, parsed_schemas["context-selection-vocabulary.v1.json"]
     ))

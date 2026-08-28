@@ -6,6 +6,7 @@
   "contracts": [
     "codegraph_contract_map.v1",
     "codegraph_measurement.v1",
+    "context_budget.v1",
     "context_card.v1",
     "context_pack.v1",
     "context_selection_vocabulary.v1",

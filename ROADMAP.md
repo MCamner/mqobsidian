@@ -106,11 +106,22 @@ new vocabulary contract is now held to a higher standard than the older one it
 was modelled on. Harden the older one to the new standard rather than treating
 the gap as licence to lower it.
 
-- [ ] Create the schema the artifact already declares.
-- [ ] Validate `.mq/context-budgets.json` against it in `validate-export.py`.
-- [ ] Add semantic invariants where they exist, not only structural checks --
-  `rendered_order` naming a file with no budget would be one.
-- [ ] Test that the declared schema id and the published artifact cannot drift.
+- [x] Create the schema the artifact already declares.
+- [x] Validate `.mq/context-budgets.json` against it in `validate-export.py`,
+  and declare `context_budget.v1` among the repo's contracts (25 -> 26).
+- [x] Add semantic invariants, not only structural checks. Every consumer
+  indexes the map as `CONTEXT_BUDGETS[name]`, so a rendered or consumed name
+  without a budget is a run-time `KeyError` rather than a readable failure;
+  `validate-export` now rejects that, which a schema cannot express.
+- [x] Test that the declared schema id and the published artifact cannot drift.
+
+Four mutations, each caught by the validator and by
+`tests/test_context_budget_contract.py`: `rendered_order` naming a file with no
+budget, a consumed file losing its budget, a budget of 0, and the schema id
+drifting from the schema file. All four passed silently before.
+
+**Both follow-ups are now closed.** The older contract meets the standard
+DEC-005 set for the newer one.
 
 ### Follow-up: CodeGraph tool names in the reference generator
 
