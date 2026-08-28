@@ -14,57 +14,10 @@ assert SPEC is not None and SPEC.loader is not None
 writer = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(writer)
 
+# The contract itself, not a copy of it. An inline fixture here used to be a
+# third source of truth and had silently drifted from the real schema.
+CANONICAL_SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "mq.model-route-outcome.v1.json"
 
-SCHEMA = {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "additionalProperties": False,
-    "required": [
-        "schema",
-        "decision_id",
-        "task_class",
-        "selected_route",
-        "local_model",
-        "authoritative_agent",
-        "attempted",
-        "model_output_received",
-        "schema_valid",
-        "verification",
-        "accepted_by_agent",
-        "accepted_by_operator",
-        "escalated",
-        "escalation_reason",
-        "recorded_at",
-    ],
-    "properties": {
-        "schema": {"const": "mq.model-route-outcome.v1"},
-        "decision_id": {"type": "string", "minLength": 1},
-        "task_class": {"enum": ["docs-review"]},
-        "selected_route": {"enum": ["local-shadow"]},
-        "local_model": {"type": ["string", "null"]},
-        "authoritative_agent": {"enum": ["codex", "claude"]},
-        "attempted": {"type": "boolean"},
-        "model_output_received": {"type": "boolean"},
-        "schema_valid": {"type": "boolean"},
-        "verification": {
-            "type": "object",
-            "additionalProperties": False,
-            "required": ["status", "checks"],
-            "properties": {
-                "status": {"enum": ["PASS", "FAIL", "SKIPPED", "UNAVAILABLE"]},
-                "checks": {
-                    "type": "array",
-                    "items": {"type": "string", "minLength": 1},
-                },
-            },
-        },
-        "accepted_by_agent": {"type": "boolean"},
-        "accepted_by_operator": {"type": "boolean"},
-        "escalated": {"type": "boolean"},
-        "escalation_reason": {"type": ["string", "null"]},
-        "recorded_at": {"type": "string", "format": "date-time"},
-    },
-}
 
 
 def _outcome(**changes: object) -> dict[str, object]:
@@ -96,10 +49,9 @@ class RecordRoutingOutcomeTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary_directory.name)
-        self.schema = self.root / "model_route_outcome.schema.json"
+        self.schema = CANONICAL_SCHEMA
         self.input = self.root / "outcome.json"
         self.output = self.root / "routing" / "outcomes.jsonl"
-        self.schema.write_text(json.dumps(SCHEMA), encoding="utf-8")
 
     def tearDown(self) -> None:
         self.temporary_directory.cleanup()
@@ -127,6 +79,13 @@ class RecordRoutingOutcomeTests(unittest.TestCase):
         rows = [json.loads(line) for line in self.output.read_text().splitlines()]
         self.assertEqual(rows, [_outcome()])
         self.assertIn("recorded", output)
+
+    def test_the_default_schema_is_the_canonical_contract_in_this_repo(self) -> None:
+        # Resolution used to walk to a sibling mq-agent checkout via MQ_AGENT_DIR,
+        # so validation depended on a machine-local path and whichever revision
+        # that checkout was on. The contract lives here now.
+        self.assertEqual(writer.default_schema_path(), CANONICAL_SCHEMA)
+        self.assertTrue(CANONICAL_SCHEMA.is_file())
 
     def test_public_example_matches_the_storage_contract(self) -> None:
         example = Path(__file__).resolve().parents[1] / "examples" / "model-route-outcome.example.json"

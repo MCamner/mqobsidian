@@ -26,11 +26,18 @@ SENSITIVE_PATTERNS = (
 
 
 def default_schema_path() -> Path:
+    """Resolve the canonical routing-outcome contract.
+
+    The contract lives here, in this repo. It used to be resolved from a
+    sibling mq-agent checkout via `MQ_AGENT_DIR`, which made validation depend
+    on a machine-local path and on whichever revision that checkout happened to
+    be on. mq-agent now vendors this file and a gate there proves the copy
+    matches (mq-agent #216).
+    """
     explicit = os.environ.get("MQ_AGENT_ROUTE_OUTCOME_SCHEMA")
     if explicit:
         return Path(explicit).expanduser()
-    agent_dir = Path(os.environ.get("MQ_AGENT_DIR", Path.home() / "mq-agent")).expanduser()
-    return agent_dir / "schemas" / "model_route_outcome.schema.json"
+    return ROOT / "schemas" / "mq.model-route-outcome.v1.json"
 
 
 def load_json(path: Path | None) -> Any:
