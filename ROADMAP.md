@@ -72,7 +72,12 @@ exercised from `tests/test_context_pack_queries.py` and
 `tests/test_context_pack_exclusions.py`. Treat that signal as a lead, not a
 finding -- the same rule ADR-009 states for CodeGraph output generally.
 
-- [ ] Decide whether the reference generators stay here or move to mq-agent.
+- [x] Decide whether the reference generators stay here or move to mq-agent.
+  Neither: `DEC-005` splits vocabulary from execution. mqobsidian publishes the
+  selection heuristic as a declarative contract and keeps the export freshness
+  gate, which guards a surface this repo publishes; mq-agent consumes the
+  contract and keeps every runtime selection decision. Implementation follows
+  the record.
 - [x] Align this repo's `--clean` with the owned-files semantics. It now
   unlinks only the names in `EXPORTED_CONTEXT_FILES` instead of calling
   `shutil.rmtree` on the directory, so `task-pack.md` and unknown files in a
