@@ -17,15 +17,16 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 `mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact
 memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`.
 Phase 12 är stängd och nästa spår är Execution Intelligence:
-`mq.execution-outcome.v1` finns som validerat observationskontrakt, medan writer
-och rapportering ännu inte är implementerade i `mq-agent`. NotebookLM förblir
-en stängd, valfri exportförmåga.
+`mq.execution-outcome.v1` finns som validerat observationskontrakt. mq-agent
+PR #206 levererar writer, execution report/compare, readiness-grind och lokal
+retention. Verklig observationsperiod och aktiv-vs-shadow-divergens återstår.
+NotebookLM förblir en stängd, valfri exportförmåga.
 
 ## Current priorities
 1. Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
 2. Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
-3. Implementera `mq-agent`-writern för `mq.execution-outcome.v1` utan påverkan på routing.
-4. Bygg deskriptiva inspect/report/compare-vyer och samla utfall per task class innan shadow routing övervägs.
+3. Samla execution outcomes per task class och route; omätta räknare är okända, inte noll.
+4. Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
 
 ## Key links
 - [[hot]]
@@ -62,6 +63,7 @@ en stängd, valfri exportförmåga.
 - Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval? (Teknisk nytta är nu mätt och utebliven; frågan kvarstår organisatoriskt.)
 
 ## Recent changes
+- 2026-08-28: Mergeade mq-agent PR #206. `mq.execution-outcome.v1` skrivs best-effort från betydande entrypoints, roteras vid 10 MiB med tre historikfiler och kan stängas av. `execution report`, `execution compare` och `route readiness` rapporterar data utan automatisk routeändring; eligibility är 30 observationer, 2 routes, 14 dagar och 10 per route.
 - 2026-08-28: Mergeade #85 med gröna `main`-kontroller och stängde Phase 12-follow-ups. Lade till `mq.execution-outcome.v1` med schema, public-safe exempel, exportvalidering och kontraktstest. Roadmapen går nu vidare med observation, deskriptiv inspektion, shadow routing och först därefter human-godkända routingexperiment.
 - 2026-08-27: **Phase 12 stängd.** 12g kördes en gång under fryst protokoll — 35 spårade public-safe källor, kall lokal baslinje, blind poängsättning. NotebookLM fick 17/40 mot 40 och 39; grinden krävde 38. Sämre än 12c trots 21x materialet. Två failure modes väger tyngre än siffran: providern svarade från ett föråldrat systemtillstånd på Q3 (2/8) med roadmapfilen i sin egen korpus, och besvarade inte Q5 alls (0/8). Det enda äkta cross-source-fyndet kom från CodeGraph-baslinjen, inte providern. 12d och 12e stängda; se [[../../docs/notebooklm-evaluation]].
 - 2026-08-27: Slöt två tomma sömmar. `feedback-signal.v1` hade kontrakt i båda ändar men ingen producent — `mq-agent context feedback` emitterar nu poster (mq-agent #209), och `scripts/eval-retrieval.py` har data för första gången. Routingutfallen fanns hela tiden i `~/.mq-agent/route-outcomes.jsonl`; de 130 posterna är nu överförda till `routing/outcomes.jsonl` via write-gaten. Routing är `NOT_ELIGIBLE` på verifieringsgrad 0,434, inte på datamängd: 72 av 74 eskaleringar är `verification-failed`, och grinden kräver att varje evidence-item är ordagrant — uppmätt 70 % korrekta citat ger 33 % godkända svar.
