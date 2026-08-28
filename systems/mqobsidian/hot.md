@@ -29,6 +29,7 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 - `mq-agent` ska äga context selection, pack-generation och export.
 - `mqobsidian` ska äga durable notes, schemas, templates och public-safe examples.
 - `.mq/context-budgets.json` är publicerad budgetkälla och CI regenererar exemplen för att upptäcka drift.
+- `.mq/context-selection-vocabulary.json` är publicerad selection-vokabulär (DEC-005). Konsumenter läser den; ingen får hålla en egen kopia, och det finns medvetet ingen fallback.
 - `--clean` tar nu bara bort exportens fem ägda filer och bevarar `task-pack.md` samt okända filer.
 - Aktuell orienteringsmätning visar 222 kontextrader mot 4797 breda baseline-rader (95,4 % minskning); CodeGraph-mätningar redovisas separat i [[../../docs/context-effect]].
 - `scripts/eval-retrieval.py` mäter precision, recall och F1 från lokala feedback-signaler utan att ändra kontrakt eller publicera rådata.
