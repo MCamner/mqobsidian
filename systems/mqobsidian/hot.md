@@ -20,9 +20,10 @@ intelligence en stabil kontraktsgrund utan att flytta runtime till vaulten.
 
 ## Current status
 Phase 12 och dess ownership-, CodeGraph mismatch- och contract-integrity-spår är
-stängda. `mq.execution-outcome.v1` är nu kontrakterat, exemplifierat och validerat
-som observationsyta. Runtime-writer, rapporter och jämförelser återstår i
-`mq-agent`. NotebookLM och automatisk routing är fortsatt stängda.
+stängda. `mq.execution-outcome.v1` är kontrakterat och validerat. mq-agent PR
+#206 är mergead med writer, execution report/compare, route readiness och
+storleksrotation. Aktiv-vs-shadow-divergens och verklig observationsperiod
+återstår. NotebookLM och automatisk routing är fortsatt stängda.
 
 ## Active blockers
 - Inga bekräftade blockers.
@@ -48,10 +49,10 @@ som observationsyta. Runtime-writer, rapporter och jämförelser återstår i
 - `routing/outcomes.jsonl` är gitignorad durable evidence och behåller mq-agents outcome-kontrakt oförändrat. Ytan fylls inte automatiskt: `mq-agent` skriver till `~/.mq-agent/route-outcomes.jsonl`, och `scripts/record-routing-outcome.py` måste köras för att föra över posterna hit.
 
 ## Immediate next actions
-1. Implementera en zero-effect runtime-writer i `mq-agent` mot
-   `mq.execution-outcome.v1` med failure- och fallback-fixtures.
-2. Bygg deskriptiva inspect/report/compare-vyer ovanpå samma data.
-3. Samla verkliga utfall; behandla 30 körningar, 2 routes och 14 dagar som en
+1. Samla verkliga execution outcomes och kontrollera vilka runtimes som faktiskt
+   mäter route, context, retries och fallbacks utan påhittade nollor.
+2. Lägg till aktiv-vs-shadow-divergens först när samma task class kan jämföras.
+3. Behandla 30 körningar, 2 routes och 14 dagar som en
    hypotes, inte som automatisk aktiveringsregel.
 
 ## Critical links

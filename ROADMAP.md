@@ -133,24 +133,24 @@ or use-case change invalidates the earlier evaluation.
 ### v2.4 — Observation foundation
 
 - [x] `mq.execution-outcome.v1` contract, example and validation
-- [ ] runtime writer in mq-agent
-- [ ] provenance for route/model/context
-- [ ] failure and fallback recording
-- [ ] fixtures and mutation tests in mq-agent
+- [x] runtime writer in mq-agent
+- [x] optional measured provenance for route/model/context
+- [ ] fallback recording (no runtime measures it yet)
+- [x] failure recording, fixtures and mutation tests in mq-agent
 
 ### v2.5 — Execution inspection
 
-- [ ] `mq-agent route inspect`
-- [ ] `mq-agent execution report`
-- [ ] route/model comparison with task-class filtering
-- [ ] latency, context and fallback statistics
+- [x] `mq-agent route inspect`
+- [x] `mq-agent execution report`
+- [x] `mq-agent execution compare` with task-class filtering
+- [x] latency, context and fallback statistics; unknown values stay absent
 
 ### v2.6 — Shadow routing
 
-- [ ] shadow decision contract
-- [ ] active versus shadow comparison
-- [ ] zero-effect guarantee and divergence reporting
-- [ ] evidence threshold before policy experiments
+- [x] shadow decision contract
+- [ ] active-versus-shadow divergence reporting
+- [x] zero-effect guarantee
+- [x] machine-checked evidence threshold before policy experiments
 
 ### v2.7 — Evidence-based routing
 
