@@ -1,9 +1,10 @@
 # Roadmap
 
 **Current version:** 0.3.0
-**Current direction:** v0.3.0 release candidate — the truth/memory contract
-implementation and local release metadata are complete. Tagging and publishing
-remain explicit release actions. The delivered scope
+**Current direction:** v0.3.0 released — tagged `v0.3.0` at `d090d03` and
+published on 2026-08-28, with the release notes taken verbatim from the
+CHANGELOG entry. Active work is the Execution Intelligence track below. The
+delivered scope
 declares the contracts this repo already owns explicitly in
 `.mq/repo-contract.json` and makes those surfaces
 safe and predictable for consumers to read. The goal is better selection and
@@ -242,7 +243,7 @@ assert the intention.
 
 ## v0.3.0 — Explicit Truth Contracts and Consumer Readiness
 
-**Status:** Release candidate; tag and publication pending
+**Status:** Released 2026-08-28 (`v0.3.0` -> `d090d03`)
 **Priority:** P1
 **Type:** Contracts / Consumer readiness
 **Goal:** Make the contracts this repo owns explicit and predictable to consume.
@@ -282,7 +283,13 @@ None open — the one gap that survived the honesty gate is closed below.
 
 - [x] Bump `VERSION`, README badge, changelog, and release metadata together.
 - [x] Run the complete public-safe validation suite against the release candidate.
-- [ ] Tag and publish `v0.3.0` only after CI is green.
+- [x] Tag and publish `v0.3.0` only after CI is green. Tagged at `d090d03`
+  after `mq-release-readiness` returned READY against that exact commit (repo
+  gate 7/7, plus the CI-only context-links, ruff 0.16.4 and export-freshness
+  gates), main CI green, and the tree clean. The CHANGELOG entry was corrected
+  first (#88): it was dated 2026-08-05 and omitted eight shipped `Unreleased`
+  entries plus thirteen later PRs, so the tag would have described less than
+  the tree it points at.
 
 #### A. Context-pack proof metadata — Completed
 
