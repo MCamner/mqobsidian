@@ -149,11 +149,14 @@ def build_codegraph_queries(
     symbols: list[str],
     mode: str,
 ) -> list[str]:
-    """Build bounded MCP tool intentions for a source-heavy task.
+    """Build bounded CodeGraph intentions for a source-heavy task.
 
-    The returned strings are agent-facing guidance, not shell commands. Keeping
-    the existing function/result name preserves the context-pack API while
-    routing Codex and Claude through CodeGraph's MCP tools.
+    The returned strings are agent-facing guidance stating an *intention*, never
+    a tool name. CodeGraph's MCP surface varies by installed version -- 1.5.0
+    exposes a single tool while the CLI keeps `callers`, `callees`, `impact` and
+    `node` as separate commands -- so naming a tool here can point a reader at a
+    call it cannot make. The consumer knows which surface it has; this repo does
+    not, and must not guess. See docs/integrations/codegraph.md.
     """
     if mode == "off":
         return []
@@ -164,22 +167,22 @@ def build_codegraph_queries(
         return []
 
     queries = [
-        f"* `codegraph_explore` — map task \"{_sanitize_query(task)}\" in `{target}` first."
+        f"* Map task \"{_sanitize_query(task)}\" in `{target}` with CodeGraph first."
     ]
     task_key = task.lower()
     if any(token in task_key for token in ("trace", "code flow", "code-flow", "call graph")):
-        queries.append("* `codegraph_explore` — trace the end-to-end flow described by the task.")
+        queries.append("* Trace the end-to-end flow described by the task.")
     for symbol in symbols:
         symbol = symbol.strip()
         if not symbol:
             continue
-        queries.append(f"* `codegraph_callers` — inspect callers of `{symbol}`.")
-        queries.append(f"* `codegraph_impact` — inspect the impact of changing `{symbol}`.")
+        queries.append(f"* Inspect the callers of `{symbol}`.")
+        queries.append(f"* Assess the blast radius of changing `{symbol}`.")
     for path in relevant_files:
         if path.split("/", 1)[0] == target and path.lower().endswith(SOURCE_EXTS):
             queries.append(
-                f"* `codegraph_node` — inspect `{_repo_relative(path, target)}` "
-                "only if the context result omitted it."
+                f"* Inspect `{_repo_relative(path, target)}` only if the earlier "
+                "result omitted it."
             )
 
     bounded: list[str] = []
@@ -198,8 +201,10 @@ def codegraph_section(queries: list[str]) -> str:
     body = "\n".join(queries)
     return (
         "\n## CodeGraph queries\n\n"
-        "Use the installed CodeGraph MCP tools directly; these are tool "
-        "intentions, not shell commands. Treat source returned by CodeGraph as "
+        "These are intentions, not tool names or shell commands: satisfy each "
+        "with whatever CodeGraph surface you have, since the MCP tool set varies "
+        "by installed version while the CLI keeps separate commands. Treat "
+        "source returned by CodeGraph as "
         "already read and do not repeat it with a broad grep/read loop. Fall "
         "back to targeted source reads only when the index is missing, the "
         "language is unsupported, or the result reports missing/stale detail. "
