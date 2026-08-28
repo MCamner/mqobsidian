@@ -143,10 +143,20 @@ requires of CodeGraph output.
   installation rather than a contract. `tests/test_codegraph_intentions.py`
   fails if any `codegraph_*` tool name reappears in the guidance or the rendered
   section.
-- [ ] Apply the same treatment to mq-agent's generator. Its names are currently
-  correct -- it emits `codegraph_explore`, which exists -- so this is latent
-  rather than broken, but it carries the same version-dependence, and the two
-  generators now produce different guidance shapes.
+- [x] Apply the same treatment to mq-agent's generator (mq-agent #212). It was
+  **broken the same way**, not latent -- correcting the claim recorded here
+  earlier. The end-to-end check behind that claim passed no `--symbol` and no
+  relevant files, so only the first line was emitted; with them the generator
+  named `codegraph_callers`, `codegraph_impact` and `codegraph_node` exactly as
+  this repo's did. Both now emit the same intentions, so a pack reads the same
+  whichever produced it.
+
+The tests were why the defect survived on both sides. Five assertions in
+mq-agent and three here pinned the exact tool names in place, which made
+correcting them look like a test failure. A test that mirrors the implementation
+rather than the requirement protects the bug, not the code -- both sets now
+assert the intention.
+
 - [x] Add covering tests for `export_repo`, including an explicit ownership
   invariant: an export run may only create, modify or delete names in
   `EXPORTED_CONTEXT_FILES`. Asserted over the whole directory before and after a
