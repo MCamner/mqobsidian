@@ -53,6 +53,7 @@ See `docs/TRUTH_SURFACES.md` for the surface boundary and freshness markers.
 | --- | --- |
 | `context-pack.v1` | Small task-scoped context bundles for Codex and Claude Code. |
 | `context-selection-vocabulary.v1` | The words that mark a task source-heavy, and the CodeGraph query bound. Owned here, applied by mq-agent (DEC-005). |
+| `context-budget.v1` | Line budgets for generated `.mq/context` files and the order they render. Owned here, consumed by mq-agent context export. |
 | `context-card.v1` | Compact per-repo card feeding pack generation. |
 | `notebook-pack.v1` | Deterministic, provenance-bearing source set for optional external synthesis. |
 
