@@ -83,8 +83,54 @@ finding -- the same rule ADR-009 states for CodeGraph output generally.
   `shutil.rmtree` on the directory, so `task-pack.md` and unknown files in a
   target repo survive. Covered by `tests/test_repo_context_export.py`, which
   fails against the old behaviour.
-- [ ] Amend `hot.md:29` and `:32` to describe what is actually true, whichever
-  way the first two land -- the current wording will keep reading as a violation.
+- [x] Amend `hot.md:29` and `:32` to describe what is actually true, whichever
+  way the first two land. Both sentences turned out to be correct and were left
+  alone: `:29` is true under DEC-005, and `:32` accurately described mq-agent's
+  exporter all along -- this repo's script was the one that disagreed, fixed in
+  the `--clean` work. What the implementation did add is a new published
+  surface, so `hot.md` gained one line naming
+  `.mq/context-selection-vocabulary.json` and the rule that consumers may not
+  copy it.
+
+**The ownership track is closed.** Findings 1 and 3 are resolved; finding 2
+needed no change. Two adjacent issues were found while working on it and are
+tracked below rather than folded in, so this track stays a bounded piece of
+work.
+
+### Follow-up: `context-budget.v1` contract integrity
+
+Non-blocking. Found while implementing DEC-005: `.mq/context-budgets.json`
+declares `"schema": "context-budget.v1"`, but that schema does not exist, the
+artifact is not validated, and the contract is not among the declared 25. The
+new vocabulary contract is now held to a higher standard than the older one it
+was modelled on. Harden the older one to the new standard rather than treating
+the gap as licence to lower it.
+
+- [ ] Create the schema the artifact already declares.
+- [ ] Validate `.mq/context-budgets.json` against it in `validate-export.py`.
+- [ ] Add semantic invariants where they exist, not only structural checks --
+  `rendered_order` naming a file with no budget would be one.
+- [ ] Test that the declared schema id and the published artifact cannot drift.
+
+### Follow-up: CodeGraph tool names in the reference generator
+
+Not stale documentation -- a contract/runtime mismatch. `generate-context-pack.py`
+emits guidance naming `codegraph_callers`, `codegraph_impact` and
+`codegraph_node`. The CodeGraph MCP server exposes a single tool,
+`codegraph_explore`, and mq-agent's generator emits that one. Verified at
+runtime: a pack built through `mq-agent context pack` against this vault names
+the tool that exists, while this repo's reference generator names three that do
+not. Packs from the reference generator can therefore steer an agent toward
+tools it cannot call.
+
+The finding came from the 12g CodeGraph baseline as a signal, was confirmed
+against source, and was then verified against the live MCP surface. Only after
+that third step is it strong enough to act on -- the same discipline ADR-009
+requires of CodeGraph output.
+
+- [ ] Reconcile the emitted tool names against the shipped MCP surface.
+- [ ] Decide whether the reference generator should name tools at all, or
+  describe intent and leave tool choice to the consumer.
 - [x] Add covering tests for `export_repo`, including an explicit ownership
   invariant: an export run may only create, modify or delete names in
   `EXPORTED_CONTEXT_FILES`. Asserted over the whole directory before and after a
