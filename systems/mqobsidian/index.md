@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-08-27
+updated: 2026-08-28
 owner:
 links_to: [hot]
 ---
@@ -14,13 +14,18 @@ links_to: [hot]
 Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade kontextyta.
 
 ## Current state
-`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`. NotebookLM-spåret är stängt: `notebook-pack.v1` och exportören behålls som *optional export capability*, inte som provider, och ingen läsväg routar dit.
+`mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact
+memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`.
+Phase 12 är stängd och nästa spår är Execution Intelligence:
+`mq.execution-outcome.v1` finns som validerat observationskontrakt, medan writer
+och rapportering ännu inte är implementerade i `mq-agent`. NotebookLM förblir
+en stängd, valfri exportförmåga.
 
 ## Current priorities
 1. Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
 2. Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
-3. Samla verifierade routingutfall per task class inför en separat evidence review; aktivera inte automatisk routing från otillräckligt underlag.
-4. Lös ägarskapsdivergensen: context selection körs i detta repo trots att regeln lägger den hos mq-agent, och repots exportör har osäker `--clean`. Se [[../../ROADMAP]].
+3. Implementera `mq-agent`-writern för `mq.execution-outcome.v1` utan påverkan på routing.
+4. Bygg deskriptiva inspect/report/compare-vyer och samla utfall per task class innan shadow routing övervägs.
 
 ## Key links
 - [[hot]]
@@ -48,14 +53,16 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 - Duplicerad source-repo-dokumentation i vaulten skapar drift.
 - Kontrakt kan vara kompletta i båda ändar utan att sömmen körs; en tom yta betyder inte att inget hänt.
 - Extern syntes kan läcka felklassificerat material om allowlist eller operator approval kringgås.
-- Två exportörer med olika `--clean`-semantik; bara den säkra är dokumenterad. Se ägarskapsspåret i [[../../ROADMAP]].
+- Befintliga route-outcomes och det bredare execution-outcome-kontraktet kan ge dubbla sanningar om migreringen inte får en tydlig producent och lagringsyta.
 
 ## Open questions
 - Vilka verkliga uppgifter ska ingå i nästa mätbatch?
+- Ska befintliga `mq.model-route-outcome.v1`-poster migreras eller endast behållas som historik när execution-writern tas i bruk?
 - Vilka repon får en beslutad publik agentyta (och därmed tracked `.mq/context/`)?
 - Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval? (Teknisk nytta är nu mätt och utebliven; frågan kvarstår organisatoriskt.)
 
 ## Recent changes
+- 2026-08-28: Mergeade #85 med gröna `main`-kontroller och stängde Phase 12-follow-ups. Lade till `mq.execution-outcome.v1` med schema, public-safe exempel, exportvalidering och kontraktstest. Roadmapen går nu vidare med observation, deskriptiv inspektion, shadow routing och först därefter human-godkända routingexperiment.
 - 2026-08-27: **Phase 12 stängd.** 12g kördes en gång under fryst protokoll — 35 spårade public-safe källor, kall lokal baslinje, blind poängsättning. NotebookLM fick 17/40 mot 40 och 39; grinden krävde 38. Sämre än 12c trots 21x materialet. Två failure modes väger tyngre än siffran: providern svarade från ett föråldrat systemtillstånd på Q3 (2/8) med roadmapfilen i sin egen korpus, och besvarade inte Q5 alls (0/8). Det enda äkta cross-source-fyndet kom från CodeGraph-baslinjen, inte providern. 12d och 12e stängda; se [[../../docs/notebooklm-evaluation]].
 - 2026-08-27: Slöt två tomma sömmar. `feedback-signal.v1` hade kontrakt i båda ändar men ingen producent — `mq-agent context feedback` emitterar nu poster (mq-agent #209), och `scripts/eval-retrieval.py` har data för första gången. Routingutfallen fanns hela tiden i `~/.mq-agent/route-outcomes.jsonl`; de 130 posterna är nu överförda till `routing/outcomes.jsonl` via write-gaten. Routing är `NOT_ELIGIBLE` på verifieringsgrad 0,434, inte på datamängd: 72 av 74 eskaleringar är `verification-failed`, och grinden kräver att varje evidence-item är ordagrant — uppmätt 70 % korrekta citat ger 33 % godkända svar.
 - 2026-08-26: Körde NotebookLM-proven mot alla tre baslinjer: 34/40 mot 36 och 37. Beslutsgaten faller — provider förblir valfri, ingen sync/routing/write-back, och skuld 12f ska inte betalas. Ett faktafel i kandidatens svar (dirty som gate i stället för deklaration) och 1704 levererade rader mot 250 lokalt. Rättvist omtest på odestillerat material specas i roadmap 12g; se [[../../docs/notebooklm-evaluation]].
