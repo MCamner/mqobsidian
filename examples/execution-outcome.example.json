@@ -1,0 +1,16 @@
+{
+  "schema": "mq.execution-outcome.v1",
+  "run_id": "exec-20260828-001",
+  "runtime": "swarm",
+  "task_class": "ci",
+  "result": "PASS",
+  "exit_status": "ok",
+  "latency_ms": 4800,
+  "route": {"selected": "local-qwen", "policy": "static", "confidence": null},
+  "model": "qwen3-coder",
+  "context": {"sources": ["repo-card", "codegraph"], "size": 18200},
+  "retries": 0,
+  "fallbacks": 0,
+  "tokens": {"input": 9200, "output": 1300},
+  "recorded_at": "2026-08-28T12:00:00Z"
+}

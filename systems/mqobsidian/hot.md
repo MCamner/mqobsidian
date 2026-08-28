@@ -4,7 +4,7 @@ system: mqobsidian
 status: active
 max_words: 500
 tags: [hot, cache, active-context]
-updated: 2026-08-27
+updated: 2026-08-28
 owner:
 links_to: [index]
 ---
@@ -15,19 +15,24 @@ links_to: [index]
 Systemets lilla arbetsminne. Bara det viktigaste.
 
 ## Current mission
-Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att läsa.
+Hålla MQ-stackens durable memory tunn och public-safe, samt ge execution
+intelligence en stabil kontraktsgrund utan att flytta runtime till vaulten.
 
 ## Current status
-`mqobsidian` är kunskapslagret, inte exekverings- eller orchestrationlagret. NotebookLM-spåret är stängt efter två mätningar; `notebook-pack.v1` och exportören står kvar som exportinfrastruktur utan konsument. Ingen adapter, sync eller automatisk routing är aktiverad.
+Phase 12 och dess ownership-, CodeGraph mismatch- och contract-integrity-spår är
+stängda. `mq.execution-outcome.v1` är nu kontrakterat, exemplifierat och validerat
+som observationsyta. Runtime-writer, rapporter och jämförelser återstår i
+`mq-agent`. NotebookLM och automatisk routing är fortsatt stängda.
 
 ## Active blockers
 - Inga bekräftade blockers.
 
 ## Most important facts
 - Läs först [[../../memory/learn/agent/mqobsidian]] för repo-specifik agentkontext.
-- Längre riktning finns i [[../../docs/roadmap-token-reduction]].
-- `mq-agent` ska äga context selection, pack-generation och export.
-- `mqobsidian` ska äga durable notes, schemas, templates och public-safe examples.
+- `mq-agent` äger context selection, pack-generation, runtime-writer och CLI.
+- `mqobsidian` äger durable notes, schemas, templates och public-safe examples.
+- `mq.execution-outcome.v1` beskriver route/model/context, duration, status,
+  fallback och retries. Quality samt usage är valfria när signalerna saknas.
 - `.mq/context-budgets.json` är publicerad budgetkälla och CI regenererar exemplen för att upptäcka drift.
 - `.mq/context-selection-vocabulary.json` är publicerad selection-vokabulär (DEC-005). Konsumenter läser den; ingen får hålla en egen kopia, och det finns medvetet ingen fallback.
 - `--clean` tar nu bara bort exportens fem ägda filer och bevarar `task-pack.md` samt okända filer.
@@ -36,16 +41,18 @@ Hålla MQ-stackens durable memory tunn, public-safe och billig för agenter att 
 - `memory-query.v1` kan ange flera `repositories`; `repository` är fortsatt det frågande repot.
 - `.mq/notebooks.json` deklarerar en smal `mq-stack-intelligence`-allowlist; materialiserad output hör hemma i gitignorerade `.notebooklm/`.
 - `notebook-pack.v1` kräver `revision.dirty`; consumer-repon får validera kontraktet men inte omdefiniera det (mq-agent vendorar en kopia).
-- **Phase 12 är stängd.** 12g:s rättvisa omtest gav 17/40 mot 40 (kompakt MQ) och 39 (MQ+CodeGraph) — sämre än 12c trots 21x materialet. NotebookLM är omklassificerad till *optional export capability*, inte provider; 12d och 12e är stängda, 12f betalas inte. Kontrakt, exportör och grindar behålls som exportinfrastruktur.
+- **Phase 12 är stängd.** NotebookLM är *optional export capability*, inte
+  provider; kontrakt och grindar behålls som exportinfrastruktur.
 - `mq-agent` äger eventuell NotebookLM selection, pack-generation, routing och sync; se [[../../docs/notebooklm-bridge]]. Gitignorerad varaktig minnesyta exporteras aldrig — publiceringsgränsen är exportgränsen.
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
 - `routing/outcomes.jsonl` är gitignorad durable evidence och behåller mq-agents outcome-kontrakt oförändrat. Ytan fylls inte automatiskt: `mq-agent` skriver till `~/.mq-agent/route-outcomes.jsonl`, och `scripts/record-routing-outcome.py` måste köras för att föra över posterna hit.
 
 ## Immediate next actions
-1. Håll [[index]] och denna hot-note små.
-2. Samla verkliga `feedback-signal.v1`-utfall innan selection quality används för beslut.
-3. Samla verifierade routingutfall per task class utan att aktivera automatisk routing.
-4. Ta ägarskapsdivergensen i [[../../ROADMAP]]: context selection körs i detta repo trots att regeln lägger den hos mq-agent, och repots `--clean` gör `rmtree` medan hot:32 beskriver mq-agents säkra variant.
+1. Implementera en zero-effect runtime-writer i `mq-agent` mot
+   `mq.execution-outcome.v1` med failure- och fallback-fixtures.
+2. Bygg deskriptiva inspect/report/compare-vyer ovanpå samma data.
+3. Samla verkliga utfall; behandla 30 körningar, 2 routes och 14 dagar som en
+   hypotes, inte som automatisk aktiveringsregel.
 
 ## Critical links
 - [[index]]

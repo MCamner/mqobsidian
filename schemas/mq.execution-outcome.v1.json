@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mq.execution-outcome.v1",
+  "description": "The outcome of one agent run. Routing, model and context are optional measured dimensions; absent counters are unknown, not zero.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "run_id", "runtime", "task_class", "result", "exit_status", "latency_ms", "recorded_at"],
+  "properties": {
+    "schema": {"const": "mq.execution-outcome.v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "runtime": {"enum": ["swarm", "executor", "task-runner", "agent"]},
+    "task_class": {"enum": ["audit", "ci", "docs", "release", "release-check", "signal", "task", "unclassified"]},
+    "result": {"enum": ["PASS", "FAIL", "SKIPPED"]},
+    "exit_status": {"enum": ["ok", "error", "aborted", "skipped"]},
+    "latency_ms": {"type": "integer", "minimum": 0},
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selected", "policy", "confidence"],
+      "properties": {
+        "selected": {"type": "string", "minLength": 1},
+        "policy": {"enum": ["static", "learned", "none"]},
+        "confidence": {"oneOf": [{"type": "null"}, {"type": "number", "minimum": 0, "maximum": 1}]}
+      }
+    },
+    "model": {"type": ["string", "null"]},
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources", "size"],
+      "properties": {
+        "sources": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 80}, "uniqueItems": true},
+        "size": {"type": "integer", "minimum": 0}
+      }
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "status": {"enum": ["ok", "error", "skipped", "dry-run"]},
+          "latency_ms": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "skills": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "tool_calls": {"type": "integer", "minimum": 0},
+    "retries": {"type": "integer", "minimum": 0},
+    "fallbacks": {"type": "integer", "minimum": 0},
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {"input": {"type": "integer", "minimum": 0}, "output": {"type": "integer", "minimum": 0}}
+    },
+    "cost": {"type": "number", "minimum": 0},
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind"],
+        "properties": {"kind": {"type": "string", "minLength": 1, "maxLength": 80}}
+      }
+    },
+    "recorded_at": {"type": "string", "format": "date-time"}
+  }
+}

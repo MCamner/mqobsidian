@@ -124,6 +124,46 @@ drifting from the schema file. All four passed silently before.
 DEC-005 set for the newer one, and that standard is now enforced rather than
 observed.
 
+## Next: Execution Intelligence
+
+Phase 12 is closed. This track collects runtime evidence before any adaptive
+routing is considered. NotebookLM remains closed unless a material capability
+or use-case change invalidates the earlier evaluation.
+
+### v2.4 — Observation foundation
+
+- [x] `mq.execution-outcome.v1` contract, example and validation
+- [ ] runtime writer in mq-agent
+- [ ] provenance for route/model/context
+- [ ] failure and fallback recording
+- [ ] fixtures and mutation tests in mq-agent
+
+### v2.5 — Execution inspection
+
+- [ ] `mq-agent route inspect`
+- [ ] `mq-agent execution report`
+- [ ] route/model comparison with task-class filtering
+- [ ] latency, context and fallback statistics
+
+### v2.6 — Shadow routing
+
+- [ ] shadow decision contract
+- [ ] active versus shadow comparison
+- [ ] zero-effect guarantee and divergence reporting
+- [ ] evidence threshold before policy experiments
+
+### v2.7 — Evidence-based routing
+
+- [ ] define promotion criteria from accumulated outcomes
+- [ ] evaluate a candidate policy in shadow mode
+- [ ] require human approval before activation
+- [ ] provide rollback or supersede mechanism
+
+The provisional observation threshold is 30 runs across 2 alternative routes
+over 14 days per relevant task class. It is a hypothesis to evaluate, not an
+activation rule. Until then, reporting is descriptive and routing remains
+unchanged.
+
 ### What makes something a contract here
 
 A file carrying a `schema` field is not a contract on its own -- that is exactly

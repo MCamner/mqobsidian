@@ -20,6 +20,7 @@
     "memory_query.v1",
     "memory_score.v1",
     "memory_score_manifest.v1",
+    "mq.execution_outcome.v1",
     "notebook_pack.v1",
     "promotion_event.v1",
     "promotion_policy.v1",

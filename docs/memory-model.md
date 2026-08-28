@@ -1,6 +1,6 @@
 # mqobsidian Memory Model
 
-This repo models MQ memory as structured, reviewable layers. It owns 24
+This repo models MQ memory as structured, reviewable layers. It owns 27
 contracts, each declared in `.mq/repo-contract.json` and backed by a
 `schemas/<name>.v1.json` file. Consumer repos may validate against these shapes
 but must not redefine them locally.
@@ -24,6 +24,7 @@ Per DEC-002, two layers are kept distinct:
 | `memory-query.v1` | A repo asking `mqobsidian` for relevant memory before or during a task. Read-only. Optional `repositories` widens one query across the stack; `repository` stays the asking repo. |
 | `workflow-observation.v1` | One sanitized workflow-run observation. `mqobsidian` owns the vocabulary; `mq-agent` emits records. |
 | `feedback-signal.v1` | One pack-usage feedback event. Kept separate from promotion. |
+| `mq.execution-outcome.v1` | One observed MQ execution result, including route/model/context provenance, latency, fallback and retries. Observation only; never changes routing. |
 | `decision-record.v1` | Architectural decisions and durable boundaries. |
 | `learn-record.v1` | Verified patterns, lessons, and reusable fixes. |
 | `repo-review.v1` | Sanitized repository review outputs worth keeping as reusable context. |
