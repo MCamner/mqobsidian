@@ -13,14 +13,14 @@ edit by hand; re-run `mq-agent agent-views rebuild`.
 
 ## Current state
 
-Hålla MQ-stackens durable memory tunn och public-safe, samt ge execution intelligence en stabil kontraktsgrund utan att flytta runtime till vaulten. Phase 12 och dess ownership-, CodeGraph mismatch- och contract-integrity-spår är stängda. `mq.execution-outcome.v1` är nu kontrakterat, exemplifierat och validerat som observationsyta. Runtime-writer, rapporter och jämförelser återstår…
+Hålla MQ-stackens durable memory tunn och public-safe, samt ge execution intelligence en stabil kontraktsgrund utan att flytta runtime till vaulten. Phase 12 och dess ownership-, CodeGraph mismatch- och contract-integrity-spår är stängda. `mq.execution-outcome.v1` är kontrakterat och validerat. mq-agent PR #206 är mergead med writer, execution report/compare…
 
 ## Active priorities
 
 - Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
 - Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
-- Implementera `mq-agent`-writern för `mq.execution-outcome.v1` utan påverkan på routing.
-- Bygg deskriptiva inspect/report/compare-vyer och samla utfall per task class innan shadow routing övervägs.
+- Samla execution outcomes per task class och route; omätta räknare är okända, inte noll.
+- Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
 
 ## Current blockers
 

@@ -135,7 +135,7 @@ or use-case change invalidates the earlier evaluation.
 - [x] `mq.execution-outcome.v1` contract, example and validation
 - [x] runtime writer in mq-agent
 - [x] optional measured provenance for route/model/context
-- [ ] fallback recording remains absent until a runtime measures it
+- [ ] fallback recording (no runtime measures it yet)
 - [x] failure recording, fixtures and mutation tests in mq-agent
 
 ### v2.5 — Execution inspection
