@@ -121,7 +121,30 @@ budget, a consumed file losing its budget, a budget of 0, and the schema id
 drifting from the schema file. All four passed silently before.
 
 **Both follow-ups are now closed.** The older contract meets the standard
-DEC-005 set for the newer one.
+DEC-005 set for the newer one, and that standard is now enforced rather than
+observed.
+
+### What makes something a contract here
+
+A file carrying a `schema` field is not a contract on its own -- that is exactly
+what `.mq/context-budgets.json` was for months. A contract must be:
+
+```text
+artifact -> schema exists -> contract declared -> documented
+```
+
+- a real schema in `schemas/`, matching the id the artifact names;
+- declared in `.mq/repo-contract.json` (hyphens in the schema file become
+  underscores in the declaration);
+- documented in `docs/memory-model.md`;
+- validated in `validate-export.py`, with explicit semantic invariants wherever
+  JSON Schema cannot reach -- coverage of keys other code will index by, for
+  instance.
+
+`tests/test_contract_artifact_invariant.py` enforces the first three links;
+`test_docs_freshness` already enforced the last. Before that test, only the last
+link was checked, which is why an artifact could name a schema nobody had
+written and nothing noticed.
 
 ### Follow-up: CodeGraph tool names in the reference generator
 
