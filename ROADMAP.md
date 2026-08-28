@@ -128,9 +128,25 @@ against source, and was then verified against the live MCP surface. Only after
 that third step is it strong enough to act on -- the same discipline ADR-009
 requires of CodeGraph output.
 
-- [ ] Reconcile the emitted tool names against the shipped MCP surface.
-- [ ] Decide whether the reference generator should name tools at all, or
-  describe intent and leave tool choice to the consumer.
+- [x] Reconcile the emitted tool names against the shipped MCP surface. The
+  investigation changed the finding: every intent *does* exist, as a CLI command
+  (`explore`, `node`, `query`, `callers`, `callees`, `impact`, `status`). Only
+  the MCP transport has consolidated -- CodeGraph 1.5.0 exposes one tool,
+  `codegraph_explore`, and the CLI's own help still refers to a
+  `codegraph_node` MCP tool. So the MCP surface varies by installed version, and
+  hardcoding any tool name here is wrong regardless of which names are current.
+- [x] Decide whether the reference generator should name tools at all: it should
+  not. It now emits intentions ("Inspect the callers of `x`", "Assess the blast
+  radius of changing `x`") and leaves transport to the consumer, which knows
+  what it has installed. `docs/integrations/codegraph.md` keeps the intent table
+  but adds a CLI column and marks the MCP column as an observation about one
+  installation rather than a contract. `tests/test_codegraph_intentions.py`
+  fails if any `codegraph_*` tool name reappears in the guidance or the rendered
+  section.
+- [ ] Apply the same treatment to mq-agent's generator. Its names are currently
+  correct -- it emits `codegraph_explore`, which exists -- so this is latent
+  rather than broken, but it carries the same version-dependence, and the two
+  generators now produce different guidance shapes.
 - [x] Add covering tests for `export_repo`, including an explicit ownership
   invariant: an export run may only create, modify or delete names in
   `EXPORTED_CONTEXT_FILES`. Asserted over the whole directory before and after a

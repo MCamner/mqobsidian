@@ -200,20 +200,31 @@ surfaces. If upstream adds shell/PowerShell extraction, these surfaces move from
 
 ## How agents should use CodeGraph
 
-Prefer CodeGraph MCP before broad grep/read loops when `.codegraph/` exists.
-The task pack describes tool intentions; Codex and Claude invoke the installed
-MCP tools directly rather than translating them into shell commands.
+Prefer CodeGraph before broad grep/read loops when `.codegraph/` exists. The
+task pack states intentions and never names a tool, because **the MCP tool set
+varies by installed version** while the CLI keeps a command per intent. Resolve
+each intention against the surface you actually have.
 
-| Intent | MCP tool |
-| --- | --- |
-| Map a task or feature first | `codegraph_explore` |
-| Trace an end-to-end path | `codegraph_explore` |
-| Survey several related symbols | `codegraph_explore` |
-| Find a symbol | `codegraph_search` |
-| Walk one call edge | `codegraph_callers` / `codegraph_callees` |
-| Check blast radius before editing | `codegraph_impact` |
-| Inspect one symbol | `codegraph_node` |
-| Check index health | `codegraph_status` |
+At CodeGraph 1.5.0 the MCP server exposes a single tool, `codegraph_explore`,
+which answers most of these in one call; the CLI still offers the separate
+commands. Earlier versions exposed more MCP tools, and the CLI's own help still
+refers to a `codegraph_node` MCP tool. Treat the MCP column as an observation
+about one installation, not as a contract.
+
+| Intent | CLI command | MCP at 1.5.0 |
+| --- | --- | --- |
+| Map a task or feature first | `explore` | `codegraph_explore` |
+| Trace an end-to-end path | `explore` | `codegraph_explore` |
+| Survey several related symbols | `explore` | `codegraph_explore` |
+| Find a symbol | `query` | `codegraph_explore` |
+| Walk one call edge | `callers` / `callees` | `codegraph_explore` |
+| Check blast radius before editing | `impact` | `codegraph_explore` |
+| Inspect one symbol | `node` | `codegraph_explore` |
+| Check index health | `status` | not exposed |
+
+Verify the MCP column before relying on it: list the server's tools in your
+agent rather than trusting this table, and prefer the CLI when a script needs a
+surface that does not move between versions.
 
 Treat source returned by CodeGraph as already read. Do not re-open the same
 material or repeat the answer with a broad grep/read loop. Use targeted source

@@ -32,11 +32,19 @@ class BuildCodegraphQueries(unittest.TestCase):
         )
         self.assertTrue(queries)
         self.assertLessEqual(len(queries), gcp.MAX_CODEGRAPH_QUERIES)
-        self.assertIn("`codegraph_explore`", queries[0])
-        self.assertTrue(any("`codegraph_explore`" in q for q in queries))
-        self.assertTrue(any("`codegraph_callers`" in q and "`store_learn_record`" in q for q in queries))
-        self.assertTrue(any("`codegraph_impact`" in q and "`store_learn_record`" in q for q in queries))
-        self.assertTrue(any("`codegraph_node`" in q and "`runtime/memory/obsidian_writer.py`" in q for q in queries))
+        # Intentions, never tool names: the MCP surface varies by installed
+        # CodeGraph version, so a named tool can be one the reader cannot call.
+        self.assertIn("with CodeGraph first", queries[0])
+        self.assertFalse(
+            any("codegraph_" in q for q in queries),
+            "guidance must not name an MCP tool",
+        )
+        # Each intention must survive the rename; only the tool name is gone.
+        self.assertTrue(any("callers of" in q and "`store_learn_record`" in q for q in queries))
+        self.assertTrue(any("blast radius" in q and "`store_learn_record`" in q for q in queries))
+        self.assertTrue(
+            any("`runtime/memory/obsidian_writer.py`" in q for q in queries)
+        )
         self.assertTrue(all(not q.startswith("codegraph ") for q in queries))
 
     def test_doc_task_emits_no_queries(self):
@@ -96,10 +104,10 @@ class RenderSection(unittest.TestCase):
             relevant_decisions=[],
             notes=[],
             do_not_read=[],
-            codegraph_queries=["* `codegraph_explore` — map task \"x\" in `mq-mcp` first."],
+            codegraph_queries=["* Map task \"x\" in `mq-mcp` with CodeGraph first."],
         )
         self.assertIn("## CodeGraph queries", content)
-        self.assertIn("Use the installed CodeGraph MCP tools directly", content)
+        self.assertIn("These are intentions, not tool names", content)
         self.assertIn("Treat source returned by CodeGraph as already read", content)
         self.assertNotIn("```bash", content)
         self.assertNotIn("codegraph explore", content)
