@@ -1,0 +1,33 @@
+{
+  "schema": "context-selection-vocabulary.v1",
+  "description": "Single source of truth for source-heavy task classification and the CodeGraph query bound. Owned by mqobsidian; consumed by mqobsidian's reference generator and by mq-agent context selection. Consumers must read this file rather than keep their own copy (DEC-005). See docs/context-export-contract.md.",
+  "source_heavy_hints": [
+    "caller",
+    "callee",
+    "impact",
+    "blast radius",
+    "call graph",
+    "code flow",
+    "code-flow",
+    "refactor",
+    "rename",
+    "trace",
+    "symbol",
+    "where is",
+    "implement",
+    "writer path",
+    "wire ",
+    "fix "
+  ],
+  "source_heavy_suppress": [
+    "readme",
+    "roadmap",
+    "release note",
+    "changelog",
+    "docstring",
+    "doc ",
+    "docs ",
+    "docs/"
+  ],
+  "max_codegraph_queries": 5
+}

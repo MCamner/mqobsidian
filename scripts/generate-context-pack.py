@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 from argparse import ArgumentParser
 from collections.abc import Sequence
@@ -89,48 +90,38 @@ def parse_exclude_arg(value: str) -> dict[str, str] | str:
     return value.strip()
 
 
-# Signals that a task is about source-code structure, where CodeGraph
-# (callers/callees, impact, code-flow, symbol search) beats broad grep/read.
-CODEGRAPH_TASK_HINTS = (
-    "caller",
-    "callee",
-    "impact",
-    "blast radius",
-    "call graph",
-    "code flow",
-    "code-flow",
-    "refactor",
-    "rename",
-    "trace",
-    "symbol",
-    "where is",
-    "implement",
-    "writer path",
-    "wire ",
-    "fix ",
-)
+# The vocabulary that decides whether a task is source-heavy is a published
+# contract, not a constant here. mqobsidian owns these words; mq-agent owns
+# applying them (DEC-005). Keeping a second copy in code is the defect that
+# decision exists to prevent, so read the contract and fail loudly if it is
+# missing rather than falling back to a private default.
+VOCABULARY_CONTRACT = ROOT / ".mq" / "context-selection-vocabulary.json"
 
-# Doc-shaped tasks never need CodeGraph; suppress even if a hint also matches so
-# non-source packs stay clean.
-CODEGRAPH_TASK_SUPPRESS = (
-    "readme",
-    "roadmap",
-    "release note",
-    "changelog",
-    "docstring",
-    "doc ",
-    "docs ",
-    "docs/",
+
+def _load_selection_vocabulary() -> tuple[tuple[str, ...], tuple[str, ...], int]:
+    try:
+        data = json.loads(VOCABULARY_CONTRACT.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise SystemExit(
+            f"missing selection vocabulary contract: {VOCABULARY_CONTRACT}"
+        ) from exc
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"invalid selection vocabulary contract: {exc}") from exc
+    return (
+        tuple(data["source_heavy_hints"]),
+        tuple(data["source_heavy_suppress"]),
+        int(data["max_codegraph_queries"]),
+    )
+
+
+CODEGRAPH_TASK_HINTS, CODEGRAPH_TASK_SUPPRESS, MAX_CODEGRAPH_QUERIES = (
+    _load_selection_vocabulary()
 )
 
 
 # Source extensions CodeGraph can index; a `node` query only makes sense for
 # these. Shell/PowerShell are unsupported (see docs/integrations/codegraph.md).
 SOURCE_EXTS = (".py", ".js", ".ts", ".tsx", ".jsx")
-
-# Hard cap so CodeGraph guidance can never become a token sink in the pack.
-MAX_CODEGRAPH_QUERIES = 5
-
 
 def task_is_source_heavy(task: str) -> bool:
     key = task.lower()
