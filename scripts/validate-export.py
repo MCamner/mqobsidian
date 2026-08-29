@@ -571,6 +571,7 @@ def main() -> int:
         SCHEMAS / "context-selection-vocabulary.v1.json",
         SCHEMAS / "context-budget.v1.json",
         SCHEMAS / "mq.execution-outcome.v1.json",
+        SCHEMAS / "mq.model-route-outcome.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
@@ -624,6 +625,11 @@ def main() -> int:
     problems.extend(validate_manifest_example(
         EXAMPLES / "execution-outcome.example.json",
         parsed_schemas["mq.execution-outcome.v1.json"],
+    ))
+
+    problems.extend(validate_manifest_example(
+        EXAMPLES / "model-route-outcome.example.json",
+        parsed_schemas["mq.model-route-outcome.v1.json"],
     ))
 
     contract_map_schema = parsed_schemas["codegraph-contract-map.v1.json"]

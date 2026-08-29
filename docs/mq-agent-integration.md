@@ -16,6 +16,8 @@
 
 `mqobsidian` stores the memory of a run, not the live control logic of the run.
 
-Verified routing outcomes use mq-agent's `mq.model-route-outcome.v1` contract
-unchanged. See [Verified routing outcomes](ROUTING_OUTCOMES.md) for the local
-append-only writer and report handoff.
+Verified routing outcomes use the `mq.model-route-outcome.v1` contract, canonical
+here in `schemas/`. mq-agent vendors it and gates its copy against this one
+(mq-agent #216); the contract's meaning is unchanged by that move. See
+[Verified routing outcomes](ROUTING_OUTCOMES.md) for the local append-only
+writer and report handoff.

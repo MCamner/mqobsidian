@@ -2,7 +2,30 @@
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- `schemas/mq.model-route-outcome.v1.json` — the routing-outcome contract is now
+  canonical here rather than resolved from a sibling mq-agent checkout. Its
+  example is validated by `validate-export.py` like every other contract.
+
+### Changed
+
+- `mq.execution-outcome.v1` reconciled with the copy mq-agent ships: the newer
+  top-level description and the `model` field's documentation (primary execution
+  model, not the verifier's). Contract identity stays this repo's convention —
+  `title: mq.execution-outcome.v1`, no `$id`. mq-agent vendors both contracts and
+  gates its copies against these (mq-agent #216).
+- `record-routing-outcome.py` validates against the canonical schema in this repo.
+  Resolution no longer walks to `MQ_AGENT_DIR`, so validation no longer depends on
+  a machine-local path or on whichever revision that checkout was on.
+  `MQ_AGENT_ROUTE_OUTCOME_SCHEMA` and `--schema` still override.
+
+### Fixed
+
+- `tests/test_record_routing_outcome.py` validated against a hand-written inline
+  copy of the routing schema — a third source of truth that had silently drifted,
+  missing both `run_id` and `verification.grounding`. The tests now exercise the
+  canonical contract, so a schema change reaches them.
 
 ## [0.3.0] - 2026-08-28
 

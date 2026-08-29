@@ -57,9 +57,11 @@ python3 scripts/record-routing-outcome.py \
   --dry-run
 ```
 
-The writer resolves the schema from `MQ_AGENT_ROUTE_OUTCOME_SCHEMA`, then
-`MQ_AGENT_DIR`, then the default sibling checkout. `--schema` and `--output`
-exist for tests and explicit local overrides.
+The writer validates against the canonical contract in this repo,
+`schemas/mq.model-route-outcome.v1.json`. mq-agent vendors that file and a gate
+there proves its copy matches (mq-agent #216), so validation no longer depends
+on a sibling mq-agent checkout. `MQ_AGENT_ROUTE_OUTCOME_SCHEMA`, `--schema` and
+`--output` exist for tests and explicit local overrides.
 
 Identical retries are idempotent. A malformed existing JSONL line blocks future
 appends instead of silently extending corrupt history.
