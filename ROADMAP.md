@@ -165,6 +165,18 @@ over 14 days per relevant task class. It is a hypothesis to evaluate, not an
 activation rule. Until then, reporting is descriptive and routing remains
 unchanged.
 
+## Next track: Evidence-grounded hybrid memory
+
+A Cognee-inspired, MQ-native roadmap is documented in
+[`docs/plans/cognee-inspired-memory-roadmap.md`](docs/plans/cognee-inspired-memory-roadmap.md).
+It adds measured provenance projection, hybrid retrieval in shadow mode,
+session-to-candidate handoff and controlled ingestion without moving runtime
+into the vault or allowing automatic memory promotion.
+
+This track starts only with Phase 0 baseline and an ownership/threat-model ADR.
+Execution Intelligence remains the active runtime-evidence track; its measured
+outcomes are inputs to hybrid-memory evaluation, not work to duplicate.
+
 ### What makes something a contract here
 
 A file carrying a `schema` field is not a contract on its own -- that is exactly
