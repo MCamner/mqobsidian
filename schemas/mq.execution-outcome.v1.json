@@ -62,6 +62,8 @@
       "minimum": 0
     },
     "route": {
+      "deprecated": true,
+      "description": "Deprecated as a source of routing truth (ADR-010 D6). Routing is decided per model call, not per operator action, so a single route value is not true of a run that made several routing decisions. Applied-route facts belong to `mq.model-route-outcome.v1`, correlated back through its `execution_run_id`, and route readiness reads them there. New records do not write this field; existing records stay valid and keep what they carry. The property is retained in v1 rather than removed — removal is a later contract version's decision, once nothing needs it.",
       "type": "object",
       "additionalProperties": false,
       "required": [

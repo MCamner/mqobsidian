@@ -61,6 +61,14 @@
         "approved-local"
       ]
     },
+    "application": {
+      "description": "Whether this routing decision affected a real execution. `advisory` is a recommendation only, with no model call and no run affected. `shadow` means the decision was actually evaluated and no execution was affected by the result, whether or not a run enclosed it. `applied` means the route governed a real execution. Route readiness counts `applied` and nothing else: an advisory or shadow observation is real evidence of routing behaviour and never evidence that a route was applied. Optional, so observations predating this field stay valid; absent means the mode was not recorded, not that it was advisory or shadow, and an absent value is never counted as applied. An `applied` observation must carry `execution_run_id`; that invariant is enforced by the emitter and its tests rather than by schema conditionals.",
+      "enum": [
+        "advisory",
+        "shadow",
+        "applied"
+      ]
+    },
     "local_model": {
       "type": [
         "string",
