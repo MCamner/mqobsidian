@@ -29,6 +29,12 @@
       "minLength": 1
     },
     "run_id": {
+      "description": "Identity of this routing observation. `decision_id` is a hash of the task, so repeated runs of one task share it; `run_id` keeps those runs distinguishable from duplicated records. It does not identify the enclosing execution and must never be redefined to — see `execution_run_id`.",
+      "type": "string",
+      "minLength": 1
+    },
+    "execution_run_id": {
+      "description": "Identifier of the enclosing execution outcome when this routing observation occurred within an execution. Absent for standalone routing observations such as CLI shadow runs. Historical pre-correlation observations remain valid without it: absence means correlation was not recorded, not that the observation is invalid, and they are not backfilled. Distinct from `run_id`, which identifies this observation rather than the run around it.",
       "type": "string",
       "minLength": 1
     },
