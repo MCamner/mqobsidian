@@ -4,6 +4,25 @@
 
 ### Added
 
+- `mq.model-route-outcome.v1` gains an optional `application`
+  (`advisory | shadow | applied`) separating whether a routing decision was a
+  recommendation, an evaluation that affected nothing, or the route that
+  governed a real execution (ADR-010 D7). Route readiness counts `applied` and
+  nothing else. `approved-local` is deliberately not reused for this — it is a
+  `selected_route` value that already means an unauthorized write. Optional, so
+  the 130 pre-decision observations stay valid; absent means the mode was not
+  recorded and is never counted as applied.
+
+### Deprecated
+
+- `route` on `mq.execution-outcome.v1` is no longer a source of routing truth
+  (ADR-010 D6). Routing is decided per model call, so one route value is not true
+  of a run that made several decisions — and the field's only writer filled it
+  with the swarm's `config.name`, the same string the record already carries as
+  `task_class`. Applied-route facts belong to `mq.model-route-outcome.v1`,
+  correlated through `execution_run_id`. The property stays in v1 and existing
+  records stay valid; removal is a later contract version's decision.
+
 - `mq.model-route-outcome.v1` gains an optional `execution_run_id`: the enclosing
   execution's identifier when a routing observation happened inside one, absent
   for standalone observations such as CLI shadow runs (ADR-010 D3). It is a

@@ -227,3 +227,75 @@ class ExecutionCorrelationContractTests(unittest.TestCase):
         validated = writer.validate_outcome(_outcome(run_id="obs-1"), validator)
 
         self.assertNotIn("execution_run_id", validated)
+
+
+class ApplicationModeContractTests(unittest.TestCase):
+    """ADR-010 D7: applied versus shadow is its own field, and readiness counts
+    only `applied`.
+
+    `approved-local` is deliberately not reused. It already exists as a
+    `selected_route` value that `model_routing.py:817` reads as an unauthorized
+    write, so loading a second meaning onto it would repeat the mistake D3's
+    invariant guards against, one field over.
+
+    Semantics, not wording.
+    """
+
+    def setUp(self) -> None:
+        self.schema = json.loads(CANONICAL_SCHEMA.read_text(encoding="utf-8"))
+
+    def test_application_distinguishes_advisory_shadow_and_applied(self) -> None:
+        self.assertEqual(
+            self.schema["properties"]["application"]["enum"],
+            ["advisory", "shadow", "applied"],
+        )
+
+    def test_application_is_optional_so_older_observations_stay_valid(self) -> None:
+        # The 130 observations recorded before this field are not backfilled.
+        # Absent means the mode was not recorded — and since readiness counts an
+        # explicit `applied` only, absence contributes nothing on its own.
+        self.assertNotIn("application", self.schema["required"])
+
+    def test_applied_is_not_expressed_through_selected_route(self) -> None:
+        # `application` and `selected_route` answer different questions: which
+        # route, and whether it governed anything.
+        self.assertNotIn("applied", self.schema["properties"]["selected_route"]["enum"])
+        self.assertIn("approved-local", self.schema["properties"]["selected_route"]["enum"])
+
+    def test_each_application_mode_validates(self) -> None:
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        for mode in ("advisory", "shadow", "applied"):
+            with self.subTest(mode=mode):
+                validated = writer.validate_outcome(
+                    _outcome(application=mode, execution_run_id="exec-1"), validator
+                )
+                self.assertEqual(validated["application"], mode)
+
+    def test_an_unknown_application_mode_is_rejected(self) -> None:
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        with self.assertRaises(ValueError):
+            writer.validate_outcome(_outcome(application="maybe"), validator)
+
+
+class ExecutionRouteDeprecationTests(unittest.TestCase):
+    """ADR-010 D6: `route` on the execution contract is deprecated, not removed.
+
+    Its only writer filled it with the swarm's `config.name` — the same string
+    the record already carries as `task_class`, which is the identity confusion
+    D5 forbids. Deprecating is the honest move; removing it in v1 would
+    invalidate records already written.
+    """
+
+    EXECUTION_SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "mq.execution-outcome.v1.json"
+
+    def setUp(self) -> None:
+        self.schema = json.loads(self.EXECUTION_SCHEMA.read_text(encoding="utf-8"))
+
+    def test_route_is_marked_deprecated(self) -> None:
+        self.assertIs(self.schema["properties"]["route"].get("deprecated"), True)
+
+    def test_route_is_still_accepted_so_existing_records_stay_valid(self) -> None:
+        self.assertIn("route", self.schema["properties"])
+        self.assertNotIn("route", self.schema["required"])
