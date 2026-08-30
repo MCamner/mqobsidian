@@ -4,6 +4,16 @@
 
 ### Added
 
+- `mq.model-route-outcome.v1` gains an optional `execution_run_id`: the enclosing
+  execution's identifier when a routing observation happened inside one, absent
+  for standalone observations such as CLI shadow runs (ADR-010 D3). It is a
+  separate field from `run_id`, which identifies the observation itself and must
+  never be redefined to mean the run. Historical pre-correlation observations
+  stay valid without it and are not backfilled — absence means correlation was
+  not recorded, not that the observation is invalid. Correlation stays
+  unconditional in v1; tying it to whether a route was applied would import a
+  definition of "applied" that does not exist yet (ADR-010 DD-3).
+
 - `schemas/mq.model-route-outcome.v1.json` — the routing-outcome contract is now
   canonical here rather than resolved from a sibling mq-agent checkout. Its
   example is validated by `validate-export.py` like every other contract.

@@ -171,3 +171,59 @@ class RecordRoutingOutcomeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ExecutionCorrelationContractTests(unittest.TestCase):
+    """ADR-010 D3: correlation is a separate field, never a redefinition.
+
+    `mq.model-route-outcome.v1` and `mq.execution-outcome.v1` both carry a
+    field named `run_id` meaning different things — this observation's identity
+    here, the operator run's identity there. The cheap "fix" for correlation is
+    to write the execution's id into the existing `run_id`; that would silently
+    destroy duplicate detection while appearing to add correlation. These tests
+    make that impossible to do by accident.
+
+    Semantics, not wording: the descriptions may be rewritten freely.
+    """
+
+    def setUp(self) -> None:
+        self.schema = json.loads(CANONICAL_SCHEMA.read_text(encoding="utf-8"))
+
+    def test_run_id_and_execution_run_id_are_two_distinct_properties(self) -> None:
+        properties = self.schema["properties"]
+
+        self.assertIn("run_id", properties)
+        self.assertIn("execution_run_id", properties)
+        self.assertIsNot(properties["run_id"], properties["execution_run_id"])
+
+    def test_correlation_is_optional(self) -> None:
+        # A routing observation can occur outside any execution — `route shadow`
+        # from the CLI. Requiring correlation would make those records invalid.
+        self.assertNotIn("execution_run_id", self.schema["required"])
+
+    def test_run_id_did_not_become_required_or_change_shape(self) -> None:
+        # Pre-existing state, recorded so a later change is deliberate: the
+        # emitter writes run_id on every record, but the contract has never
+        # required it. D3 does not change that.
+        self.assertNotIn("run_id", self.schema["required"])
+        self.assertEqual(self.schema["properties"]["run_id"]["type"], "string")
+
+    def test_a_record_carrying_correlation_validates(self) -> None:
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        validated = writer.validate_outcome(
+            _outcome(run_id="obs-1", execution_run_id="exec-1"), validator
+        )
+
+        self.assertEqual(validated["run_id"], "obs-1")
+        self.assertEqual(validated["execution_run_id"], "exec-1")
+
+    def test_a_historical_record_without_correlation_stays_valid(self) -> None:
+        # The 130 observations recorded before this field existed are not
+        # backfilled. Absence means correlation was not recorded, not that the
+        # observation is invalid.
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        validated = writer.validate_outcome(_outcome(run_id="obs-1"), validator)
+
+        self.assertNotIn("execution_run_id", validated)
