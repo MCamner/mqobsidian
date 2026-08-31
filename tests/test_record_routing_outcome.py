@@ -299,3 +299,72 @@ class ExecutionRouteDeprecationTests(unittest.TestCase):
     def test_route_is_still_accepted_so_existing_records_stay_valid(self) -> None:
         self.assertIn("route", self.schema["properties"])
         self.assertNotIn("route", self.schema["required"])
+
+
+class RouteIdentityContractTests(unittest.TestCase):
+    """ADR-010 D8: `selected_route` names the execution strategy, never the model.
+
+    `route_readiness` counts distinct `selected_route` per routing task class, so
+    what this field is allowed to mean decides what "two candidate routes"
+    proves. A second local model would not register at all — `local_model` is a
+    separate field and both observations still read `local-shadow` — and the
+    tempting repair, writing `qwen-local` or `gpt-cloud` into the route, collapses
+    route identity into model identity. These tests exist to make that collapse
+    fail loudly rather than pass quietly.
+    """
+
+    def setUp(self) -> None:
+        self.schema = json.loads(CANONICAL_SCHEMA.read_text(encoding="utf-8"))
+
+    def test_a_deterministic_local_strategy_is_a_route(self) -> None:
+        self.assertIn(
+            "deterministic-local", self.schema["properties"]["selected_route"]["enum"]
+        )
+
+    def test_the_route_vocabulary_names_strategies_not_models(self) -> None:
+        # Semantics, not wording: no route value may carry a model or vendor name.
+        # Enumerating the forbidden shapes rather than the allowed ones is the
+        # point — the failure mode is someone *adding* `qwen-local` later.
+        routes = self.schema["properties"]["selected_route"]["enum"]
+        for route in routes:
+            with self.subTest(route=route):
+                for model_word in ("qwen", "llama", "gpt", "claude", "mistral", "phi"):
+                    self.assertNotIn(model_word, route.lower())
+
+    def test_existing_route_values_are_untouched(self) -> None:
+        # D8 adds a value. It reclassifies nothing, so every previously valid
+        # observation stays valid without being rewritten.
+        for route in ("local-shadow", "cloud-required", "approved-local"):
+            with self.subTest(route=route):
+                self.assertIn(route, self.schema["properties"]["selected_route"]["enum"])
+
+    def test_a_strategy_that_runs_no_model_records_no_model(self) -> None:
+        # `null`, never a placeholder string. A route with no model has no model
+        # identity, and "deterministic" in `local_model` would put the strategy
+        # name back into the field D8 just separated it from.
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        validated = writer.validate_outcome(
+            _outcome(
+                selected_route="deterministic-local",
+                local_model=None,
+                application="applied",
+                execution_run_id="exec-1",
+            ),
+            validator,
+        )
+
+        self.assertEqual(validated["selected_route"], "deterministic-local")
+        self.assertIsNone(validated["local_model"])
+
+    def test_local_model_stays_required_so_its_absence_cannot_be_silent(self) -> None:
+        # Nullable, not optional. A missing key would let a strategy leave the
+        # question unanswered; `null` answers it.
+        self.assertIn("local_model", self.schema["required"])
+        self.assertEqual(self.schema["properties"]["local_model"]["type"], ["string", "null"])
+
+    def test_an_unknown_route_is_rejected(self) -> None:
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        with self.assertRaises(ValueError):
+            writer.validate_outcome(_outcome(selected_route="qwen-local"), validator)

@@ -55,8 +55,10 @@
       ]
     },
     "selected_route": {
+      "description": "Which execution strategy carried this routing decision. It identifies the strategy, never the concrete model: `local-shadow` is local model inference, `deterministic-local` is local execution with no model inference at all, `cloud-required` means the policy requires cloud execution, and `approved-local` is a reserved promotion state that is not a legitimate runtime write. Model identity stays in `local_model`, which is null when the strategy runs no model. Values like `qwen-local` or `gpt-cloud` would collapse the two and are therefore not admissible here.",
       "enum": [
         "local-shadow",
+        "deterministic-local",
         "cloud-required",
         "approved-local"
       ]
