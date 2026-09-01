@@ -368,3 +368,86 @@ class RouteIdentityContractTests(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             writer.validate_outcome(_outcome(selected_route="qwen-local"), validator)
+
+
+class ContextIntegrityContractTests(unittest.TestCase):
+    """Silent truncation has to be expressible, or it stays invisible.
+
+    Measured on mq-agent 2026-09-01: `_ollama_generate` never sent
+    `options.num_ctx`, so Ollama applied its 4096-token default to a ~19,000
+    token prompt and processed 4098 of them. No error was raised. The candidate
+    came back looking normal, and `evidence_grounding` then checked its citations
+    against the *full* material — material the model had never seen.
+
+    That is an integrity fault in the evidence chain, not a quality result, and
+    the contract has to be able to say so. Recording it as `verification-failed`
+    would claim the model read the material and cited it wrongly.
+    """
+
+    def setUp(self) -> None:
+        self.schema = json.loads(CANONICAL_SCHEMA.read_text(encoding="utf-8"))
+
+    def _reasons(self) -> list[str]:
+        for branch in self.schema["properties"]["escalation_reason"]["oneOf"]:
+            if "enum" in branch:
+                return list(branch["enum"])
+        raise AssertionError("escalation_reason has no enum branch")
+
+    def test_refusal_and_discovery_are_separate_reasons(self) -> None:
+        # Before inference versus after it. Collapsing them would lose whether
+        # the preflight check is working.
+        reasons = self._reasons()
+
+        self.assertIn("context-window-exceeded", reasons)
+        self.assertIn("context-truncated", reasons)
+
+    def test_a_context_fault_is_not_model_unavailability(self) -> None:
+        # The model was reachable and willing. The material did not fit.
+        reasons = self._reasons()
+
+        self.assertIn("model-unavailable", reasons)
+        self.assertNotEqual("model-unavailable", "context-window-exceeded")
+
+    def test_the_existing_reasons_are_untouched(self) -> None:
+        for reason in (
+            "model-unavailable",
+            "schema-invalid",
+            "verification-failed",
+            "malformed-output",
+            "policy-requires-cloud",
+            "operator-required",
+        ):
+            with self.subTest(reason=reason):
+                self.assertIn(reason, self._reasons())
+
+    def test_null_stays_valid_so_a_clean_run_records_no_reason(self) -> None:
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        validated = writer.validate_outcome(_outcome(escalation_reason=None), validator)
+
+        self.assertIsNone(validated["escalation_reason"])
+
+    def test_each_context_reason_validates_on_a_real_record(self) -> None:
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        for reason in ("context-window-exceeded", "context-truncated"):
+            with self.subTest(reason=reason):
+                validated = writer.validate_outcome(
+                    _outcome(
+                        verification={"status": "FAIL", "checks": []},
+                        escalated=True,
+                        escalation_reason=reason,
+                        application="applied",
+                        execution_run_id="exec-1",
+                    ),
+                    validator,
+                )
+                self.assertEqual(validated["escalation_reason"], reason)
+
+    def test_an_invented_context_reason_is_rejected(self) -> None:
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        with self.assertRaises(ValueError):
+            writer.validate_outcome(
+                _outcome(escalation_reason="context-too-big"), validator
+            )

@@ -147,6 +147,7 @@
       "type": "boolean"
     },
     "escalation_reason": {
+      "description": "Why the route escalated. `context-window-exceeded` and `context-truncated` both mean the model was not given the material the verifier checks against, and they differ by when that was discovered: `context-window-exceeded` is a refusal before inference, when the prompt does not fit the configured window; `context-truncated` is discovered afterwards, when the backend reports having processed fewer prompt tokens than were sent. Neither is `model-unavailable` — the model was reachable and willing; the material was not. Both must stay distinguishable from `verification-failed`, which means the model saw the material and cited it wrongly.",
       "oneOf": [
         {
           "type": "null"
@@ -158,7 +159,9 @@
             "verification-failed",
             "malformed-output",
             "policy-requires-cloud",
-            "operator-required"
+            "operator-required",
+            "context-window-exceeded",
+            "context-truncated"
           ]
         }
       ]
