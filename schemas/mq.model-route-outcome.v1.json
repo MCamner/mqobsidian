@@ -147,7 +147,7 @@
       "type": "boolean"
     },
     "escalation_reason": {
-      "description": "Why the route escalated. `context-window-exceeded` and `context-truncated` both mean the model was not given the material the verifier checks against, and they differ by when that was discovered: `context-window-exceeded` is a refusal before inference, when the prompt does not fit the configured window; `context-truncated` is discovered afterwards, when the backend reports having processed fewer prompt tokens than were sent. Neither is `model-unavailable` — the model was reachable and willing; the material was not. Both must stay distinguishable from `verification-failed`, which means the model saw the material and cited it wrongly.",
+      "description": "Why the route escalated. `context-window-exceeded` and `context-truncated` both mean the model was not given the material the verifier checks against, and they differ by when that was discovered: `context-window-exceeded` is a refusal before inference, when the prompt does not fit the configured window; `context-truncated` is discovered afterwards, when the backend reports having processed fewer prompt tokens than were sent. Neither is `model-unavailable` — the model was reachable and willing; the material was not. Both must stay distinguishable from `verification-failed`, which means the model saw the material and cited it wrongly. `generation-timeout` is the caller's deadline expiring while the backend was generating: it was reached, it accepted the request and it was producing tokens, so nothing about it was unavailable. The rule is where the run stopped, not how long it took — backend reached and generation started and deadline exceeded is `generation-timeout`; a backend that cannot be reached or a model that cannot be invoked is `model-unavailable`. Keeping them apart matters because a store of timeouts recorded as `model-unavailable` claims an unreachable-runtime path was exercised when it never was.",
       "oneOf": [
         {
           "type": "null"
@@ -155,6 +155,7 @@
         {
           "enum": [
             "model-unavailable",
+            "generation-timeout",
             "schema-invalid",
             "verification-failed",
             "malformed-output",

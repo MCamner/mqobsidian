@@ -451,3 +451,71 @@ class ContextIntegrityContractTests(unittest.TestCase):
             writer.validate_outcome(
                 _outcome(escalation_reason="context-too-big"), validator
             )
+
+
+class GenerationTimeoutContractTests(unittest.TestCase):
+    """A model that ran out of time is not a model that was not there.
+
+    Measured on mq-agent 2026-09-04, from Ollama's own server log. Five real
+    docs-review calls sent an identical prompt — 5299 prompt tokens, `num_ctx`
+    12288, `qwen3:4b-instruct` on CPU at ~23-25 tok/s. Three finished in 41s,
+    48s and 108s. Two were cut off by the client at exactly its 180s deadline,
+    still generating, at `n_gen` 3786 and 3397:
+
+        [GIN] 14:01:33 | 500 | 3m0s | POST "/api/generate"
+        [GIN] 14:28:44 | 500 | 3m0s | POST "/api/generate"
+
+    Both were recorded as `model-unavailable`. The backend was reached, accepted
+    the request and produced thousands of tokens — every part of it was
+    available. What ran out was the caller's patience.
+
+    The distinction is not cosmetic. `model-unavailable` is what
+    `ollama-unavailable-path-proven` counts, so a store full of timeouts claims
+    a runtime failure path has been exercised when it never was, and route
+    escalation statistics describe an unreachable model that was working the
+    whole time.
+    """
+
+    def setUp(self) -> None:
+        self.schema = json.loads(CANONICAL_SCHEMA.read_text(encoding="utf-8"))
+
+    def _reasons(self) -> list[str]:
+        for branch in self.schema["properties"]["escalation_reason"]["oneOf"]:
+            if "enum" in branch:
+                return list(branch["enum"])
+        raise AssertionError("escalation_reason has no enum branch")
+
+    def test_a_deadline_exceeded_mid_generation_has_its_own_reason(self) -> None:
+        self.assertIn("generation-timeout", self._reasons())
+
+    def test_generation_timeout_is_not_model_unavailability(self) -> None:
+        # backend reached AND generation started AND client deadline exceeded
+        #     => generation-timeout
+        # backend unreachable OR the model cannot be invoked
+        #     => model-unavailable
+        reasons = self._reasons()
+
+        self.assertIn("model-unavailable", reasons)
+        self.assertIn("generation-timeout", reasons)
+        self.assertNotEqual("model-unavailable", "generation-timeout")
+
+    def test_the_contract_says_why_the_two_differ(self) -> None:
+        # An enum value nobody can tell apart from its neighbour gets used
+        # interchangeably. The description carries the rule, not just the word.
+        description = self.schema["properties"]["escalation_reason"]["description"]
+
+        self.assertIn("generation-timeout", description)
+
+    def test_the_existing_reasons_are_untouched(self) -> None:
+        for reason in (
+            "model-unavailable",
+            "schema-invalid",
+            "verification-failed",
+            "malformed-output",
+            "policy-requires-cloud",
+            "operator-required",
+            "context-window-exceeded",
+            "context-truncated",
+        ):
+            with self.subTest(reason=reason):
+                self.assertIn(reason, self._reasons())
