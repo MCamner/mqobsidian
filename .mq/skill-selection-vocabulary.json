@@ -1,0 +1,141 @@
+{
+  "schema": "skill-selection-vocabulary.v1",
+  "intents": {
+    "inspect": [
+      "inspect",
+      "check",
+      "kolla"
+    ],
+    "plan": [
+      "plan",
+      "design",
+      "blueprint"
+    ],
+    "implement": [
+      "implement",
+      "implementera",
+      "add",
+      "build",
+      "l\u00e4gg till",
+      "bygg"
+    ],
+    "fix": [
+      "fix",
+      "repair",
+      "bug",
+      "r\u00e4tta",
+      "fixa"
+    ],
+    "review": [
+      "review",
+      "audit",
+      "granska"
+    ],
+    "release": [
+      "release",
+      "publish",
+      "tag",
+      "sl\u00e4pp"
+    ],
+    "document": [
+      "docs",
+      "readme",
+      "documentation",
+      "dokumentera"
+    ]
+  },
+  "domains": {
+    "repo": [
+      "repo",
+      "repository",
+      "repot",
+      "mq-agent"
+    ],
+    "git": [
+      "git",
+      "branch",
+      "commit",
+      "merge",
+      "pull request",
+      "pr"
+    ],
+    "ci": [
+      "ci",
+      "test failure"
+    ],
+    "release": [
+      "release",
+      "version",
+      "tag",
+      "changelog"
+    ],
+    "mcp": [
+      "mcp",
+      "tool contract"
+    ],
+    "memory": [
+      "memory",
+      "obsidian",
+      "context card"
+    ],
+    "runtime": [
+      "runtime",
+      "process",
+      "installed"
+    ],
+    "security": [
+      "secret",
+      "credential",
+      "public-safe",
+      "token"
+    ],
+    "visual": [
+      "image",
+      "screenshot",
+      "visual"
+    ],
+    "stack": [
+      "mq stack",
+      "cross-repo"
+    ]
+  },
+  "risks": {
+    "repo_write": [
+      "implement",
+      "implementera",
+      "fix",
+      "fixa",
+      "modify",
+      "\u00e4ndra",
+      "bygg",
+      "l\u00e4gg till"
+    ],
+    "git_write": [
+      "commit",
+      "branch",
+      "merge",
+      "pull request",
+      "pr"
+    ],
+    "public_surface": [
+      "readme",
+      "docs",
+      "release",
+      "public",
+      "publish",
+      "pull request",
+      "pr"
+    ],
+    "secret_exposure": [
+      "token",
+      "credential",
+      "secret"
+    ],
+    "cross_repo": [
+      "stack",
+      "cross-repo"
+    ]
+  },
+  "max_selected_skills": 5,
+  "max_optional_skills": 3
+}

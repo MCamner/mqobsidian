@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "task",
+    "repo",
+    "target",
+    "profile",
+    "selected",
+    "missing_required",
+    "selection_state",
+    "reasons",
+    "candidate_count"
+  ],
+  "properties": {
+    "schema": {
+      "const": "mq.skill-route.v1"
+    },
+    "task": {
+      "type": "string"
+    },
+    "repo": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target": {
+      "enum": [
+        "codex",
+        "claude",
+        "both"
+      ]
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "intents",
+        "domains",
+        "risks"
+      ],
+      "properties": {
+        "intents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "uniqueItems": true
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "uniqueItems": true
+        },
+        "risks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "selected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "skill",
+          "requirement",
+          "discoverable_targets",
+          "matched"
+        ],
+        "properties": {
+          "skill": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "requirement": {
+            "enum": [
+              "required",
+              "recommended"
+            ]
+          },
+          "discoverable_targets": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "codex",
+                "claude"
+              ]
+            },
+            "uniqueItems": true,
+            "minItems": 1
+          },
+          "matched": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "intents",
+              "domains",
+              "risks"
+            ],
+            "properties": {
+              "intents": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]*$"
+                },
+                "uniqueItems": true
+              },
+              "domains": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]*$"
+                },
+                "uniqueItems": true
+              },
+              "risks": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]*$"
+                },
+                "uniqueItems": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "missing_required": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "skill",
+          "targets"
+        ],
+        "properties": {
+          "skill": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "codex",
+                "claude"
+              ]
+            },
+            "uniqueItems": true,
+            "minItems": 1
+          }
+        }
+      }
+    },
+    "selection_state": {
+      "enum": [
+        "complete",
+        "partial",
+        "empty",
+        "invalid"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "skill",
+          "target",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "enum": [
+              "SKS001_VOCABULARY_UNAVAILABLE",
+              "SKS002_VOCABULARY_INVALID",
+              "SKS003_SKILL_PROFILE_INVALID",
+              "SKS004_SKILL_NOT_DISCOVERABLE",
+              "SKS005_REQUIRED_SKILL_UNAVAILABLE",
+              "SKS006_SKILL_SUPERSEDED",
+              "SKS007_SELECTION_BUDGET_APPLIED",
+              "SKS008_NO_MATCH",
+              "SKS009_TARGET_UNSUPPORTED"
+            ]
+          },
+          "skill": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "target": {
+            "enum": [
+              "codex",
+              "claude",
+              null
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "candidate_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

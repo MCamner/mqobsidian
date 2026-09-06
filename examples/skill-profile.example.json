@@ -1,0 +1,28 @@
+{
+  "schema": "mq.skill-profile.v1",
+  "skill": "repo-aware",
+  "status": "active",
+  "supported_targets": [
+    "codex",
+    "claude"
+  ],
+  "scope": [
+    "repo"
+  ],
+  "intents": [
+    "inspect",
+    "plan",
+    "implement",
+    "fix",
+    "review"
+  ],
+  "domains": [
+    "repo"
+  ],
+  "risks": [
+    "repo_write"
+  ],
+  "required_for": [],
+  "supersedes": [],
+  "description": "Ground existing-repository work in source evidence."
+}
