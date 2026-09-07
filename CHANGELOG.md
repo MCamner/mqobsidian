@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 - Add skill selection vocabulary, profile and route contracts; mq-agent owns execution.
+- DEC-006 records that optional runtime provenance extends
+  `mq.execution-outcome.v1` additively rather than creating v2. Historical
+  records remain valid and unmodified; the decision also records the known
+  forward-compatibility cost of an older closed-schema reader seeing newer v1
+  records.
 
 ### Added
 
@@ -206,4 +211,4 @@
 
 - Expanded token budget checks to cover system hot/index notes, context cards, and agent views.
 - Expanded export validation to check context-pack frontmatter and required context-card sections.
-- Documented Phase 2 context-card seed status in the token-reduction roadmap.
+- Documented Phase 2 context-card seed status in the token-reduction roadmap with the verified local rollout.
