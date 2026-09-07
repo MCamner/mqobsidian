@@ -92,3 +92,9 @@ The promotion axis is frozen: `observed -> candidate -> promoted -> deprecated
 -> archived`, with the verbs `promote / reject / defer / rollback / deprecate`.
 Scoring and promotion are applied through a local-only memory CLI that is not
 part of the published repository surface.
+
+## Skill selection
+
+`skill-selection-vocabulary.v1`, `mq.skill-profile.v1`, and `mq.skill-route.v1`
+define declarative skill routing contracts; mq-agent executes selection.
+See [skill selection](skill-selection.md).

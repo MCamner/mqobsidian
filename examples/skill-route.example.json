@@ -1,0 +1,91 @@
+{
+  "schema": "mq.skill-route.v1",
+  "task": "Implement runtime provenance in mq-agent, add tests and open a PR",
+  "repo": "mq-agent",
+  "target": "codex",
+  "profile": {
+    "intents": [
+      "implement"
+    ],
+    "domains": [
+      "git",
+      "repo",
+      "runtime"
+    ],
+    "risks": [
+      "git_write",
+      "public_surface",
+      "repo_write"
+    ]
+  },
+  "selected": [
+    {
+      "skill": "mq-secrets-public-safe",
+      "requirement": "required",
+      "discoverable_targets": [
+        "codex"
+      ],
+      "matched": {
+        "intents": [],
+        "domains": [],
+        "risks": [
+          "public_surface"
+        ]
+      }
+    },
+    {
+      "skill": "repo-aware",
+      "requirement": "recommended",
+      "discoverable_targets": [
+        "codex"
+      ],
+      "matched": {
+        "intents": [
+          "implement"
+        ],
+        "domains": [
+          "repo"
+        ],
+        "risks": [
+          "repo_write"
+        ]
+      }
+    },
+    {
+      "skill": "mq-worktree-safe",
+      "requirement": "recommended",
+      "discoverable_targets": [
+        "codex"
+      ],
+      "matched": {
+        "intents": [],
+        "domains": [
+          "git"
+        ],
+        "risks": [
+          "git_write"
+        ]
+      }
+    },
+    {
+      "skill": "mq-writing-plans",
+      "requirement": "recommended",
+      "discoverable_targets": [
+        "codex"
+      ],
+      "matched": {
+        "intents": [
+          "implement"
+        ],
+        "domains": [],
+        "risks": [
+          "repo_write"
+        ]
+      }
+    }
+  ],
+  "missing_required": [],
+  "selection_state": "complete",
+  "reasons": [],
+  "candidate_count": 8
+}

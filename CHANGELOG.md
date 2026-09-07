@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add skill selection vocabulary, profile and route contracts; mq-agent owns execution.
+
 ### Added
 
 - `mq.model-route-outcome.v1` gains an optional `application`
