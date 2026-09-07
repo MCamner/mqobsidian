@@ -120,7 +120,12 @@ versioning policy invented for Phase 5.2:
 
 - `.mq/repo-contract.json` lists `mq.execution_outcome.v1` among contracts owned
   by mqobsidian and states that consumers may validate against these shapes but
-  must not redefine them locally.
+  must not redefine them locally. The underscore is the register's normalized
+  declaration name (`-` → `_`), not a second identity: the contract's wire and
+  schema identity stays `mq.execution-outcome.v1`. `_declared_name()` in
+  `tests/test_contract_artifact_invariant.py` performs that translation and
+  enforces the correspondence, so the two spellings are one contract rather
+  than two surfaces that disagree.
 - `schemas/mq.execution-outcome.v1.json` is closed with
   `additionalProperties: false`, has nineteen properties, eight required fields,
   and already documents absent measurements as absent rather than zero.
