@@ -30,6 +30,116 @@
         "agent"
       ]
     },
+    "runtime_fingerprint": {
+      "description": "Which code produced this observation: a projection of the producing runtime's own established identity, not a second observation of it. Absent means runtime provenance was not observed — a producer that predates this field, never a claim that the runtime matched anything. Present with identity_quality unknown is a different fact: provenance was observed and the runtime could not be identified. Carries no comparison, policy, reason code or local path; whether the code was current is a question for provenance, and this field only says what it was.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component",
+        "version",
+        "commit",
+        "identity_quality"
+      ],
+      "properties": {
+        "component": {
+          "description": "The MQ component that produced the record. A commit without a subject names nothing.",
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "description": "The version the runtime reported. Null when it could not be read; never taken from a tag.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "commit": {
+          "description": "The git object name the running code was built from, lowercase. Null when the build carries none — a weaker identity, not a gap to fill in.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{7,40}$"
+        },
+        "identity_quality": {
+          "description": "How complete the identity is. Constrained below, so a record cannot claim more or less than it carries.",
+          "enum": [
+            "verified",
+            "partial",
+            "unknown"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "identity_quality": {
+                "const": "verified"
+              }
+            },
+            "required": [
+              "identity_quality"
+            ]
+          },
+          "then": {
+            "properties": {
+              "version": {
+                "type": "string"
+              },
+              "commit": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "identity_quality": {
+                "const": "partial"
+              }
+            },
+            "required": [
+              "identity_quality"
+            ]
+          },
+          "then": {
+            "properties": {
+              "version": {
+                "type": "string"
+              },
+              "commit": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "identity_quality": {
+                "const": "unknown"
+              }
+            },
+            "required": [
+              "identity_quality"
+            ]
+          },
+          "then": {
+            "properties": {
+              "version": {
+                "type": "null"
+              },
+              "commit": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
     "task_class": {
       "enum": [
         "audit",
