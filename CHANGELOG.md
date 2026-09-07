@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+- `mq.execution-outcome.v1` gains an optional `runtime_fingerprint`: which
+  code produced the observation, as component, version, commit and
+  identity quality. A projection of the producing runtime's own identity,
+  not a second observation of it, and deliberately smaller than
+  `mq.runtime-identity.v1` — install type, process metadata and local paths
+  answer a different question. Optional, so every record written before it
+  stays valid; absence means provenance was not observed, which is a
+  different fact from a fingerprint whose identity quality is `unknown`.
+  Carries no comparison, policy or reason code. See DEC-006.
 - Add skill selection vocabulary, profile and route contracts; mq-agent owns execution.
 - DEC-006 records that optional runtime provenance extends
   `mq.execution-outcome.v1` additively rather than creating v2. Historical

@@ -2,15 +2,34 @@
   "schema": "mq.execution-outcome.v1",
   "run_id": "exec-20260828-001",
   "runtime": "swarm",
+  "runtime_fingerprint": {
+    "component": "mq-agent",
+    "version": "1.28.0",
+    "commit": "974aa2f8b1c3d5e7a9b0c2d4e6f8a1b3c5d7e9f0",
+    "identity_quality": "verified"
+  },
   "task_class": "ci",
   "result": "PASS",
   "exit_status": "ok",
   "latency_ms": 4800,
-  "route": {"selected": "local-qwen", "policy": "static", "confidence": null},
+  "route": {
+    "selected": "local-qwen",
+    "policy": "static",
+    "confidence": null
+  },
   "model": "qwen3-coder",
-  "context": {"sources": ["repo-card", "codegraph"], "size": 18200},
+  "context": {
+    "sources": [
+      "repo-card",
+      "codegraph"
+    ],
+    "size": 18200
+  },
   "retries": 0,
   "fallbacks": 0,
-  "tokens": {"input": 9200, "output": 1300},
+  "tokens": {
+    "input": 9200,
+    "output": 1300
+  },
   "recorded_at": "2026-08-28T12:00:00Z"
 }
