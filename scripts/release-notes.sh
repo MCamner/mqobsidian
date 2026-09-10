@@ -50,13 +50,21 @@ for i, (start, end, name) in enumerate(spans):
         print(f"section for {version} in {path} is empty", file=sys.stderr)
         sys.exit(4)
 
-    # A GitHub release body is capped at 125,000 characters, and MQ changelog
+    # A GitHub release body is capped at 125,000 characters and MQ changelog
     # sections get large: macos-scripts' 2.1.0 entry is 111,768. Truncating
-    # here keeps the publish from failing at the one moment it must not.
+    # would publish something that is not the canonical description, which is
+    # the one thing this script exists to guarantee. An oversized section is a
+    # loud failure instead, and the rule holds in every direction: what gets
+    # published is exactly the section, or nothing is.
     LIMIT = 120_000
     if len(body) > LIMIT:
-        keep = body[:LIMIT].rsplit("\n", 1)[0]
-        body = keep + f"\n\n… truncated at {LIMIT:,} characters. Full notes: CHANGELOG.md"
+        print(
+            f"release notes for {version} are {len(body):,} characters; a "
+            f"GitHub release body is capped at 125,000 and a truncated "
+            f"section would not be the changelog",
+            file=sys.stderr,
+        )
+        sys.exit(6)
 
     print(body)
     sys.exit(0)
