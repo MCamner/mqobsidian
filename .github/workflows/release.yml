@@ -21,9 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # A human who published in the same session — with a themed title, which
-      # this job cannot invent — must not be overwritten. This job is the net
-      # under that flow, not a replacement for it.
+      # Idempotent: an existing release is left exactly as it is, so
+      # re-running this or repairing an old tag by hand is safe.
+      #
+      # This job does not wait for a human, so do NOT run `gh release create`
+      # after pushing a tag — the two race and this usually wins, with a plain
+      # title. The procedure is: push the tag, let this publish, then
+      # `gh release edit <tag> --title "<tag> — Theme"` if a themed title is
+      # wanted. Publication is the tag's job; the title is the polish.
       - name: Check whether the release already exists
         id: existing
         env:
