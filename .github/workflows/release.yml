@@ -1,0 +1,53 @@
+name: Release
+
+# Publishing a release was a manual step, and a manual step gets skipped. Across
+# the MQ stack every missing GitHub release sits in a repo that published by
+# hand; the one repo that automated it has none. mq-hal shipped v2.3.0 and
+# v2.4.0 as tags nobody ever released, and nothing noticed for a month.
+#
+# So the tag is the release. Pushing v* publishes it.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # A human who published in the same session — with a themed title, which
+      # this job cannot invent — must not be overwritten. This job is the net
+      # under that flow, not a replacement for it.
+      - name: Check whether the release already exists
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "$GITHUB_REF_NAME is already published — nothing to do."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Notes come from the changelog section, never from the commit range: a
+      # tag placed late makes the range describe the wrong work.
+      - name: Read the release notes for this tag
+        if: steps.existing.outputs.exists == 'false'
+        run: bash scripts/release-notes.sh "$GITHUB_REF_NAME" > "$RUNNER_TEMP/notes.md"
+
+      - name: Publish
+        if: steps.existing.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --verify-tag \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file "$RUNNER_TEMP/notes.md"
