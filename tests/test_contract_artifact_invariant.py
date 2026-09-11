@@ -11,6 +11,13 @@ nobody wrote, because nothing was reading the artifacts.
     artifact -> schema exists -> contract declared -> documentation freshness
     [ this test ....................................]  [ existing gate ]
 
+The chain was walked in one direction only, so a schema nobody reached from an
+artifact stayed invisible: `schemas/mq.model-route-outcome.v1.json` shipped with
+tests, `docs/ROUTING_OUTCOMES.md` and DEC-006, and was still absent from
+`.mq/repo-contract.json` -- the register the rest of the stack reads to learn
+what this repo owns. A green suite said nothing, because nothing read the
+schema directory. The last test below closes that direction.
+
 Deliberately narrow: no discovery, no contract engine, no new abstraction.
 """
 from __future__ import annotations
@@ -85,6 +92,31 @@ class ContractArtifactInvariantTests(unittest.TestCase):
         )
         self.assertEqual(
             missing, [], f"declared contracts with no schema file: {missing}"
+        )
+
+
+    def test_every_schema_file_is_declared(self) -> None:
+        """A schema in the tree that the register does not name owns nothing.
+
+        Consumers read `.mq/repo-contract.json`, not a directory listing, so an
+        undeclared schema is invisible to the stack however well it is tested
+        and documented. Declaring one is intentional: it also obliges
+        `scripts/check-docs-freshness.py` to find it in `docs/memory-model.md`.
+        """
+        undeclared = sorted(
+            path.name
+            for path in SCHEMAS.glob("*.json")
+            if _declared_name(path.name[: -len(".json")]) not in self.declared
+        )
+        self.assertEqual(
+            undeclared,
+            [],
+            f"schema files absent from .mq/repo-contract.json: {undeclared}",
+        )
+
+    def test_the_schema_gate_is_not_vacuous(self) -> None:
+        self.assertTrue(
+            list(SCHEMAS.glob("*.json")), "no schema files found; gate is vacuous"
         )
 
 

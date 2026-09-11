@@ -67,6 +67,21 @@
 
 ### Fixed
 
+- `mq.model-route-outcome.v1` had a schema, tests, `docs/ROUTING_OUTCOMES.md`
+  and DEC-006, and was still absent from `.mq/repo-contract.json` — the register
+  the rest of the stack reads to learn what this repo owns. An undeclared
+  contract owns nothing, however well it is tested. It is now declared, and
+  documented in `docs/memory-model.md` as the declaration obliges.
+- `tests/test_contract_artifact_invariant.py` walked the chain in one direction
+  only, so a schema no `.mq` artifact reached stayed invisible and the suite
+  passed anyway. It now also asserts that every `schemas/*.json` is declared,
+  closing the direction that let the gap above exist unnoticed.
+- `docs/ROUTING_OUTCOMES.md` still named `mq-agent` as schema owner and pointed
+  at `schemas/model_route_outcome.schema.json` in a sibling checkout as
+  authoritative. The contract became canonical here, and
+  `scripts/record-routing-outcome.py` already resolved the local schema; only
+  the document still said otherwise. `mq-agent` remains the producer.
+
 - `tests/test_record_routing_outcome.py` validated against a hand-written inline
   copy of the routing schema — a third source of truth that had silently drifted,
   missing both `run_id` and `verification.grounding`. The tests now exercise the
