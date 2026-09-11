@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.4.0] - 2026-09-11
 
 - `mq.execution-outcome.v1` gains an optional `runtime_fingerprint`: which
   code produced the observation, as component, version, commit and

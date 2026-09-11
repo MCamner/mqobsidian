@@ -1,16 +1,18 @@
 # Roadmap
 
-**Current version:** 0.3.0
-**Current direction:** v0.3.0 released — tagged `v0.3.0` at `d090d03` and
-published on 2026-08-28, with the release notes taken verbatim from the
-CHANGELOG entry. Active work is the Execution Intelligence track below. The
-delivered scope
-declares the contracts this repo already owns explicitly in
-`.mq/repo-contract.json` and makes those surfaces
-safe and predictable for consumers to read. The goal is better selection and
-clearer contracts, not more memory. The `v0.3.0` plan is stated below; the SSOT
-& Promotion Governance and CodeGraph MQ Integration blocks further down are
-**completed** and kept as history.
+**Current version:** 0.4.0
+**Current direction:** v0.4.0 released — the execution and routing contracts
+this repo owns are now complete, canonical and gated, and the register that
+declares them is held to `schemas/` in both directions.
+
+This release describes a contract foundation, **not** a finished Execution
+Intelligence track. Fallback recording, active-versus-shadow divergence
+reporting and the whole human-gated policy layer in v2.7 stay genuinely open
+below; nothing was ticked to make a release look complete. The layers that need
+this foundation come next, and they come on their own evidence.
+
+The `v0.3.0` plan is kept below as history, as are the SSOT & Promotion
+Governance and CodeGraph MQ Integration blocks.
 
 `mqobsidian` is the single source of truth and durable memory for the MQ stack.
 Its job is to own the canonical structure of truth, inbox, promotion, and
@@ -342,11 +344,17 @@ Exit gate:
 - do not add memory categories without a declared consumer need
 - do not move orchestration, review execution, or terminal UX into this repo
 
-## Landed since v0.3.0
+## v0.4.0 — Execution and Routing Contract Integrity
 
-Unreleased work on `main`. Recorded here because the roadmap had drifted ten
-commits behind the repository, and an entire contract family was invisible in
-it.
+**Status:** Released 2026-09-11 (`v0.4.0`)
+**Priority:** P1
+**Type:** Contracts / Integrity
+**Goal:** Make the execution and routing contracts this repo owns complete,
+canonical and gated — the foundation the later routing layers will read, not
+those layers themselves.
+
+Deliberately scoped to what landed. The Execution Intelligence track above
+keeps its open items open.
 
 ### Routing and execution contracts (ADR-010)
 
