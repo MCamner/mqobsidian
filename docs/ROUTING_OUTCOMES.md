@@ -7,8 +7,11 @@ policy. Those responsibilities remain in `mq-agent`.
 
 ## Contract boundary
 
-- Producer and schema owner: `mq-agent`
-- Authoritative schema: `schemas/model_route_outcome.schema.json` in `mq-agent`
+- Producer: `mq-agent` — it classifies tasks, runs models and records outcomes
+- Schema owner: `mqobsidian`. The authoritative schema is
+  `schemas/mq.model-route-outcome.v1.json` in this repo, declared in
+  `.mq/repo-contract.json`. `mq-agent` vendors a copy and gates it against this
+  one (mq-agent #216); it is no longer resolved from a sibling checkout
 - Durable local surface: `routing/outcomes.jsonl` in `mqobsidian`
 - **The surface is not filled automatically.** `mq-agent` writes its own
   outcomes to `~/.mq-agent/route-outcomes.jsonl` (or `MQ_AGENT_ROUTE_OUTCOMES`).
