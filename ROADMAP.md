@@ -263,8 +263,11 @@ Better selection and clearer contracts — **not** more memory categories.
 
 ### Landed
 
-- [x] `.mq/repo-contract.json` declares the 23 owned contracts, each backed by a
-  `schemas/<name>.v1.json` file (#53).
+- [x] `.mq/repo-contract.json` declares every contract this repo owns, each
+  backed by a `schemas/<name>.v1.json` file (#53). The register is the count —
+  it stood at 27 when `v0.3.0` was tagged and grows as contracts land, so no
+  number is restated here to go stale. `tests/test_contract_artifact_invariant.py`
+  holds the register and `schemas/` to each other in both directions.
 - [x] Roadmap states current version + direction and marks the shipped blocks
   completed (#52).
 
@@ -338,6 +341,49 @@ Exit gate:
   the public-safe guard — they exist
 - do not add memory categories without a declared consumer need
 - do not move orchestration, review execution, or terminal UX into this repo
+
+## Landed since v0.3.0
+
+Unreleased work on `main`. Recorded here because the roadmap had drifted ten
+commits behind the repository, and an entire contract family was invisible in
+it.
+
+### Routing and execution contracts (ADR-010)
+
+- [x] A route is an execution strategy, not a model — applied routing separated
+  from advice, `execution.route` deprecated (#92, #94)
+- [x] Routing observations correlate with their execution via
+  `execution_run_id`; correlation is unconditional in v1 (#91)
+- [x] A broken context window is expressible rather than silent (#95)
+- [x] A model that ran out of time was not unavailable — timeout and
+  unavailability are different facts (#96)
+- [x] `mq.model-route-outcome.v1` is canonical here rather than resolved from a
+  sibling `mq-agent` checkout; `mq-agent` vendors a copy gated against it (#90)
+- [x] `mq.execution-outcome.v1` gains an optional `runtime_fingerprint` —
+  additive, so records written before it stay valid (#99, #100)
+
+### Task-aware skill selection
+
+- [x] `mq.skill-profile.v1`, `mq.skill-route.v1` and
+  `skill-selection-vocabulary.v1` define the contracts for selecting a skill
+  from a task, mirroring the routing split between advice and application (#98)
+
+### Release and register integrity
+
+- [x] The tag is the release: pushing `v*` publishes it, with notes taken from
+  the changelog section rather than a commit range (#101)
+- [x] A truncated section is not the changelog — an oversized release body fails
+  loudly instead of publishing something that is not the canonical description
+  (#102)
+- [x] An undeclared schema owns nothing. `mq.model-route-outcome.v1` had a
+  schema, tests, docs and a decision record while being absent from
+  `.mq/repo-contract.json`, and the contract-artifact gate walked its chain in
+  one direction only. Both are fixed (#103)
+
+### Open questions
+
+- [ ] Whether `repo_scope` is the right dimension — research node, not a
+  commitment (#97)
 
 ## Single Source Of Truth And Promotion Governance
 
