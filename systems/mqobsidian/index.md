@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-08-28
+updated: 2026-09-17
 owner:
 links_to: [hot]
 ---
@@ -16,17 +16,22 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 ## Current state
 `mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact
 memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`.
-Phase 12 är stängd och nästa spår är Execution Intelligence:
-`mq.execution-outcome.v1` finns som validerat observationskontrakt. mq-agent
-PR #206 levererar writer, execution report/compare, readiness-grind och lokal
-retention. Verklig observationsperiod och aktiv-vs-shadow-divergens återstår.
-NotebookLM förblir en stängd, valfri exportförmåga.
+`v0.4.0` (2026-09-11) stängde Execution and Routing Contract Integrity: ADR-010
+delade routing per modellanrop, `mq.model-route-outcome.v1` är kanoniskt här,
+`application` och `execution_run_id` skiljer tillämpad routing från råd, och
+`.mq/repo-contract.json` deklarerar nu 31 kontrakt som grindas mot `schemas/` i
+båda riktningar. Task-aware skill selection har kontrakt men ingen exekvering
+här. Det är en kontraktsgrund, inte levererad Execution Intelligence: fallback
+recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
+öppna. Phase 12 och ownership-spåret (DEC-005) är stängda; NotebookLM förblir
+en stängd, valfri exportförmåga.
 
 ## Current priorities
-1. Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
-2. Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
-3. Samla execution outcomes per task class och route; omätta räknare är okända, inte noll.
+1. Hålla read-order-kedjan liten och sann: agent view -> hot -> index -> små cards, och regenerera steg 0 när hot/index ändras.
+2. Skaffa applied-evidens från fler än en task; de 14 överförda posterna är alla samma `docs-review`-beslut.
+3. Samla execution outcomes per task class och route; omätta räknare är okända, inte noll, och underlaget domineras i dag av task class `docs`.
 4. Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
+5. Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
 
 ## Key links
 - [[hot]]
@@ -36,6 +41,8 @@ NotebookLM förblir en stängd, valfri exportförmåga.
 - [[../../docs/context-effect]]
 - [[../../docs/FEEDBACK_LOOP]]
 - [[../../docs/notebooklm-bridge]]
+- [[../../docs/ROUTING_OUTCOMES]]
+- [[../../docs/skill-selection]]
 - [[../../templates/context-pack]]
 
 ## Core notes
@@ -44,25 +51,36 @@ NotebookLM förblir en stängd, valfri exportförmåga.
 - [[../../README]] — publik roll och repo-layout.
 - [[../../schemas/context-pack.v1]] — task-pack contract.
 - [[../../schemas/notebook-pack.v1]] — provenance-kontrakt för valda externa synteskällor.
+- [[../../schemas/mq.model-route-outcome.v1]] — kanoniskt routingkontrakt (ADR-010).
+- [[../../schemas/mq.execution-outcome.v1]] — exekveringsobservation; `route` deprekerad.
 - [[../../examples/sanitized-context-pack]] — public-safe exempel.
 - [[../mq-agent/index]] — orchestration och agent-view regeneration.
 - [[../mq-mcp/index]] — bounded MCP tools och runtime contracts.
 
 ## Active risks
+- Överföringen till `routing/outcomes.jsonl` är manuell, så vault och runtime-store glider isär tyst mellan körningar; 130 -> 144 den 2026-09-17 efter sju veckors drift.
+- Ett underlag som domineras av en task class kan se ut som routingevidens utan att kunna jämföra routes.
+- Kontrakt kan vara kompletta i båda ändar utan att sömmen körs; en tom yta betyder inte att inget hänt.
 - Context surfaces kan växa till permanenta token-sänkor.
 - Hårdkodade MVP-defaults kan misstas för generell memory query.
 - Duplicerad source-repo-dokumentation i vaulten skapar drift.
-- Kontrakt kan vara kompletta i båda ändar utan att sömmen körs; en tom yta betyder inte att inget hänt.
 - Extern syntes kan läcka felklassificerat material om allowlist eller operator approval kringgås.
-- Befintliga route-outcomes och det bredare execution-outcome-kontraktet kan ge dubbla sanningar om migreringen inte får en tydlig producent och lagringsyta.
 
 ## Open questions
 - Vilka verkliga uppgifter ska ingå i nästa mätbatch?
-- Ska befintliga `mq.model-route-outcome.v1`-poster migreras eller endast behållas som historik när execution-writern tas i bruk?
+- Är `repo_scope` rätt dimension? Öppen som research node, inte som åtagande (#97).
+- När finns tillräckligt med `applied`-poster per route för att divergensrapporten säger något?
 - Vilka repon får en beslutad publik agentyta (och därmed tracked `.mq/context/`)?
 - Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval? (Teknisk nytta är nu mätt och utebliven; frågan kvarstår organisatoriskt.)
 
 ## Recent changes
+- 2026-09-17: Refreshade hot/index till v0.4.0-läget och överförde de 14 `applied`-posterna (130 -> 144). Write-gaten avvisade fem av dem: `record-routing-outcome.py` krävde `model_output_received=true` på varje PASS, ett krav från tiden före ADR-010 D8 när varje route var ett modellanrop. `deterministic-local` kör ingen modellinferens, så kravet avvisade den enda sanna post en sådan körning kan skriva. Invarianten är nu route-medveten i båda riktningar — en deterministisk route får inte heller påstå mottagen modelloutput.
+- 2026-09-13: Regenererade agent views efter learn-refresh (#106) och bevarade 2026-08-04-inventeringen av vector stores som research node.
+- 2026-09-11: **`v0.4.0` släppt** — Execution and Routing Contract Integrity (#105). Roadmapen gjordes sann efter v0.3.0 (#104), och ett odeklarerat schema äger inget: `mq.model-route-outcome.v1` hade schema, tester, docs och beslutspost men saknades i `.mq/repo-contract.json`, och kontraktsgrinden gick kedjan i bara en riktning. Båda är fixade (#103). Registret deklarerar nu 31 kontrakt.
+- 2026-09-10: Taggen är releasen — `v*` publicerar med noter ur changelog-sektionen (#101), och en trunkerad sektion faller högt i stället för att publicera något som inte är den kanoniska beskrivningen (#102).
+- 2026-09-07: `mq.execution-outcome.v1` fick valfri `runtime_fingerprint` (#100) med DEC-006 som beslut: additiv utökning, inte v2 — historiska poster förblir giltiga och frånvaro betyder att proveniens inte observerades (#99). Task-aware skill selection fick kontrakt: `mq.skill-profile.v1`, `mq.skill-route.v1`, `skill-selection-vocabulary.v1` (#98).
+- 2026-09-05: Öppnade research node om huruvida `repo_scope` är rätt dimension (#97).
+- 2026-08-29 → 09-04: ADR-010 landade i fem steg. Routing- och execution-outcomes blev kanoniska här i stället för att lösas från ett sibling-checkout (#90); `execution_run_id` korrelerar observation med exekvering (#91); `application` skiljer tillämpad routing från råd och deprekerar `execution.route` (#92); en route är en exekveringsstrategi, inte en modell (#94); ett brutet kontextfönster blev uttryckbart i stället för tyst (#95); och en modell som fick slut på tid var inte otillgänglig (#96).
 - 2026-08-28: Mergeade mq-agent PR #206. `mq.execution-outcome.v1` skrivs best-effort från betydande entrypoints, roteras vid 10 MiB med tre historikfiler och kan stängas av. `execution report`, `execution compare` och `route readiness` rapporterar data utan automatisk routeändring; eligibility är 30 observationer, 2 routes, 14 dagar och 10 per route.
 - 2026-08-28: Mergeade #85 med gröna `main`-kontroller och stängde Phase 12-follow-ups. Lade till `mq.execution-outcome.v1` med schema, public-safe exempel, exportvalidering och kontraktstest. Roadmapen går nu vidare med observation, deskriptiv inspektion, shadow routing och först därefter human-godkända routingexperiment.
 - 2026-08-27: **Phase 12 stängd.** 12g kördes en gång under fryst protokoll — 35 spårade public-safe källor, kall lokal baslinje, blind poängsättning. NotebookLM fick 17/40 mot 40 och 39; grinden krävde 38. Sämre än 12c trots 21x materialet. Två failure modes väger tyngre än siffran: providern svarade från ett föråldrat systemtillstånd på Q3 (2/8) med roadmapfilen i sin egen korpus, och besvarade inte Q5 alls (0/8). Det enda äkta cross-source-fyndet kom från CodeGraph-baslinjen, inte providern. 12d och 12e stängda; se [[../../docs/notebooklm-evaluation]].
