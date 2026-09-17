@@ -35,39 +35,47 @@ other repos read or delegate to it.
 `mqobsidian` does **not** own: terminal UX, shell runtime authority,
 orchestration logic, review execution, or menu routing.
 
-### Open divergence: context selection lives on both sides
+### Closed: context selection lived on both sides (DEC-005)
 
 Surfaced by the CodeGraph baseline during the 12g evaluation and verified
 directly in source afterwards. Tracked here rather than in Phase 12: this is an
 ownership question, and it outlived the phase that found it.
 
 The reviewed rule is that `mq-agent` owns context selection, pack generation and
-export (`systems/mqobsidian/hot.md:29`), and that this repo "kor inte workflows"
-(`systems/mqobsidian/index.md:17`). Three things in the code do not match that
-as written:
+export (stated in `systems/mqobsidian/hot.md`), and that this repo "kor inte
+workflows" (stated in `systems/mqobsidian/index.md`). Three things in the code
+did not match that as written:
 
-1. **Selection logic runs here.** `scripts/generate-context-pack.py` classifies
-   a task against `CODEGRAPH_TASK_HINTS`/`CODEGRAPH_TASK_SUPPRESS`
-   (`task_is_source_heavy`, :135), builds bounded per-task queries
-   (`build_codegraph_queries`, :153, capped by `MAX_CODEGRAPH_QUERIES`, :132)
-   and renders the pack (`render_pack`, :276). The same task-pack query logic is
-   mirrored in mq-agent's `context_pack.py`, so the two must be edited together.
-2. **A second exporter exists here.** `scripts/generate-repo-context-export.py`
-   writes to `output_root/<repo>/.mq/context` (`export_repo`, :147). Its default
+1. **Selection logic ran here, against its own copy of the vocabulary.**
+   `scripts/generate-context-pack.py` classified a task against
+   `CODEGRAPH_TASK_HINTS`/`CODEGRAPH_TASK_SUPPRESS` (`task_is_source_heavy`),
+   built bounded per-task queries (`build_codegraph_queries`, capped by
+   `MAX_CODEGRAPH_QUERIES`) and rendered the pack (`render_pack`) — with the
+   same three constants duplicated in mq-agent's `context_pack.py`, so the only
+   protection against drift was a convention that both copies got edited
+   together. Since DEC-005 the script loads all three from
+   `.mq/context-selection-vocabulary.json` and there is deliberately no
+   fallback: there is one copy to edit, and it is the contract.
+2. **A second exporter exists here** — kept deliberately, not debris.
+   `scripts/generate-repo-context-export.py` writes to `output_root/<repo>/.mq/context` (`export_repo`, :147). Its default
    `--output-dir` is `examples/repo-context-exports`, so by default it stays
    inside this repo; it reaches a live sibling repo only when `--output-dir` is
    passed explicitly.
 3. **The two exporters have different `--clean` semantics, and only the safe one
-   is documented.** `hot.md:32` states that `--clean` removes the export's five
+   is documented.** `hot.md` states that `--clean` removes the export's five
    owned files and preserves `task-pack.md` and unknown files. That describes
    mq-agent's exporter, which removes only names in its owned list. This repo's
-   script instead calls `shutil.rmtree(context_dir)` on the whole directory.
-   Aimed at a live repo with `--output-dir`, it would delete `task-pack.md` and
-   any unknown file -- the opposite of what the vault documents.
+   script instead called `shutil.rmtree(context_dir)` on the whole directory.
+   Aimed at a live repo with `--output-dir`, it would have deleted
+   `task-pack.md` and any unknown file -- the opposite of what the vault
+   documents. Fixed below.
 
-Finding 3 is fixed; 1 and 2 are a migration that was never finished
-(`index.md:68` records that export landed in mq-agent, and ADR-006 makes local
-regeneration a working method).
+All three are resolved, and not by finishing a migration. `DEC-005` answered
+finding 1 by splitting the vocabulary from its execution: this repo publishes
+the selection heuristic as a declarative contract and mq-agent keeps every
+runtime selection decision. Finding 2 needed no change — the second exporter is
+load-bearing in this repo's own CI, and ADR-006 already makes local
+regeneration a working method. Finding 3 was a real defect and is fixed.
 
 CodeGraph's blast radius flagged these symbols as having no covering tests.
 That was accurate for `export_repo` and wrong for `render_pack`, which is
@@ -86,11 +94,11 @@ finding -- the same rule ADR-009 states for CodeGraph output generally.
   `shutil.rmtree` on the directory, so `task-pack.md` and unknown files in a
   target repo survive. Covered by `tests/test_repo_context_export.py`, which
   fails against the old behaviour.
-- [x] Amend `hot.md:29` and `:32` to describe what is actually true, whichever
-  way the first two land. Both sentences turned out to be correct and were left
-  alone: `:29` is true under DEC-005, and `:32` accurately described mq-agent's
-  exporter all along -- this repo's script was the one that disagreed, fixed in
-  the `--clean` work. What the implementation did add is a new published
+- [x] Amend the two `hot.md` sentences to describe what is actually true,
+  whichever way the first two land. Both turned out to be correct and were left
+  alone: the ownership sentence is true under DEC-005, and the `--clean`
+  sentence accurately described mq-agent's exporter all along -- this repo's
+  script was the one that disagreed, fixed in the `--clean` work. What the implementation did add is a new published
   surface, so `hot.md` gained one line naming
   `.mq/context-selection-vocabulary.json` and the rule that consumers may not
   copy it.

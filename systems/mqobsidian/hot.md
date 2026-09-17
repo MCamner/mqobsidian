@@ -4,7 +4,7 @@ system: mqobsidian
 status: active
 max_words: 500
 tags: [hot, cache, active-context]
-updated: 2026-08-28
+updated: 2026-09-17
 owner:
 links_to: [index]
 ---
@@ -15,15 +15,17 @@ links_to: [index]
 Systemets lilla arbetsminne. Bara det viktigaste.
 
 ## Current mission
-Hålla MQ-stackens durable memory tunn och public-safe, samt ge execution
-intelligence en stabil kontraktsgrund utan att flytta runtime till vaulten.
+Hålla MQ-stackens durable memory tunn och public-safe, och äga de
+execution- och routingkontrakt senare lager läser — utan att flytta runtime
+till vaulten.
 
 ## Current status
-Phase 12 och dess ownership-, CodeGraph mismatch- och contract-integrity-spår är
-stängda. `mq.execution-outcome.v1` är kontrakterat och validerat. mq-agent PR
-#206 är mergead med writer, execution report/compare, route readiness och
-storleksrotation. Aktiv-vs-shadow-divergens och verklig observationsperiod
-återstår. NotebookLM och automatisk routing är fortsatt stängda.
+`v0.4.0` släppt 2026-09-11: execution- och routingkontrakten är kompletta,
+kanoniska och grindade, och kontraktsregistret hålls mot `schemas/` i båda
+riktningar. Det är en kontraktsgrund, **inte** levererad Execution
+Intelligence — fallback recording och aktiv-vs-shadow-divergens är fortsatt
+öppna. Phase 12 och ownership-spåret (DEC-005) är stängda. NotebookLM är
+valfri exportförmåga, inte provider.
 
 ## Active blockers
 - Inga bekräftade blockers.
@@ -31,35 +33,48 @@ storleksrotation. Aktiv-vs-shadow-divergens och verklig observationsperiod
 ## Most important facts
 - Läs först [[../../memory/learn/agent/mqobsidian]] för repo-specifik agentkontext.
 - `mq-agent` äger context selection, pack-generation, runtime-writer och CLI.
-- `mqobsidian` äger durable notes, schemas, templates och public-safe examples.
-- `mq.execution-outcome.v1` beskriver route/model/context, duration, status,
-  fallback och retries. Quality samt usage är valfria när signalerna saknas.
-- `.mq/context-budgets.json` är publicerad budgetkälla och CI regenererar exemplen för att upptäcka drift.
-- `.mq/context-selection-vocabulary.json` är publicerad selection-vokabulär (DEC-005). Konsumenter läser den; ingen får hålla en egen kopia, och det finns medvetet ingen fallback.
-- `--clean` tar nu bara bort exportens fem ägda filer och bevarar `task-pack.md` samt okända filer.
-- Aktuell orienteringsmätning visar 222 kontextrader mot 4797 breda baseline-rader (95,4 % minskning); CodeGraph-mätningar redovisas separat i [[../../docs/context-effect]].
-- `scripts/eval-retrieval.py` mäter precision, recall och F1 från lokala feedback-signaler utan att ändra kontrakt eller publicera rådata.
-- `memory-query.v1` kan ange flera `repositories`; `repository` är fortsatt det frågande repot.
-- `.mq/notebooks.json` deklarerar en smal `mq-stack-intelligence`-allowlist; materialiserad output hör hemma i gitignorerade `.notebooklm/`.
-- `notebook-pack.v1` kräver `revision.dirty`; consumer-repon får validera kontraktet men inte omdefiniera det (mq-agent vendorar en kopia).
-- **Phase 12 är stängd.** NotebookLM är *optional export capability*, inte
-  provider; kontrakt och grindar behålls som exportinfrastruktur.
-- `mq-agent` äger eventuell NotebookLM selection, pack-generation, routing och sync; se [[../../docs/notebooklm-bridge]]. Gitignorerad varaktig minnesyta exporteras aldrig — publiceringsgränsen är exportgränsen.
+  `mqobsidian` äger schemas, durable notes, templates och public-safe examples.
+- `.mq/repo-contract.json` deklarerar 31 kontrakt. Ett odeklarerat schema äger
+  inget (#103) — registret och `schemas/` grindas mot varandra.
+- `mq.model-route-outcome.v1` är kanoniskt här, inte löst från ett sibling
+  `mq-agent`-checkout; mq-agent vendorar en grindad kopia.
+- En route är en exekveringsstrategi, inte en modell (ADR-010). `application`
+  (`advisory | shadow | applied`) skiljer råd från tillämpning och route
+  readiness räknar bara `applied`. `route` på `mq.execution-outcome.v1` är
+  deprekerad; applied-route-fakta hör till routingkontraktet.
+- `execution_run_id` korrelerar routingobservation med exekvering; korrelation
+  är ovillkorlig i v1.
+- `runtime_fingerprint` är valfri och additiv (DEC-006). Frånvaro betyder att
+  proveniens inte observerades — annan fakta än `identity quality: unknown`.
+- Skill selection har kontrakt (`mq.skill-profile.v1`, `mq.skill-route.v1`,
+  `skill-selection-vocabulary.v1`); mq-agent äger exekveringen.
+- `.mq/context-selection-vocabulary.json` (DEC-005) och
+  `.mq/context-budgets.json` (`context-budget.v1`) är publicerade
+  kontraktskällor. Konsumenter läser dem; ingen håller en egen kopia.
+- `--clean` rör bara exportens fem ägda filer — nu sant för båda exportörerna.
+- Evidensläge 2026-09-17: `routing/outcomes.jsonl` har 144 poster, i linje med
+  mq-agents store. De 14 `applied` (2026-09-01 → 09-04) delar ett `decision_id`
+  — samma task enligt kontraktet — med 14 skilda `run_id`, alla `docs-review`,
+  9 PASS / 3 UNAVAILABLE / 2 FAIL, på `local-shadow` (9) och
+  `deterministic-local` (5). Execution-outcomes: 54 i mq-agents store,
+  2026-08-19 → 09-15, en med fingerprint, noll fallback.
+- Write-gaten är route-medveten: `deterministic-local` kör ingen modellinferens,
+  så `model_output_received: false` är enda sanna värdet på en PASS, och `true`
+  avvisas för den routen.
+- Omätta räknare är okända, inte noll.
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
-- `routing/outcomes.jsonl` är gitignorad durable evidence och behåller mq-agents outcome-kontrakt oförändrat. Ytan fylls inte automatiskt: `mq-agent` skriver till `~/.mq-agent/route-outcomes.jsonl`, och `scripts/record-routing-outcome.py` måste köras för att föra över posterna hit.
 
 ## Immediate next actions
-1. Samla verkliga execution outcomes och kontrollera vilka runtimes som faktiskt
-   mäter route, context, retries och fallbacks utan påhittade nollor.
-2. Lägg till aktiv-vs-shadow-divergens först när samma task class kan jämföras.
-3. Behandla 30 körningar, 2 routes och 14 dagar som en
-   hypotes, inte som automatisk aktiveringsregel.
+1. Skaffa applied-evidens från mer än en task: alla 14 `applied` är samma `docs-review`-beslut, så ingen jämförelse mellan task classes är möjlig.
+2. Lägg till aktiv-vs-shadow-divergens först när samma task class kan jämföras; `docs` dominerar underlaget.
+3. Behandla 30 körningar, 2 routes, 14 dagar och 10 per route som hypotes, inte som aktiveringsregel.
 
 ## Critical links
 - [[index]]
 - [[../../memory/learn/agent/mqobsidian]]
+- [[../../docs/ROUTING_OUTCOMES]]
+- [[../../docs/skill-selection]]
 - [[../../docs/roadmap-token-reduction]]
-- [[../../docs/notebooklm-bridge]]
 
 ## Update rule
 Behåll bara det som behövs för nästa analys/beslut. Rensa aggressivt.

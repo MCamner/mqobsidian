@@ -1,7 +1,7 @@
 ---
 type: agent-view
 system: mqobsidian
-generated: 2026-09-13
+generated: 2026-09-17
 generator: mq-agent agent-views rebuild
 sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md, memory/learn/repos/mqobsidian.md]
 ---
@@ -13,27 +13,25 @@ edit by hand; re-run `mq-agent agent-views rebuild`.
 
 ## Current state
 
-Hålla MQ-stackens durable memory tunn och public-safe, samt ge execution intelligence en stabil kontraktsgrund utan att flytta runtime till vaulten. Phase 12 och dess ownership-, CodeGraph mismatch- och contract-integrity-spår är stängda. `mq.execution-outcome.v1` är kontrakterat och validerat. mq-agent PR #206 är mergead med writer, execution report/compare…
+Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution- och routingkontrakt senare lager läser — utan att flytta runtime till vaulten. `v0.4.0` släppt 2026-09-11: execution- och routingkontrakten är kompletta, kanoniska och grindade, och kontraktsregistret hålls mot `schemas/` i båda riktningar. Det är en…
 
 ## Active priorities
 
-- Hålla read-order-kedjan liten: agent view -> hot -> index -> små cards.
-- Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
-- Samla execution outcomes per task class och route; omätta räknare är okända, inte noll.
+- Hålla read-order-kedjan liten och sann: agent view -> hot -> index -> små cards, och regenerera steg 0…
+- Skaffa applied-evidens från fler än en task; de 14 överförda posterna är alla samma `docs-review`-beslut.
+- Samla execution outcomes per task class och route; omätta räknare är okända, inte noll, och underlaget domineras i…
 - Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
 
 ## Current blockers
 
 - Inga bekräftade blockers.
-- Context surfaces kan växa till permanenta token-sänkor.
-- Hårdkodade MVP-defaults kan misstas för generell memory query.
-- Duplicerad source-repo-dokumentation i vaulten skapar drift.
+- Överföringen till `routing/outcomes.jsonl` är manuell, så vault och runtime-store glider isär tyst mellan körningar; 130 -> 144 den…
+- Ett underlag som domineras av en task class kan se ut som routingevidens utan att kunna jämföra routes.
+- Kontrakt kan vara kompletta i båda ändar utan att sömmen körs; en tom yta betyder inte att inget…
 
 ## Relevant lessons
 
 - Document and verify CodeGraph CLI query patterns for mqobsidian
-- Prove the mqobsidian token-reduction MVP with one real context pack before broad rollout
-- Keep mqobsidian context-export cleanup ownership-based and idempotent
 
 ## Read next
 

@@ -348,6 +348,7 @@ class RouteIdentityContractTests(unittest.TestCase):
             _outcome(
                 selected_route="deterministic-local",
                 local_model=None,
+                model_output_received=False,
                 application="applied",
                 execution_run_id="exec-1",
             ),
@@ -356,6 +357,44 @@ class RouteIdentityContractTests(unittest.TestCase):
 
         self.assertEqual(validated["selected_route"], "deterministic-local")
         self.assertIsNone(validated["local_model"])
+
+    def test_a_route_that_runs_no_model_passes_without_model_output(self) -> None:
+        # The PASS invariant predates D8, when every route was a model call. A
+        # deterministic strategy runs no model, so `model_output_received: false`
+        # is the only truthful value on a PASS — and the gate must not read that
+        # honesty as an inconsistency and refuse the record.
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        validated = writer.validate_outcome(
+            _outcome(
+                selected_route="deterministic-local",
+                local_model=None,
+                model_output_received=False,
+                application="applied",
+                execution_run_id="exec-1",
+            ),
+            validator,
+        )
+
+        self.assertFalse(validated["model_output_received"])
+
+    def test_a_route_that_runs_no_model_cannot_claim_model_output(self) -> None:
+        # The inverse, and the reason the invariant becomes route-aware rather
+        # than simply weaker: a strategy defined as running no model inference
+        # has no model output to have received.
+        validator = writer.load_validator(CANONICAL_SCHEMA)
+
+        with self.assertRaises(ValueError) as raised:
+            writer.validate_outcome(
+                _outcome(
+                    selected_route="deterministic-local",
+                    local_model=None,
+                    model_output_received=True,
+                ),
+                validator,
+            )
+
+        self.assertIn("deterministic-local", str(raised.exception))
 
     def test_local_model_stays_required_so_its_absence_cannot_be_silent(self) -> None:
         # Nullable, not optional. A missing key would let a strategy leave the
