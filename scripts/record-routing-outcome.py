@@ -76,10 +76,25 @@ def validate_outcome(data: Any, validator: Draft202012Validator) -> dict[str, An
         raise ValueError("outcome must be a JSON object")
 
     verification = data["verification"]
+    # A route is an execution strategy, not a model (ADR-010 D8), and
+    # `deterministic-local` is defined as local execution with no model
+    # inference at all. Such a run has no model output to receive, whatever its
+    # verification status — so the claim is refused in both directions rather
+    # than only relaxed: the invariant below predates D8 and would otherwise
+    # reject the only truthful record a deterministic route can write.
+    runs_a_model = data["selected_route"] != "deterministic-local"
+    if not runs_a_model and data["model_output_received"] is not False:
+        raise ValueError(
+            "deterministic-local runs no model inference, so it cannot have "
+            "received model output"
+        )
     if verification["status"] == "PASS":
         if not verification["checks"]:
             raise ValueError("PASS outcome must name at least one deterministic check")
-        for field in ("attempted", "model_output_received", "schema_valid"):
+        required_true = ["attempted", "schema_valid"]
+        if runs_a_model:
+            required_true.append("model_output_received")
+        for field in required_true:
             if data[field] is not True:
                 raise ValueError(f"PASS outcome requires {field}=true")
         if data["escalated"] is not False or data["escalation_reason"] is not None:
