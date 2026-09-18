@@ -44,9 +44,13 @@ jobs:
       # selection lives in ruff.toml so it is the repo's decision rather than an
       # editor extension's default — which is what it was before, silently.
       - name: Lint Python (ruff, pinned)
-        run: |
-          ruff --version
-          ruff check .
+        run: ./scripts/check-ruff-pinned.sh
+
+      # The local release gate mirrors this workflow. Nothing checked that it
+      # actually did, and it had drifted: check-context-links.py and ruff ran
+      # here and not there.
+      - name: Local gate and CI check the same things
+        run: python3 scripts/check-gate-parity.py
 
       - name: Run focused unit tests
         run: python3 -m unittest discover -s tests -q
