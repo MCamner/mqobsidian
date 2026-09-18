@@ -10,6 +10,11 @@
 # These mirror the Public Safe Check CI gate — mqobsidian's releasability
 # assertions — minus the context-export staleness step, which regenerates files
 # and so is not read-only. CI enforces staleness on every push.
+#
+# scripts/check-gate-parity.py asserts that mirror mechanically: every step of
+# that workflow must be declared here or declared CI-only with a reason. The
+# mirror had already drifted before it was checked — check-context-links.py and
+# ruff ran in CI and not here, so a green local gate was silent about them.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -65,11 +70,20 @@ run "validate-export.py" python3 scripts/validate-export.py
 step "Token budget"
 run "check-token-budget.py" python3 scripts/check-token-budget.py
 
+step "Context front doors"
+run "check-context-links.py" python3 scripts/check-context-links.py
+
 step "Agent entrypoints canonical"
 run "check-agent-entrypoints.py" python3 scripts/check-agent-entrypoints.py
 
 step "Published docs match contract truth"
 run "check-docs-freshness.py" python3 scripts/check-docs-freshness.py
+
+step "Python lint (ruff, pinned)"
+run "ruff" bash scripts/check-ruff-pinned.sh
+
+step "Gate parity"
+run "check-gate-parity.py" python3 scripts/check-gate-parity.py
 
 step "Unit tests"
 run "unittest" python3 -m unittest discover -s tests -q
