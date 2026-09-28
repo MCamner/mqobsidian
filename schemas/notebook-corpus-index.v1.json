@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mq.local/schemas/notebook-corpus-index.v1.json",
+  "title": "Notebook corpus index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "corpus", "snapshot_at", "notebooks", "items"],
+  "properties": {
+    "schema": { "const": "notebook-corpus-index.v1" },
+    "corpus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "provider"],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "provider": { "const": "google-drive" }
+      }
+    },
+    "snapshot_at": { "type": "string", "format": "date-time" },
+    "notebooks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/notebook" }
+    },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/item" }
+    }
+  },
+  "$defs": {
+    "opaqueId": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "notebook": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["notebook_id", "drive_item_id", "title"],
+      "properties": {
+        "notebook_id": { "$ref": "#/$defs/opaqueId" },
+        "drive_item_id": { "$ref": "#/$defs/opaqueId" },
+        "title": { "type": "string" }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "method"],
+      "properties": {
+        "role": {
+          "enum": [
+            "source",
+            "derived",
+            "derived-note",
+            "interaction",
+            "metadata-or-other",
+            "unknown"
+          ]
+        },
+        "method": { "enum": ["structural", "override", "unknown"] },
+        "override_provenance": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "method": { "const": "override" } }, "required": ["method"] },
+          "then": { "required": ["override_provenance"] }
+        }
+      ]
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "item_id",
+        "drive_item_id",
+        "notebook_id",
+        "parent_drive_item_id",
+        "title",
+        "mime_type",
+        "size_bytes",
+        "modified_time",
+        "origin_provider",
+        "classification"
+      ],
+      "properties": {
+        "item_id": { "$ref": "#/$defs/opaqueId" },
+        "drive_item_id": { "$ref": "#/$defs/opaqueId" },
+        "notebook_id": { "$ref": "#/$defs/opaqueId" },
+        "parent_drive_item_id": { "$ref": "#/$defs/opaqueId" },
+        "title": { "type": "string" },
+        "mime_type": { "type": "string", "minLength": 1 },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "modified_time": { "type": "string", "format": "date-time" },
+        "origin_provider": { "type": "string", "minLength": 1 },
+        "content_sha256": { "$ref": "#/$defs/sha256" },
+        "classification": { "$ref": "#/$defs/classification" }
+      }
+    }
+  }
+}

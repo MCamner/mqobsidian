@@ -1,0 +1,53 @@
+{
+  "schema": "notebook-corpus-index.v1",
+  "corpus": {
+    "key": "notebooklm-archive",
+    "provider": "google-drive"
+  },
+  "snapshot_at": "2026-09-28T16:32:50Z",
+  "notebooks": [
+    {
+      "notebook_id": "nb-001",
+      "drive_item_id": "drive-notebook-001",
+      "title": "MQ Stack Intelligence"
+    },
+    {
+      "notebook_id": "nb-002",
+      "drive_item_id": "drive-notebook-002",
+      "title": "Sample research notebook"
+    }
+  ],
+  "items": [
+    {
+      "item_id": "item-001",
+      "drive_item_id": "drive-file-001",
+      "notebook_id": "nb-001",
+      "parent_drive_item_id": "drive-folder-sources-001",
+      "title": "MCP server notes.pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 123456,
+      "modified_time": "2026-09-27T10:00:00Z",
+      "origin_provider": "takeout",
+      "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "classification": {
+        "role": "source",
+        "method": "structural"
+      }
+    },
+    {
+      "item_id": "item-002",
+      "drive_item_id": "drive-file-002",
+      "notebook_id": "nb-002",
+      "parent_drive_item_id": "drive-folder-root-002",
+      "title": "metadata.json",
+      "mime_type": "application/json",
+      "size_bytes": 512,
+      "modified_time": "2026-09-27T11:00:00Z",
+      "origin_provider": "notebooklm",
+      "classification": {
+        "role": "unknown",
+        "method": "unknown"
+      }
+    }
+  ]
+}

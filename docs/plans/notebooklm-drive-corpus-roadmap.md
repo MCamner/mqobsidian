@@ -65,9 +65,10 @@ semantics are different:
 Google Drive archive -> local metadata index -> selective read -> answer/research
 ```
 
-A future `notebook-corpus-index.v1` may describe that local index if Phase 1
-shows a real consumer need. Do not create the schema merely because the name is
-available.
+`notebook-corpus-index.v1` now describes that local index. D2 established the
+named consumer as the future `mq-agent` catalog/search path and froze only the
+metadata fields that consumer needs. The real catalog remains local and
+disposable.
 
 ## Ownership
 
@@ -168,6 +169,11 @@ The full public-safe measurement is in
 
 ## Phase 1 — Corpus catalog contract
 
+**Status:** Completed 2026-09-28 — contract frozen in
+[`schemas/notebook-corpus-index.v1.json`](../../schemas/notebook-corpus-index.v1.json)
+with a sanitized example, validation tests and
+[`docs/notebooklm-corpus-index-contract.md`](../notebooklm-corpus-index-contract.md).
+
 **Owner:** `mqobsidian` for contract; `mq-agent` for materialization
 
 Define the smallest local catalog needed for navigation. Candidate fields are:
@@ -201,10 +207,19 @@ Requirements:
 
 **Exit gate**
 
-- rebuilding unchanged metadata produces the same logical catalog;
-- every catalog record maps back to exactly one Drive item;
-- unknown source role remains representable;
-- deleting the local catalog loses no canonical knowledge.
+- [x] rebuilding unchanged metadata produces the same logical catalog — v1
+  requires deterministic notebook/item ordering and uses source snapshot time,
+  not build time, as catalog state;
+- [x] every catalog record maps back to exactly one Drive item — notebook and
+  file records carry explicit opaque Drive item identity;
+- [x] unknown source role remains representable — `unknown` is a first-class
+  classification role and method;
+- [x] deleting the local catalog loses no canonical knowledge — Drive remains
+  corpus storage; the tracked repository contains only contract, example and
+  tests.
+
+**Result:** D2 is closed. D3 may materialize this contract but must not add
+search, semantic indexing or Drive mutation in the same slice.
 
 ## Phase 2 — Incremental, quota-aware Drive inventory
 
@@ -510,8 +525,10 @@ Keep implementation reviewable and independently reversible:
 1. **D0 — roadmap and boundary:** this document plus the top-level roadmap link;
 2. **D1 — baseline inventory:** **completed 2026-09-28** — read-only
    measurement and sanitized report; no schema was added;
-3. **D2 — catalog contract:** schema/example/validation only when justified;
-4. **D3 — deterministic catalog builder:** local generated index and checkpoint;
+3. **D2 — catalog contract:** **completed 2026-09-28** —
+   `notebook-corpus-index.v1`, sanitized example and validation tests;
+4. **D3 — deterministic catalog builder:** **next** — local generated index and
+   checkpoint;
 5. **D4 — metadata/text search:** query trace and frozen evaluation set;
 6. **D5 — selective fetch + provenance:** source-role-aware answer context;
 7. **D6 — cross-notebook research:** common findings, disagreements and gaps;

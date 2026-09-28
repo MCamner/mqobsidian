@@ -1,6 +1,6 @@
 # mqobsidian Memory Model
 
-This repo models MQ memory as structured, reviewable layers. It owns 27
+This repo models MQ memory as structured, reviewable layers. It owns 28
 contracts, each declared in `.mq/repo-contract.json` and backed by a
 `schemas/<name>.v1.json` file. Consumer repos may validate against these shapes
 but must not redefine them locally.
@@ -58,6 +58,7 @@ See `docs/TRUTH_SURFACES.md` for the surface boundary and freshness markers.
 | `context-budget.v1` | Line budgets for generated `.mq/context` files and the order they render. Owned here, consumed by mq-agent context export. |
 | `context-card.v1` | Compact per-repo card feeding pack generation. |
 | `notebook-pack.v1` | Deterministic, provenance-bearing source set for optional external synthesis. |
+| `notebook-corpus-index.v1` | Metadata-only contract for the disposable local index of the external Drive-backed NotebookLM corpus; source roles and opaque provider identity are preserved without storing file bodies. |
 
 ## CodeGraph metadata
 
