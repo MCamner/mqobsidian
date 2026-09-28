@@ -214,20 +214,26 @@ Ownership stays aligned with this repo's boundary:
 - durable conclusions enter mqobsidian only through the existing review and
   promotion path.
 
-Initial sequence:
+Progress:
 
-```text
-D0 roadmap/boundary
-  -> D1 read-only corpus baseline
-  -> D2 catalog contract only if a consumer needs it
-  -> D3 deterministic incremental catalog
-  -> D4 metadata/text search baseline
-  -> D5 selective fetch + provenance
-  -> D6 cross-notebook research
-  -> D7 interaction-gap analysis
-  -> D8 semantic retrieval only if measured necessary
-  -> D9 bounded MQ context + operator health
-```
+- [x] D0 — roadmap/boundary
+- [x] D1 — read-only corpus baseline
+- [ ] D2 — catalog contract only if a consumer needs it
+- [ ] D3 — deterministic incremental catalog
+- [ ] D4 — metadata/text search baseline
+- [ ] D5 — selective fetch + provenance
+- [ ] D6 — cross-notebook research
+- [ ] D7 — interaction-gap analysis
+- [ ] D8 — semantic retrieval only if measured necessary
+- [ ] D9 — bounded MQ context + operator health
+
+D1 is recorded in
+[`docs/plans/notebooklm-drive-corpus-baseline.md`](docs/plans/notebooklm-drive-corpus-baseline.md).
+The live connector pass measured 199 notebook folders and 4,682 files in the
+paginated document/image classes; the previously recorded archive-builder
+summary covers 6,914 processed files. The baseline keeps those evidence levels
+separate rather than presenting the connector-visible subtotal as the whole
+corpus.
 
 This track must not copy the archive into Git, treat chats as evidence, or make
 NotebookLM summaries primary sources.
