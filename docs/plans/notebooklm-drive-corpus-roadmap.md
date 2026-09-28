@@ -221,6 +221,30 @@ Requirements:
 **Result:** D2 is closed. D3 may materialize this contract but must not add
 search, semantic indexing or Drive mutation in the same slice.
 
+### D3 materialization result
+
+**Status:** Completed 2026-09-29 in `mq-agent` PR #303, merged as
+`d8da5c21dffa947dde0434ea7e2adda55e233e21`.
+
+D3 added the deterministic materializer for `notebook-corpus-index.v1`:
+
+- normalized metadata becomes a schema-validated local catalog;
+- logical notebook/item IDs derive deterministically from opaque Drive identity,
+  not display titles;
+- the D1 structural source-role rules are preserved, including explicit
+  `unknown`;
+- classification overrides require provenance;
+- unmapped records are excluded and counted rather than assigned to a synthetic
+  notebook;
+- the local checkpoint records a deterministic source fingerprint, catalog
+  SHA-256 and included/excluded counts;
+- generated JSON is written atomically;
+- the canonical D2 schema is vendored into `mq-agent` and protected by its
+  existing cross-repo drift gate.
+
+The implementation deliberately does not contain a Drive adapter, search,
+selective file fetch, embeddings or Drive mutation.
+
 ## Phase 2 — Incremental, quota-aware Drive inventory
 
 **Owner:** authorized read adapter; orchestration in `mq-agent`
@@ -527,9 +551,10 @@ Keep implementation reviewable and independently reversible:
    measurement and sanitized report; no schema was added;
 3. **D2 — catalog contract:** **completed 2026-09-28** —
    `notebook-corpus-index.v1`, sanitized example and validation tests;
-4. **D3 — deterministic catalog builder:** **next** — local generated index and
-   checkpoint;
-5. **D4 — metadata/text search:** query trace and frozen evaluation set;
+4. **D3 — deterministic catalog builder:** **completed 2026-09-29** in
+   `mq-agent` PR #303 — deterministic catalog + local checkpoint;
+5. **D4 — metadata/text search:** **next** — query trace and frozen evaluation
+   set;
 6. **D5 — selective fetch + provenance:** source-role-aware answer context;
 7. **D6 — cross-notebook research:** common findings, disagreements and gaps;
 8. **D7 — interaction-gap analysis:** questions/gaps without evidence promotion;
