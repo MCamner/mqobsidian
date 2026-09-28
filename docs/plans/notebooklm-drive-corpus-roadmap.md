@@ -123,29 +123,35 @@ available.
 
 Establish what the archive actually is before designing retrieval around it.
 
+**Status:** Completed 2026-09-28. Measurement:
+[`docs/measurements/notebooklm-drive-corpus-baseline.md`](../measurements/notebooklm-drive-corpus-baseline.md).
+
 Tasks:
 
-- [ ] inventory the configured Drive corpus by folder, MIME type, file count,
+- [x] inventory the configured Drive corpus by folder, MIME type, file count,
   size and modification time without reading every file body;
-- [ ] identify how notebook boundaries are represented by parent folders and
+- [x] identify how notebook boundaries are represented by parent folders and
   exported metadata;
-- [ ] measure duplicates and repeated generated artifacts without deleting them;
-- [ ] sample several notebooks and record which artifacts can be classified
+- [x] measure duplicates and repeated generated artifacts without deleting them;
+  D1 records a conservative metadata-based lower bound and does not claim
+  content-identical duplicates without hashes;
+- [x] sample several notebooks and record which artifacts can be classified
   reliably as source, derived or interaction;
-- [ ] define a small sanitized query set for later retrieval measurement;
-- [ ] write a decision record for the external-corpus boundary only if the
-  ownership table above conflicts with an existing accepted decision.
+- [x] define a small sanitized query set for later retrieval measurement;
+- [x] evaluate whether a new decision record is needed for the external-corpus
+  boundary. It is not: the observed Drive corpus matches the existing ownership
+  boundary, so another decision would duplicate rather than resolve policy.
 
 Do not infer that a filename or extension proves authority. Classification
 rules must be explicit and overridable.
 
 **Exit gate**
 
-- the configured corpus root is known locally;
-- notebook-to-file relationships can be reconstructed deterministically;
-- a representative sample has explicit source roles;
-- no raw corpus content or Drive identifier is required in tracked files;
-- the baseline query set exists before search implementation starts.
+- [x] the configured corpus root is known locally;
+- [x] notebook-to-file relationships can be reconstructed deterministically;
+- [x] a representative sample has explicit source roles;
+- [x] no raw corpus content or Drive identifier is required in tracked files;
+- [x] the baseline query set exists before search implementation starts.
 
 ## Phase 1 — Corpus catalog contract
 
@@ -488,18 +494,18 @@ material while losing provenance is not an improvement.
 
 Keep implementation reviewable and independently reversible:
 
-1. **D0 — roadmap and boundary:** this document plus the top-level roadmap link;
-2. **D1 — baseline inventory:** read-only measurement, sanitized report, no new
+1. [x] **D0 — roadmap and boundary:** this document plus the top-level roadmap link;
+2. [x] **D1 — baseline inventory:** read-only measurement, sanitized report, no new
    schema unless a consumer proves it needs one;
-3. **D2 — catalog contract:** schema/example/validation only when justified;
-4. **D3 — deterministic catalog builder:** local generated index and checkpoint;
-5. **D4 — metadata/text search:** query trace and frozen evaluation set;
-6. **D5 — selective fetch + provenance:** source-role-aware answer context;
-7. **D6 — cross-notebook research:** common findings, disagreements and gaps;
-8. **D7 — interaction-gap analysis:** questions/gaps without evidence promotion;
-9. **D8 — semantic retrieval experiment:** only if the D4 baseline misses the
+3. [ ] **D2 — catalog contract:** schema/example/validation only when justified;
+4. [ ] **D3 — deterministic catalog builder:** local generated index and checkpoint;
+5. [ ] **D4 — metadata/text search:** query trace and frozen evaluation set;
+6. [ ] **D5 — selective fetch + provenance:** source-role-aware answer context;
+7. [ ] **D6 — cross-notebook research:** common findings, disagreements and gaps;
+8. [ ] **D7 — interaction-gap analysis:** questions/gaps without evidence promotion;
+9. [ ] **D8 — semantic retrieval experiment:** only if the D4 baseline misses the
    frozen gate;
-10. **D9 — context integration and operator health:** bounded handoff and
+10. [ ] **D9 — context integration and operator health:** bounded handoff and
     read-only freshness reporting.
 
 Do not combine catalog contract creation, Drive adapter implementation,
