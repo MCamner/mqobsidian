@@ -214,20 +214,19 @@ Ownership stays aligned with this repo's boundary:
 - durable conclusions enter mqobsidian only through the existing review and
   promotion path.
 
-Initial sequence:
+Progress:
 
-```text
-D0 roadmap/boundary
-  -> D1 read-only corpus baseline
-  -> D2 catalog contract only if a consumer needs it
-  -> D3 deterministic incremental catalog
-  -> D4 metadata/text search baseline
-  -> D5 selective fetch + provenance
-  -> D6 cross-notebook research
-  -> D7 interaction-gap analysis
-  -> D8 semantic retrieval only if measured necessary
-  -> D9 bounded MQ context + operator health
-```
+- [x] D0 — roadmap and boundary
+- [x] D1 — read-only corpus baseline
+  ([measurement](docs/measurements/notebooklm-drive-corpus-baseline.md))
+- [ ] D2 — catalog contract only if a consumer needs it
+- [ ] D3 — deterministic incremental catalog
+- [ ] D4 — metadata/text search baseline
+- [ ] D5 — selective fetch + provenance
+- [ ] D6 — cross-notebook research
+- [ ] D7 — interaction-gap analysis
+- [ ] D8 — semantic retrieval only if measured necessary
+- [ ] D9 — bounded MQ context + operator health
 
 This track must not copy the archive into Git, treat chats as evidence, or make
 NotebookLM summaries primary sources.
