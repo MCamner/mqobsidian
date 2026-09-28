@@ -23,6 +23,7 @@
     "mq.execution_outcome.v1",
     "mq.model_route_outcome.v1",
     "notebook_pack.v1",
+    "notebook_corpus_index.v1",
     "promotion_event.v1",
     "promotion_policy.v1",
     "repo_memory_index.v1",
