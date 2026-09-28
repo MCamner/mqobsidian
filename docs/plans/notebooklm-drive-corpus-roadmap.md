@@ -119,33 +119,45 @@ available.
 
 ## Phase 0 — Corpus baseline and ownership decision
 
-**Owner:** `mqobsidian` for definitions; `mq-agent` for measurement
+**Status:** Completed 2026-09-28 (D1 baseline)  
+**Owner:** `mqobsidian` for definitions; `mq-agent` for measurement  
+**Evidence:** [`notebooklm-drive-corpus-baseline.md`](notebooklm-drive-corpus-baseline.md)
 
 Establish what the archive actually is before designing retrieval around it.
 
 Tasks:
 
-- [ ] inventory the configured Drive corpus by folder, MIME type, file count,
-  size and modification time without reading every file body;
-- [ ] identify how notebook boundaries are represented by parent folders and
-  exported metadata;
-- [ ] measure duplicates and repeated generated artifacts without deleting them;
-- [ ] sample several notebooks and record which artifacts can be classified
-  reliably as source, derived or interaction;
-- [ ] define a small sanitized query set for later retrieval measurement;
-- [ ] write a decision record for the external-corpus boundary only if the
-  ownership table above conflicts with an existing accepted decision.
+- [x] inventory the configured Drive corpus by folder, MIME type, file count,
+  size and modification time without reading every file body. The live connector
+  pass records 199 notebook folders and an exact 4,682-file document/image
+  subtotal; the prior archive-builder summary records the full 6,914 processed
+  files, with the evidence levels kept separate in the D1 report;
+- [x] identify how notebook boundaries are represented by parent folders and
+  exported metadata. The first-level folder under the archive root is the
+  notebook boundary; role folders and optional artifact folders reconstruct
+  membership deterministically;
+- [x] measure duplicates and repeated generated artifacts without deleting them.
+  The metadata baseline found at least 10 duplicate-candidate groups and records
+  why that is a lower bound until D3 has a complete local catalog;
+- [x] sample several notebooks and record which artifacts can be classified
+  reliably as source, derived or interaction. Ten notebooks were sampled and
+  the structural role defaults are frozen in the D1 report;
+- [x] define a small sanitized query set for later retrieval measurement. Six
+  frozen queries, including one negative control, are recorded in the D1 report;
+- [x] evaluate whether a decision record is required for the external-corpus
+  boundary. No conflict with the accepted ownership boundary was found, so D1
+  does not create a redundant decision record.
 
 Do not infer that a filename or extension proves authority. Classification
 rules must be explicit and overridable.
 
 **Exit gate**
 
-- the configured corpus root is known locally;
-- notebook-to-file relationships can be reconstructed deterministically;
-- a representative sample has explicit source roles;
-- no raw corpus content or Drive identifier is required in tracked files;
-- the baseline query set exists before search implementation starts.
+- [x] the configured corpus root is known locally;
+- [x] notebook-to-file relationships can be reconstructed deterministically;
+- [x] a representative sample has explicit source roles;
+- [x] no raw corpus content or Drive identifier is required in tracked files;
+- [x] the baseline query set exists before search implementation starts.
 
 ## Phase 1 — Corpus catalog contract
 
@@ -488,9 +500,10 @@ material while losing provenance is not an improvement.
 
 Keep implementation reviewable and independently reversible:
 
-1. **D0 — roadmap and boundary:** this document plus the top-level roadmap link;
-2. **D1 — baseline inventory:** read-only measurement, sanitized report, no new
-   schema unless a consumer proves it needs one;
+1. **D0 — roadmap and boundary:** complete;
+2. **D1 — baseline inventory:** complete — read-only measurement and sanitized
+   report in [`notebooklm-drive-corpus-baseline.md`](notebooklm-drive-corpus-baseline.md);
+   no schema was created;
 3. **D2 — catalog contract:** schema/example/validation only when justified;
 4. **D3 — deterministic catalog builder:** local generated index and checkpoint;
 5. **D4 — metadata/text search:** query trace and frozen evaluation set;
