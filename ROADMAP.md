@@ -138,8 +138,10 @@ observed.
 ## Next: Execution Intelligence
 
 Phase 12 is closed. This track collects runtime evidence before any adaptive
-routing is considered. NotebookLM remains closed unless a material capability
-or use-case change invalidates the earlier evaluation.
+routing is considered. NotebookLM as an intelligence/retrieval provider remains
+closed under the earlier evaluation. The Drive-backed corpus track below is a
+different use case: it treats an existing archive as external research material
+and does not route answers through NotebookLM.
 
 ### v2.4 — Observation foundation
 
@@ -186,6 +188,49 @@ into the vault or allowing automatic memory promotion.
 This track starts only with Phase 0 baseline and an ownership/threat-model ADR.
 Execution Intelligence remains the active runtime-evidence track; its measured
 outcomes are inputs to hybrid-memory evaluation, not work to duplicate.
+
+## Next track: Drive-backed NotebookLM corpus
+
+A material use-case change has occurred since Phase 12: an existing NotebookLM
+archive in Google Drive can now be treated as an external research corpus.
+This does **not** reopen NotebookLM as an intelligence or routing provider. The
+12g verdict remains valid for that role.
+
+The new track is documented in
+[`docs/plans/notebooklm-drive-corpus-roadmap.md`](docs/plans/notebooklm-drive-corpus-roadmap.md).
+It separates original sources, NotebookLM-derived artifacts and interaction
+history; keeps the generated catalog local and disposable; starts with
+metadata/text search and selective Drive fetch; and opens semantic indexing
+only if a measured retrieval gap requires it.
+
+Ownership stays aligned with this repo's boundary:
+
+- `mqobsidian` owns corpus vocabulary, provenance rules, public-safe contracts
+  and evaluation definitions;
+- `mq-agent` owns catalog/search/research orchestration;
+- Google Drive remains storage authority for the raw archive;
+- NotebookLM-derived material is external derived content, never canonical MQ
+  memory;
+- durable conclusions enter mqobsidian only through the existing review and
+  promotion path.
+
+Initial sequence:
+
+```text
+D0 roadmap/boundary
+  -> D1 read-only corpus baseline
+  -> D2 catalog contract only if a consumer needs it
+  -> D3 deterministic incremental catalog
+  -> D4 metadata/text search baseline
+  -> D5 selective fetch + provenance
+  -> D6 cross-notebook research
+  -> D7 interaction-gap analysis
+  -> D8 semantic retrieval only if measured necessary
+  -> D9 bounded MQ context + operator health
+```
+
+This track must not copy the archive into Git, treat chats as evidence, or make
+NotebookLM summaries primary sources.
 
 ### What makes something a contract here
 
