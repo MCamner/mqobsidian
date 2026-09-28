@@ -323,6 +323,34 @@ Measure:
 - a no-result query remains a no-result rather than broadening until something
   plausible appears.
 
+### D4 implementation result
+
+**Implementation status:** Completed 2026-09-29 in `mq-agent` PR #304,
+merged as `c4268d5daf86864f6bcab2e160c92688ae40fb01`.
+
+D4 now provides:
+
+- lexical metadata retrieval over the D3 catalog;
+- optional provider text-match metadata as a separate input channel;
+- deterministic ranking with item-title, provider-text and notebook-title
+  signals;
+- source-role ordering as a tie-breaker;
+- bounded top-k results;
+- explicit query traces covering candidate counts, returned role mix,
+  connector-call count and zero file-body/byte reads by D4 itself;
+- `mq-agent notebook catalog`, `search` and `show` operator commands;
+- the six D1 queries frozen verbatim in tests, including the negative control;
+- a hard no-broadening rule when nothing matches.
+
+The tracked tests use a sanitized synthetic corpus. They prove retrieval
+semantics and trace behavior, not real-corpus relevance. The Phase 3 exit gate
+therefore remains **measurement-pending** until the authorized Drive inventory
+adapter can feed the real D3 catalog and provider text-hit metadata.
+
+Do not start D5 selective fetch solely because the synthetic D4 suite is green.
+First complete the quota-aware Drive read path and run the frozen queries against
+the real corpus.
+
 ## Phase 4 — Evidence-aware selective retrieval
 
 **Owner:** `mq-agent`; provenance rules owned by `mqobsidian`
@@ -553,9 +581,11 @@ Keep implementation reviewable and independently reversible:
    `notebook-corpus-index.v1`, sanitized example and validation tests;
 4. **D3 — deterministic catalog builder:** **completed 2026-09-29** in
    `mq-agent` PR #303 — deterministic catalog + local checkpoint;
-5. **D4 — metadata/text search:** **next** — query trace and frozen evaluation
-   set;
-6. **D5 — selective fetch + provenance:** source-role-aware answer context;
+5. **D4 — metadata/text search:** **implementation completed 2026-09-29** in
+   `mq-agent` PR #304 — lexical baseline, query trace and frozen evaluation
+   set; real-corpus measurement is pending the Phase 2 Drive adapter;
+6. **D5 — selective fetch + provenance:** blocked until the real-corpus D4
+   measurement passes;
 7. **D6 — cross-notebook research:** common findings, disagreements and gaps;
 8. **D7 — interaction-gap analysis:** questions/gaps without evidence promotion;
 9. **D8 — semantic retrieval experiment:** only if the D4 baseline misses the
