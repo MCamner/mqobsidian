@@ -285,7 +285,7 @@ about what the stored material supports.
 Requirements:
 
 - every quoted or paraphrased material claim resolves to notebook + Drive file
-  + source role;
+  - source role;
 - a derived artifact is labelled derived in output;
 - when a derived artifact points to an available source, ground the claim in the
   source before presenting it as established;
