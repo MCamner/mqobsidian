@@ -385,9 +385,18 @@ within its provider/tool limits. The remaining Phase 3 requirement is therefore
 a complete current catalog produced by the merged local Drive adapter, followed
 by the same six queries over that catalog.
 
-Do not start D5 selective fetch until that complete-catalog run passes.
+The complete-catalog run remains the activation gate. D5 implementation may
+exist behind that gate so its authority and failure semantics can be tested, but
+the whole-archive D5 path must not be declared active until the complete D3/D4
+run passes.
 
 ## Phase 4 — Evidence-aware selective retrieval
+
+**Implementation status:** Completed 2026-09-29 in `mq-agent` PR #306,
+merged as `8fed2412962ffe7938710deb7dc153cae4d3d4a2`.
+
+**Activation status:** gated on a complete current D3 catalog plus the frozen D4
+run over that catalog.
 
 **Owner:** `mq-agent`; provenance rules owned by `mqobsidian`
 
@@ -418,10 +427,35 @@ Requirements:
 
 **Exit gate**
 
-- every answer has a provenance trace for material claims;
-- derived content cannot masquerade as original evidence;
-- interaction material cannot become claim evidence;
-- provider/connector failure degrades to a readable unavailable state.
+- [x] every retrieved evidence item has a provenance trace that includes
+  notebook identity, Drive item identity, source role, modified time and fetch
+  status;
+- [x] derived content cannot masquerade as original evidence — only
+  `source` may become claim-eligible;
+- [x] interaction material cannot become claim evidence — interaction rows are
+  rejected before selective fetch;
+- [x] provider/connector failure degrades to a readable unavailable state —
+  provider exceptions, unsupported MIME types and empty bounded reads remain
+  explicit unavailable records.
+
+### D5 implementation result
+
+D5 now provides `mq-agent notebook retrieve` and a bounded evidence bundle
+above D4 ranking. Defaults are four files, 64 KiB per file, 256 KiB total and a
+4,000-character excerpt.
+
+The implementation supports text/plain, Markdown, HTML/XHTML and native Google
+Docs text export. Unsupported binary formats fail closed. A successful HTTP
+read with no readable text in the byte budget also fails closed rather than
+becoming empty source evidence.
+
+A representative live-corpus probe found exactly that edge case in an exported
+source HTML file whose beginning was dominated by an inline base64 image. The
+behavior and boundary are recorded in
+[`docs/notebooklm-real-corpus-d5-probe.md`](../notebooklm-real-corpus-d5-probe.md).
+
+**Result:** D5 implementation is closed. Whole-archive activation remains
+pending the complete current D3 catalog and complete-catalog D4 evaluation.
 
 ## Phase 5 — Cross-notebook research
 
@@ -620,9 +654,11 @@ Keep implementation reviewable and independently reversible:
 5. **D4 — metadata/text search:** **implementation completed 2026-09-29** in
    `mq-agent` PR #304 — lexical baseline, query trace and frozen evaluation
    set; real-corpus measurement is pending a current adapter-produced D3 catalog;
-6. **D5 — selective fetch + provenance:** blocked until the real-corpus D4
-   measurement passes;
-7. **D6 — cross-notebook research:** common findings, disagreements and gaps;
+6. **D5 — selective fetch + provenance:** **implementation completed
+   2026-09-29** in `mq-agent` PR #306 — bounded provenance-bearing retrieval;
+   whole-archive activation remains gated on complete D3/D4;
+7. **D6 — cross-notebook research:** blocked from whole-archive activation until
+   the D3/D4 activation gate is satisfied;
 8. **D7 — interaction-gap analysis:** questions/gaps without evidence promotion;
 9. **D8 — semantic retrieval experiment:** only if the D4 baseline misses the
    frozen gate;
