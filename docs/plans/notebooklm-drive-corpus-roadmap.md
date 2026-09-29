@@ -525,34 +525,65 @@ verification.
 
 ## Phase 6 — Interaction-history and research-gap analysis
 
+**Implementation status:** Completed 2026-09-29 in `mq-agent` PR #308,
+merged as `0d1c66273a9e791fe08041a1e555c5c96a17e335`.
+
 **Owner:** `mq-agent`
 
-Use chat/session exports for what they are good at: describing prior inquiry,
+D7 uses chat/session exports for what they are good at: describing prior inquiry,
 not proving facts.
 
-Provisional capabilities:
+Operator surfaces:
 
 ```text
 mq-agent notebook questions
 mq-agent notebook gaps
 ```
 
-Candidate outputs:
+The implementation provides:
 
 - recurring questions;
-- topics revisited across notebooks;
-- questions that repeatedly ended without source evidence;
-- areas where only derived material exists;
-- stale research themes whose sources have not been refreshed.
+- topics revisited across notebooks through deterministic recurrence counts;
+- questions with no matching source evidence;
+- areas where only derived material matches;
+- stale research themes whose matched sources exceed the configured age
+  threshold.
+
+Question extraction is deterministic and bounded. Only items classified as
+`interaction` are read. Normalized question keys are used for deduplication,
+and every interaction trace remains `claim_eligible=false`.
+
+Gap analysis reuses D4 lexical metadata/text matching and classifies each prior
+question as `NO_SOURCE_EVIDENCE`, `DERIVED_ONLY`, `STALE_SOURCE_THEME` or
+`SOURCE_MATCHES_PRESENT`. These are research-state labels, not factual
+answers.
 
 Never report "the answer is X" because a previous chat said X.
 
 **Exit gate**
 
-- every gap traces to interaction history without promoting it to evidence;
-- repeated questions are deduplicated deterministically;
-- private chat text is not copied to tracked artifacts;
-- gap output is useful without requiring semantic embeddings.
+- [x] every gap traces to interaction history without promoting it to evidence;
+- [x] repeated questions are deduplicated deterministically;
+- [x] private chat text is not copied to tracked artifacts;
+- [x] gap output is useful without requiring semantic embeddings.
+
+### D7 implementation result
+
+D7 now provides `mq-agent notebook questions` and
+`mq-agent notebook gaps`. It selectively reads bounded interaction-role files,
+produces stable question identities, detects repeated/cross-notebook inquiry and
+compares those questions against source/derived catalog search results.
+
+No semantic index is required and no interaction content is promoted into
+source evidence or durable memory. Tracked tests use synthetic interaction
+content only.
+
+The implementation boundary is recorded in
+[`docs/notebooklm-d7-implementation.md`](../notebooklm-d7-implementation.md).
+
+**Result:** D7 implementation is closed. D8 remains optional and should open only
+if complete-catalog D4 measurement demonstrates a retrieval failure that simple
+metadata/text search cannot solve.
 
 ## Phase 7 — Optional semantic retrieval evaluation
 
@@ -693,7 +724,9 @@ Keep implementation reviewable and independently reversible:
    in `mq-agent` PR #307 — deterministic provenance validation over D5 evidence;
    whole-archive activation remains gated on complete D3/D4 plus D5 authority
    verification;
-8. **D7 — interaction-gap analysis:** questions/gaps without evidence promotion;
+8. **D7 — interaction-gap analysis:** **completed 2026-09-29** in
+   `mq-agent` PR #308 — deterministic recurring-question and research-gap
+   analysis with interaction history kept non-evidentiary;
 9. **D8 — semantic retrieval experiment:** only if the D4 baseline misses the
    frozen gate;
 10. **D9 — context integration and operator health:** bounded handoff and
