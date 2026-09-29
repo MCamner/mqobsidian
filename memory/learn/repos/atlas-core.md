@@ -1,11 +1,13 @@
 ---
 type: learn
 system: atlas-core
-status: candidate
+status: verified
 date: 2026-09-29
 tags: [atlas-core, loop, repo-review, evidence, ci, release-gates]
 source_evidence_refs:
   - https://github.com/MCamner/atlas-core/pull/127
+  - https://github.com/MCamner/atlas-core/commit/8b7e4bfc34f41dc8c4af7855eac1cd6f170b478e
+  - https://github.com/MCamner/atlas-core/actions/runs/36606444857
 ---
 
 # Atlas Core — observation is not enough without a producer
@@ -72,6 +74,10 @@ For deterministic repo-review tasks, prefer a small vertical producer over a gen
 
 Exact source plans should remain bounded. Repository metadata such as `.DS_Store` is not evidence and should not consume observation budget.
 
-## Promotion condition
+## Verification
 
-Promote this lesson to verified after Atlas Core PR #127 is merged and exact-main CI passes on the merge SHA.
+Verified on 2026-09-29 after Atlas Core PR #127 was squash-merged as
+`8b7e4bfc34f41dc8c4af7855eac1cd6f170b478e` and the exact-main GitHub
+Actions test run `36606444857` completed successfully. That run included the
+pinned end-to-end `mq-agent` gate-parity smoke test as well as unit tests,
+mypy, pyright, pip-audit, secret scanning, reproducible build and SBOM gates.
