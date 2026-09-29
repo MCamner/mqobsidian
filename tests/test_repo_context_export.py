@@ -18,6 +18,14 @@ assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 
+FRESH_SPEC = importlib.util.spec_from_file_location(
+    "check_context_export_fresh",
+    SCRIPTS / "check-context-export-fresh.py",
+)
+assert FRESH_SPEC and FRESH_SPEC.loader
+FRESH = importlib.util.module_from_spec(FRESH_SPEC)
+FRESH_SPEC.loader.exec_module(FRESH)
+
 from context_budgets import EXPORTED_CONTEXT_FILES  # noqa: E402
 
 
@@ -177,6 +185,26 @@ class RepoContextExportTests(unittest.TestCase):
 
         self.assertIn("No blockers are declared in the source context card.", rendered)
         self.assertIn("Verify live repo state before making runtime or release claims.", rendered)
+
+
+class OwnExportFreshnessTests(unittest.TestCase):
+    """The repo's own `.mq/context` is gated, not just the published copy.
+
+    CI diffs `examples/repo-context-exports`, so the copy stayed fresh while the
+    original drifted for three months. These assert the check that closes that
+    gap: it must be green on the committed tree, and it must actually notice
+    when an owned file does not match the generator.
+    """
+
+    def test_committed_export_matches_the_generator(self) -> None:
+        self.assertEqual(FRESH.drifted_files(), [])
+
+    def test_absent_files_count_as_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(
+                FRESH.drifted_files(Path(tmp)),
+                list(EXPORTED_CONTEXT_FILES),
+            )
 
 
 if __name__ == "__main__":

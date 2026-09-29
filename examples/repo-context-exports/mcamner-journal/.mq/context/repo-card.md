@@ -2,7 +2,7 @@
 schema: context-card.v1
 repo: mcamner-journal
 role: Static journal and public writing system for MQ-adjacent thinking
-updated_at: 2026-06-19T00:00:00Z
+updated_at: 2026-09-29T00:00:00Z
 freshness: current
 scope: repo
 publishability: public-safe
@@ -10,9 +10,9 @@ publishability: public-safe
 
 # Context Card: mcamner-journal
 
-## Role
+## Current blockers
 
-Static journal and public writing system for MQ-adjacent thinking.
+* No known blockers as of 2026-06-17.
 
 ## Owns
 

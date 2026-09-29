@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mq.local/schemas/mq.semantic-refresh.v1.json",
+  "title": "MQ semantic refresh result",
+  "description": "One observed semantic-memory refresh for a logical repository artifact. The contract separates physical file existence from retrieval authority: exactly one current generation may be retrieval-authoritative for an identity, while legacy stores may exist only as non-authoritative history or migration state.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "logical_identity",
+    "source",
+    "authority",
+    "refresh_semantics",
+    "generation",
+    "freshness",
+    "postcondition",
+    "recorded_at"
+  ],
+  "properties": {
+    "schema": {
+      "const": "mq.semantic-refresh.v1"
+    },
+    "logical_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repo",
+        "artifact_type"
+      ],
+      "properties": {
+        "repo": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_revision",
+        "generated_at"
+      ],
+      "properties": {
+        "source_revision": {
+          "description": "Immutable source revision used to generate this artifact; normally the repository commit SHA.",
+          "type": "string",
+          "minLength": 1
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authoritative_stores",
+        "non_authoritative_store_policy"
+      ],
+      "properties": {
+        "authoritative_stores": {
+          "description": "Vector stores allowed to make this logical identity retrieval-authoritative.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "non_authoritative_store_policy": {
+          "description": "Legacy or sibling stores may physically retain copies, but those copies must not participate as authoritative retrieval state.",
+          "const": "may-exist-but-not-retrieval-authoritative"
+        }
+      }
+    },
+    "refresh_semantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "replacement",
+        "failure_behavior",
+        "destructive_cleanup"
+      ],
+      "properties": {
+        "replacement": {
+          "description": "A successful refresh supersedes prior generations of the same logical identity rather than appending another authoritative generation.",
+          "const": "latest-only"
+        },
+        "failure_behavior": {
+          "description": "If the new generation cannot be uploaded and verified, the last verified authoritative generation remains authoritative.",
+          "const": "preserve-last-authoritative"
+        },
+        "destructive_cleanup": {
+          "description": "Deleting stale generations or legacy-store data is a separate destructive action and is never implied by refresh.",
+          "const": "explicit-only"
+        }
+      }
+    },
+    "generation": {
+      "description": "The generation that this refresh proposes as current. generation.store_id must be one of authority.authoritative_stores; export validation enforces that cross-field invariant.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generation_id",
+        "store_id",
+        "file_id",
+        "uploaded_at"
+      ],
+      "properties": {
+        "generation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "store_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uploaded_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "status",
+        "evaluated_at"
+      ],
+      "properties": {
+        "policy": {
+          "description": "Freshness is determined against the current source revision, not merely by whether a store is configured or reachable.",
+          "const": "source-revision"
+        },
+        "status": {
+          "enum": [
+            "fresh",
+            "stale",
+            "unknown"
+          ]
+        },
+        "evaluated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "postcondition": {
+      "description": "PASS means the logical identity has exactly one active generation inside the authoritative store set and no retrieval-authoritative generation outside it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "authoritative_active_count",
+        "non_authoritative_retrieval_count"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "UNKNOWN"
+          ]
+        },
+        "authoritative_active_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "non_authoritative_retrieval_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "PASS"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "authoritative_active_count": {
+                "const": 1
+              },
+              "non_authoritative_retrieval_count": {
+                "const": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

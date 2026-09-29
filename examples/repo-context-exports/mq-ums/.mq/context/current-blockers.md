@@ -2,7 +2,8 @@
 
 ## Known Blockers
 
-* No blockers are declared in the source context card.
+* Live PSIGEL, UMS, DPAPI and TLS behaviour can only be verified on a Windows management host.
+* One further blocker is tracked locally and is not published.
 
 ## Check Before Acting
 

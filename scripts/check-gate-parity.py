@@ -58,6 +58,7 @@ STEPS: dict[str, object] = {
     "Local gate and CI check the same things": "check-gate-parity.py",
     "Run focused unit tests": "unittest",
     "Check agent-entrypoint canonical contract": "check-agent-entrypoints.py",
+    "Check this repo's own context export is fresh": "check-context-export-fresh.py",
     "Check context exports are regenerated": CiOnly(
         "CI-only by design, and release-check.sh's header says so: the step runs "
         "generate-repo-context-export.py --all and diffs the result, so it "

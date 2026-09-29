@@ -150,8 +150,8 @@ def export_repo(repo: str, output_root: Path, clean: bool = False) -> list[Path]
         # Remove only the files this exporter owns. `--output-dir` can point at a
         # live repo, where the directory also holds a per-task `task-pack.md` that
         # mq-agent owns, and whatever else that repo keeps there. Wiping the
-        # directory would delete both, which is the opposite of what
-        # systems/mqobsidian/hot.md:32 documents.
+        # directory would delete both, which is the opposite of the documented
+        # rule: `--clean` touches only the export's five owned files.
         for name in EXPORTED_CONTEXT_FILES:
             (context_dir / name).unlink(missing_ok=True)
     context_dir.mkdir(parents=True, exist_ok=True)

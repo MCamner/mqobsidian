@@ -1,0 +1,39 @@
+{
+  "schema": "mq.semantic-refresh.v1",
+  "logical_identity": {
+    "repo": "example-repo",
+    "artifact_type": "symbol-memory"
+  },
+  "source": {
+    "source_revision": "0123456789abcdef0123456789abcdef01234567",
+    "generated_at": "2026-09-29T20:00:00Z"
+  },
+  "authority": {
+    "authoritative_stores": [
+      "vs_example_canonical"
+    ],
+    "non_authoritative_store_policy": "may-exist-but-not-retrieval-authoritative"
+  },
+  "refresh_semantics": {
+    "replacement": "latest-only",
+    "failure_behavior": "preserve-last-authoritative",
+    "destructive_cleanup": "explicit-only"
+  },
+  "generation": {
+    "generation_id": "example-repo-symbol-memory-20260929T200000Z",
+    "store_id": "vs_example_canonical",
+    "file_id": "file_example_current",
+    "uploaded_at": "2026-09-29T20:01:00Z"
+  },
+  "freshness": {
+    "policy": "source-revision",
+    "status": "fresh",
+    "evaluated_at": "2026-09-29T20:02:00Z"
+  },
+  "postcondition": {
+    "status": "PASS",
+    "authoritative_active_count": 1,
+    "non_authoritative_retrieval_count": 0
+  },
+  "recorded_at": "2026-09-29T20:02:00Z"
+}

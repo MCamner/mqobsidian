@@ -2,7 +2,7 @@
 schema: context-card.v1
 repo: mq-image-analyze
 role: Visual perception layer that turns images into structured MQ context
-updated_at: 2026-06-19T00:00:00Z
+updated_at: 2026-09-29T00:00:00Z
 freshness: current
 scope: repo
 publishability: public-safe
@@ -10,9 +10,9 @@ publishability: public-safe
 
 # Context Card: mq-image-analyze
 
-## Role
+## Current blockers
 
-Visual perception layer that turns images into structured MQ context.
+* No known blockers as of 2026-06-17.
 
 ## Owns
 

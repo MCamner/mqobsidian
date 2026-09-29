@@ -5,6 +5,7 @@
 * reviewed durable memory notes
 * public-safe schemas, templates, and examples
 * context-pack and context-card contracts
+* durable memory-query and feedback-signal contracts
 * agent-readable routing surfaces
 * token-budget guardrails for context surfaces
 

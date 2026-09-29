@@ -35,7 +35,8 @@
     "workflow_observation.v1",
     "skill_selection_vocabulary.v1",
     "mq.skill_profile.v1",
-    "mq.skill_route.v1"
+    "mq.skill_route.v1",
+    "mq.semantic_refresh.v1"
   ],
   "release_mode": "pull_request",
   "notes": "Each declared contract is backed by an owned schema file under schemas/<name>.v1.json (dash form). Consumer repos may validate against these shapes but must not redefine them locally."
