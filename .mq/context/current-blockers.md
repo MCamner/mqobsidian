@@ -2,7 +2,7 @@
 
 ## Known Blockers
 
-* No repo-specific blocker exported in this Phase 4 seed.
+* No blockers are declared in the source context card.
 
 ## Check Before Acting
 
