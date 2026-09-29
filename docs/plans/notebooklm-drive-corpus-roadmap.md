@@ -371,13 +371,21 @@ D4 now provides:
 - a hard no-broadening rule when nothing matches.
 
 The tracked tests use a sanitized synthetic corpus. They prove retrieval
-semantics and trace behavior, not real-corpus relevance. The Phase 3 exit gate
-therefore remains **measurement-pending** until the authorized Drive inventory
-adapter can feed the real D3 catalog and provider text-hit metadata.
+semantics and trace behavior.
 
-Do not start D5 selective fetch solely because the synthetic D4 suite is green.
-First complete the quota-aware Drive read path and run the frozen queries against
-the real corpus.
+A bounded real-corpus probe was completed 2026-09-29 and is recorded in
+[`docs/notebooklm-real-corpus-d4-probe.md`](../notebooklm-real-corpus-d4-probe.md).
+All six frozen query behaviors passed against the live Drive projection without
+file-body reads, including source-before-derived behavior and the Akkadian
+negative control.
+
+The probe is intentionally not treated as a complete D3-catalog measurement:
+the conversational Drive connector cannot truthfully enumerate the whole corpus
+within its provider/tool limits. The remaining Phase 3 requirement is therefore
+a complete current catalog produced by the merged local Drive adapter, followed
+by the same six queries over that catalog.
+
+Do not start D5 selective fetch until that complete-catalog run passes.
 
 ## Phase 4 — Evidence-aware selective retrieval
 
