@@ -8,8 +8,10 @@
 #   `stack release --all --preflight`.
 #
 # These mirror the Public Safe Check CI gate — mqobsidian's releasability
-# assertions — minus the context-export staleness step, which regenerates files
-# and so is not read-only. CI enforces staleness on every push.
+# assertions — minus the examples/repo-context-exports staleness step, which
+# regenerates files in place and so is not read-only. CI enforces that one on
+# every push. This repo's own .mq/context is checked here too, because
+# check-context-export-fresh.py renders into a temporary directory and compares.
 #
 # scripts/check-gate-parity.py asserts that mirror mechanically: every step of
 # that workflow must be declared here or declared CI-only with a reason. The
@@ -72,6 +74,9 @@ run "check-token-budget.py" python3 scripts/check-token-budget.py
 
 step "Context front doors"
 run "check-context-links.py" python3 scripts/check-context-links.py
+
+step "Own context export fresh"
+run "check-context-export-fresh.py" python3 scripts/check-context-export-fresh.py
 
 step "Agent entrypoints canonical"
 run "check-agent-entrypoints.py" python3 scripts/check-agent-entrypoints.py

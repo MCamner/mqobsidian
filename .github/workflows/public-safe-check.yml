@@ -58,6 +58,12 @@ jobs:
       - name: Check agent-entrypoint canonical contract
         run: python3 scripts/check-agent-entrypoints.py
 
+      # The step below diffs the published copy. This one checks the original:
+      # the repo's own tracked .mq/context, which drifted for three months while
+      # examples/repo-context-exports stayed green.
+      - name: Check this repo's own context export is fresh
+        run: python3 scripts/check-context-export-fresh.py
+
       - name: Check context exports are regenerated
         run: |
           python3 scripts/generate-repo-context-export.py --all
