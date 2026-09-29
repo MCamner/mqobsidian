@@ -15,26 +15,24 @@ links_to: [index]
 Systemets lilla arbetsminne. Bara det viktigaste.
 
 ## Current mission
-Hålla MQ-stackens durable memory tunn och public-safe, och äga de
-execution- och routingkontrakt senare lager läser — utan att flytta runtime
-till vaulten.
+Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution-
+och routingkontrakt senare lager läser.
 
 ## Current status
-`v0.4.0` släppt 2026-09-11: execution- och routingkontrakten är kompletta,
-kanoniska och grindade, och kontraktsregistret hålls mot `schemas/` i båda
-riktningar. Det är en kontraktsgrund, **inte** levererad Execution
-Intelligence — fallback recording och aktiv-vs-shadow-divergens är fortsatt
-öppna. Phase 12 och ownership-spåret (DEC-005) är stängda. NotebookLM är
-valfri exportförmåga, inte provider.
+`v0.4.0` (2026-09-11) är en kontraktsgrund, inte levererad Execution
+Intelligence: kontrakten är kompletta och grindade, men fallback recording och
+aktiv-vs-shadow-divergens är öppna.
+Execution- och routingkontrakten är kanoniska här och registret hålls mot
+`schemas/` i båda riktningar. Phase 12 och ownership-spåret (DEC-005) är
+stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
 
 ## Active blockers
 - Inga bekräftade blockers.
 
 ## Most important facts
-- Läs först [[../../memory/learn/agent/mqobsidian]] för repo-specifik agentkontext.
 - `mq-agent` äger context selection, pack-generation, runtime-writer och CLI.
   `mqobsidian` äger schemas, durable notes, templates och public-safe examples.
-- `.mq/repo-contract.json` deklarerar 31 kontrakt. Ett odeklarerat schema äger
+- `.mq/repo-contract.json` deklarerar 32 kontrakt. Ett odeklarerat schema äger
   inget (#103) — registret och `schemas/` grindas mot varandra.
 - `mq.model-route-outcome.v1` är kanoniskt här, inte löst från ett sibling
   `mq-agent`-checkout; mq-agent vendorar en grindad kopia.
@@ -46,6 +44,8 @@ valfri exportförmåga, inte provider.
   är ovillkorlig i v1.
 - `runtime_fingerprint` är valfri och additiv (DEC-006). Frånvaro betyder att
   proveniens inte observerades — annan fakta än `identity quality: unknown`.
+- NotebookLM D3–D8 är implementerat i `mq-agent` (#307–#309), opt-in inte default.
+  `mq.notebook-corpus-index.v1` (#114) är kanoniskt här; dataapproval är öppen.
 - Skill selection har kontrakt (`mq.skill-profile.v1`, `mq.skill-route.v1`,
   `skill-selection-vocabulary.v1`); mq-agent äger exekveringen.
 - `.mq/context-selection-vocabulary.json` (DEC-005) och

@@ -19,17 +19,18 @@ memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`.
 `v0.4.0` (2026-09-11) stängde Execution and Routing Contract Integrity: ADR-010
 delade routing per modellanrop, `mq.model-route-outcome.v1` är kanoniskt här,
 `application` och `execution_run_id` skiljer tillämpad routing från råd, och
-`.mq/repo-contract.json` deklarerar nu 31 kontrakt som grindas mot `schemas/` i
+`.mq/repo-contract.json` deklarerar nu 32 kontrakt som grindas mot `schemas/` i
 båda riktningar. Task-aware skill selection har kontrakt men ingen exekvering
 här. Det är en kontraktsgrund, inte levererad Execution Intelligence: fallback
 recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
-öppna. Phase 12 och ownership-spåret (DEC-005) är stängda; NotebookLM förblir
-en stängd, valfri exportförmåga.
+öppna. Phase 12 och ownership-spåret (DEC-005) är stängda. NotebookLM-spåret D3–D8
+är implementerat i `mq-agent` och förblir opt-in: `mq.notebook-corpus-index.v1`
+är kanoniskt här, exekveringen ligger där, och dataapproval är öppen.
 
 ## Current priorities
-1. Hålla read-order-kedjan liten och sann: agent view -> hot -> index -> små cards, och regenerera steg 0 när hot/index ändras.
+1. Regenerera steg 0 när hot eller index ändras; read-order-kedjan ska vara liten och sann.
 2. Skaffa applied-evidens från fler än en task; de 14 överförda posterna är alla samma `docs-review`-beslut.
-3. Samla execution outcomes per task class och route; omätta räknare är okända, inte noll, och underlaget domineras i dag av task class `docs`.
+3. Samla execution outcomes per task class och route; underlaget domineras i dag av task class `docs`.
 4. Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
 5. Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
 
@@ -58,9 +59,9 @@ en stängd, valfri exportförmåga.
 - [[../mq-mcp/index]] — bounded MCP tools och runtime contracts.
 
 ## Active risks
-- Överföringen till `routing/outcomes.jsonl` är manuell, så vault och runtime-store glider isär tyst mellan körningar; 130 -> 144 den 2026-09-17 efter sju veckors drift.
-- Ett underlag som domineras av en task class kan se ut som routingevidens utan att kunna jämföra routes.
-- Kontrakt kan vara kompletta i båda ändar utan att sömmen körs; en tom yta betyder inte att inget hänt.
+- Överföringen till `routing/outcomes.jsonl` är manuell, så vault och runtime-store glider isär tyst mellan körningar.
+- Ett underlag dominerat av en task class ser ut som routingevidens utan att kunna jämföra routes.
+- Kontrakt kan vara kompletta i båda ändar utan att sömmen körs; en tom yta bevisar ingenting.
 - Context surfaces kan växa till permanenta token-sänkor.
 - Hårdkodade MVP-defaults kan misstas för generell memory query.
 - Duplicerad source-repo-dokumentation i vaulten skapar drift.
@@ -74,9 +75,10 @@ en stängd, valfri exportförmåga.
 - Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval? (Teknisk nytta är nu mätt och utebliven; frågan kvarstår organisatoriskt.)
 
 ## Recent changes
+- 2026-09-29: NotebookLM D3–D8 stängdes i `mq-agent` (#307–#309) och registrerades här som implementationsposter. `mq.notebook-corpus-index.v1` (#114) gjorde registret 32 kontrakt. D8 är ett opt-in semantiskt experiment mot den frysta D4-lexikala baslinjen, med lokal `nomic-embed-text` via Ollama och ingen hostad embedding-egress; det är inte en aktiverad default-retrievalväg. Den organisatoriska dataapprovalfrågan är oförändrad.
 - 2026-09-17: Refreshade hot/index till v0.4.0-läget och överförde de 14 `applied`-posterna (130 -> 144). Write-gaten avvisade fem av dem: `record-routing-outcome.py` krävde `model_output_received=true` på varje PASS, ett krav från tiden före ADR-010 D8 när varje route var ett modellanrop. `deterministic-local` kör ingen modellinferens, så kravet avvisade den enda sanna post en sådan körning kan skriva. Invarianten är nu route-medveten i båda riktningar — en deterministisk route får inte heller påstå mottagen modelloutput.
 - 2026-09-13: Regenererade agent views efter learn-refresh (#106) och bevarade 2026-08-04-inventeringen av vector stores som research node.
-- 2026-09-11: **`v0.4.0` släppt** — Execution and Routing Contract Integrity (#105). Roadmapen gjordes sann efter v0.3.0 (#104), och ett odeklarerat schema äger inget: `mq.model-route-outcome.v1` hade schema, tester, docs och beslutspost men saknades i `.mq/repo-contract.json`, och kontraktsgrinden gick kedjan i bara en riktning. Båda är fixade (#103). Registret deklarerar nu 31 kontrakt.
+- 2026-09-11: **`v0.4.0` släppt** — Execution and Routing Contract Integrity (#105). Roadmapen gjordes sann efter v0.3.0 (#104), och ett odeklarerat schema äger inget: `mq.model-route-outcome.v1` hade schema, tester, docs och beslutspost men saknades i `.mq/repo-contract.json`, och kontraktsgrinden gick kedjan i bara en riktning. Båda är fixade (#103). Registret deklarerade då 31 kontrakt.
 - 2026-09-10: Taggen är releasen — `v*` publicerar med noter ur changelog-sektionen (#101), och en trunkerad sektion faller högt i stället för att publicera något som inte är den kanoniska beskrivningen (#102).
 - 2026-09-07: `mq.execution-outcome.v1` fick valfri `runtime_fingerprint` (#100) med DEC-006 som beslut: additiv utökning, inte v2 — historiska poster förblir giltiga och frånvaro betyder att proveniens inte observerades (#99). Task-aware skill selection fick kontrakt: `mq.skill-profile.v1`, `mq.skill-route.v1`, `skill-selection-vocabulary.v1` (#98).
 - 2026-09-05: Öppnade research node om huruvida `repo_scope` är rätt dimension (#97).
