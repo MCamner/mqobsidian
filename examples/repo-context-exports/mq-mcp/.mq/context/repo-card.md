@@ -2,7 +2,7 @@
 schema: context-card.v1
 repo: mq-mcp
 role: MCP execution and validation runtime for the MQ stack
-updated_at: 2026-06-17T00:00:00Z
+updated_at: 2026-09-29T00:00:00Z
 freshness: current
 scope: repo
 publishability: public-safe
@@ -10,9 +10,9 @@ publishability: public-safe
 
 # Context Card: mq-mcp
 
-## Role
+## Current blockers
 
-MCP execution and validation runtime for the MQ stack.
+* No blocker state declared; verify in the source repo.
 
 ## Owns
 

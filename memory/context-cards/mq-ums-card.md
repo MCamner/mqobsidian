@@ -2,7 +2,7 @@
 schema: context-card.v1
 repo: mq-ums
 role: Local operator UI for bounded IGEL UMS management
-updated_at: 2026-06-19T00:00:00Z
+updated_at: 2026-09-29T00:00:00Z
 freshness: current
 scope: repo
 publishability: public-safe
@@ -10,9 +10,10 @@ publishability: public-safe
 
 # Context Card: mq-ums
 
-## Role
+## Current blockers
 
-Local operator UI for bounded IGEL UMS management.
+* Live PSIGEL, UMS, DPAPI and TLS behaviour can only be verified on a Windows management host.
+* One further blocker is tracked locally and is not published.
 
 ## Owns
 

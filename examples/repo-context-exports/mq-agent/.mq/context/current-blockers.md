@@ -2,7 +2,7 @@
 
 ## Known Blockers
 
-* No blockers are declared in the source context card.
+* No code blockers as of 2026-09-13; the remaining constraint is evidence volume, not code.
 
 ## Check Before Acting
 

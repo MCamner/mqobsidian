@@ -2,7 +2,7 @@
 schema: context-card.v1
 repo: repo-signal
 role: Structured repo readiness and inspection signal provider
-updated_at: 2026-06-17T00:00:00Z
+updated_at: 2026-09-29T00:00:00Z
 freshness: current
 scope: repo
 publishability: public-safe
@@ -10,9 +10,9 @@ publishability: public-safe
 
 # Context Card: repo-signal
 
-## Role
+## Current blockers
 
-Structured repo readiness and inspection signal provider.
+* No confirmed blockers as of 2026-06-17.
 
 ## Owns
 

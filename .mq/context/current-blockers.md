@@ -2,7 +2,7 @@
 
 ## Known Blockers
 
-* No blockers are declared in the source context card.
+* No confirmed blockers as of 2026-09-17.
 
 ## Check Before Acting
 

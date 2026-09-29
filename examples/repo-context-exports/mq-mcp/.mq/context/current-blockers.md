@@ -2,7 +2,7 @@
 
 ## Known Blockers
 
-* No blockers are declared in the source context card.
+* No blocker state declared; verify in the source repo.
 
 ## Check Before Acting
 

@@ -2,7 +2,7 @@
 schema: context-card.v1
 repo: mq-agent
 role: MQ-stack workflow orchestrator and context-export owner
-updated_at: 2026-06-17T00:00:00Z
+updated_at: 2026-09-29T00:00:00Z
 freshness: current
 scope: repo
 publishability: public-safe
@@ -10,9 +10,9 @@ publishability: public-safe
 
 # Context Card: mq-agent
 
-## Role
+## Current blockers
 
-MQ-stack workflow orchestrator and context-export owner.
+* No code blockers as of 2026-09-13; the remaining constraint is evidence volume, not code.
 
 ## Owns
 
