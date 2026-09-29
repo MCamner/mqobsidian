@@ -247,6 +247,9 @@ selective file fetch, embeddings or Drive mutation.
 
 ## Phase 2 — Incremental, quota-aware Drive inventory
 
+**Status:** Implementation completed 2026-09-29 in `mq-agent` PR #305,
+merged as `0ce86adc273b174a9860972d75ceffe1f7ae8c5f`.
+
 **Owner:** authorized read adapter; orchestration in `mq-agent`
 
 Build a resumable reader rather than a full rescan/download loop.
@@ -275,10 +278,35 @@ Requirements:
 
 **Exit gate**
 
-- an interrupted scan resumes without starting over;
-- an unchanged second scan reads materially less content than the first;
-- quota/rate-limit failure produces a truthful partial state;
-- no Drive mutation is required to maintain the index.
+- [x] an interrupted scan resumes without starting over — opaque page cursors
+  and discovered child-folder work survive checkpoint/resume;
+- [x] an unchanged second scan reads materially less content than the first —
+  after the initial traversal, refresh uses the Drive change feed and an
+  unchanged corpus completes with one change-feed request;
+- [x] quota/rate-limit failure produces a truthful partial state — retryable
+  quota/transient responses use bounded backoff and a failed page never becomes
+  current;
+- [x] no Drive mutation is required to maintain the index — the adapter
+  implements metadata-list and change-feed reads only.
+
+**Current projection observation, 2026-09-29:** a separate read-only connector
+inspection found 204 top-level items under the configured archive root:
+203 folders and one root metadata file. D1 recorded 200 top-level folders on
+2026-09-28. The current folder set includes the manifest folder plus one empty
+container folder; excluding those leaves 201 current notebook-folder candidates.
+This is a new storage-projection observation, not a correction to D1's immutable
+snapshot.
+
+The same inspection also found at least one notebook-folder candidate whose
+generated artifacts are flattened directly at notebook root rather than under
+the usual typed `Sources/` and `Artifacts/` folders. The classifier must keep
+such records conservative (`metadata-or-other` or `unknown`) until stronger
+provenance is available rather than inferring authority from file type.
+
+**Result:** Phase 2 implementation is closed. The remaining operational step is
+to run the merged adapter against the real corpus, project a current D3 catalog,
+and execute the frozen D4 evaluation. That measurement, not the adapter merge,
+is what can unlock D5.
 
 ## Phase 3 — Metadata and text search baseline
 
@@ -583,7 +611,7 @@ Keep implementation reviewable and independently reversible:
    `mq-agent` PR #303 — deterministic catalog + local checkpoint;
 5. **D4 — metadata/text search:** **implementation completed 2026-09-29** in
    `mq-agent` PR #304 — lexical baseline, query trace and frozen evaluation
-   set; real-corpus measurement is pending the Phase 2 Drive adapter;
+   set; real-corpus measurement is pending a current adapter-produced D3 catalog;
 6. **D5 — selective fetch + provenance:** blocked until the real-corpus D4
    measurement passes;
 7. **D6 — cross-notebook research:** common findings, disagreements and gaps;
