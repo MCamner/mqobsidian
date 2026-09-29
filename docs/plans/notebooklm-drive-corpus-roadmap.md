@@ -587,42 +587,74 @@ metadata/text search cannot solve.
 
 ## Phase 7 — Optional semantic retrieval evaluation
 
+**Implementation status:** Experiment implemented 2026-09-29 in `mq-agent`
+PR #309, merged as `aa7411d9a820239cf9163cf7afad818dfbcdaecf`.
+
+**Activation status:** disabled by default. No complete-corpus benefit claim has
+been made.
+
 **Owner:** runtime retrieval component; evaluation owned by `mqobsidian`
 
-Open this phase only if Phase 3 measurements show a real search failure that
-metadata plus Drive text search cannot solve.
+D8 now provides an opt-in local experiment for measuring whether semantic
+retrieval improves the D4 lexical baseline.
 
-Candidate design:
+Implemented design:
 
 ```text
 selected text-capable files
+  -> bounded D5 reads
   -> bounded chunks
+  -> local Ollama embeddings
   -> disposable local semantic index
-  -> query
-  -> candidate ids
-  -> source-role and provenance filter
-  -> selective Drive fetch
+  -> cosine retrieval
+  -> source-role and provenance preservation
+  -> frozen D4 comparison
 ```
 
-Requirements:
+Operator surfaces:
 
-- index entries retain Drive file identity and chunk provenance;
-- deletion of the vector index loses no canonical data;
-- hosted embeddings require a separate explicit data-egress decision;
-- no automatic indexing of binaries or unsupported media;
-- semantic similarity never overrides source role or freshness.
+```text
+mq-agent notebook semantic-build
+mq-agent notebook semantic-search
+mq-agent notebook semantic-eval
+```
 
-Compare semantic retrieval against the Phase 3 baseline on the same frozen query
-set.
+The default embedding model is local `nomic-embed-text` through Ollama.
+Hosted embedding egress is not part of this implementation.
 
-**Exit gate**
+Requirements now enforced by the experiment:
 
-- semantic retrieval improves a named metric on a named query class;
-- provenance coverage remains complete;
-- context/fetch volume does not grow without measured benefit;
-- disabling the semantic layer restores the Phase 3 path cleanly.
+- [x] index entries retain Drive file identity, notebook identity, source role,
+  modified time and chunk offsets;
+- [x] deletion of the vector index loses no canonical data;
+- [x] hosted embeddings are not used;
+- [x] only text-capable items that D5 can read are indexed;
+- [x] semantic similarity never overrides source role or claim eligibility;
+- [x] D4 remains available unchanged when the semantic layer is disabled.
 
-If the baseline is already good enough, close this phase without implementation.
+The evaluation reuses the exact six frozen D4 queries and reports lexical versus
+semantic pass counts, improvements, regressions and provenance coverage.
+
+**Activation exit gate**
+
+- [ ] semantic retrieval improves a named metric on a named real-corpus query
+  class;
+- [ ] provenance coverage remains complete on that measurement;
+- [ ] context/fetch volume does not grow without measured benefit;
+- [x] disabling the semantic layer restores the D4 path cleanly.
+
+### D8 implementation result
+
+The experiment is built and verified, but not activated. Its result labels are
+descriptive only: `SEMANTIC_BENEFIT_MEASURED`,
+`NO_MEASURED_BENEFIT`, or `SEMANTIC_REGRESSION_OR_MIXED`.
+
+The implementation boundary is recorded in
+[`docs/notebooklm-d8-experiment.md`](../notebooklm-d8-experiment.md).
+
+**Result:** D8 implementation is closed as an experiment. The activation
+decision remains open until a complete current D3 catalog and real frozen-query
+measurement exist.
 
 ## Phase 8 — MQ context and reviewed distillation
 
@@ -727,8 +759,9 @@ Keep implementation reviewable and independently reversible:
 8. **D7 — interaction-gap analysis:** **completed 2026-09-29** in
    `mq-agent` PR #308 — deterministic recurring-question and research-gap
    analysis with interaction history kept non-evidentiary;
-9. **D8 — semantic retrieval experiment:** only if the D4 baseline misses the
-   frozen gate;
+9. **D8 — semantic retrieval experiment:** **implemented 2026-09-29** in
+   `mq-agent` PR #309 as an opt-in local experiment; activation remains
+   measurement-gated against the frozen D4 baseline;
 10. **D9 — context integration and operator health:** bounded handoff and
     read-only freshness reporting.
 
