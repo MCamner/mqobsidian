@@ -251,6 +251,34 @@ def _schema_errors(data: Any, schema: dict[str, Any], where: str) -> list[str]:
     return errs
 
 
+def validate_semantic_refresh(path: Path, schema: dict[str, object]) -> list[str]:
+    """Validate mq.semantic-refresh.v1 plus its cross-field authority invariant."""
+    problems = validate_manifest_example(path, schema)
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return problems
+
+    if not isinstance(data, dict):
+        return problems
+    authority = data.get("authority")
+    generation = data.get("generation")
+    if isinstance(authority, dict) and isinstance(generation, dict):
+        stores = authority.get("authoritative_stores")
+        store_id = generation.get("store_id")
+        if (
+            isinstance(stores, list)
+            and isinstance(store_id, str)
+            and store_id
+            and store_id not in stores
+        ):
+            problems.append(
+                f"{path.relative_to(ROOT)}: generation.store_id `{store_id}` "
+                "must be listed in authority.authoritative_stores"
+            )
+    return problems
+
+
 def validate_manifest_example(path: Path, schema: dict[str, object]) -> list[str]:
     """Validate a truth-surface manifest example (JSON) against its schema."""
     try:
@@ -572,6 +600,7 @@ def main() -> int:
         SCHEMAS / "context-budget.v1.json",
         SCHEMAS / "mq.execution-outcome.v1.json",
         SCHEMAS / "mq.model-route-outcome.v1.json",
+        SCHEMAS / "mq.semantic-refresh.v1.json",
     ]
     required_templates = [
         TEMPLATES / "context-pack.md",
@@ -630,6 +659,11 @@ def main() -> int:
     problems.extend(validate_manifest_example(
         EXAMPLES / "model-route-outcome.example.json",
         parsed_schemas["mq.model-route-outcome.v1.json"],
+    ))
+
+    problems.extend(validate_semantic_refresh(
+        EXAMPLES / "semantic-refresh.example.json",
+        parsed_schemas["mq.semantic-refresh.v1.json"],
     ))
 
     contract_map_schema = parsed_schemas["codegraph-contract-map.v1.json"]
