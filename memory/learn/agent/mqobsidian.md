@@ -31,9 +31,8 @@ Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution- o
 
 ## Relevant lessons
 
-- Document and verify CodeGraph CLI query patterns for mqobsidian
-- Prove the mqobsidian token-reduction MVP with one real context pack before broad rollout
-- Keep mqobsidian context-export cleanup ownership-based and idempotent
+- refresh the OpenAI semantic repository memory after finding the store 20 days stale
+- close the gate gap that let this repo's own .mq/context drift for three months
 
 ## Read next
 
