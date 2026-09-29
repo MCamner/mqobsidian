@@ -459,17 +459,24 @@ pending the complete current D3 catalog and complete-catalog D4 evaluation.
 
 ## Phase 5 — Cross-notebook research
 
+**Implementation status:** Completed 2026-09-29 in `mq-agent` PR #307,
+merged as `3115772556c00cd1e74dd21d3bf17d8bb5b8b855`.
+
+**Activation status:** gated on the same complete current D3 catalog plus frozen
+D4 evaluation and D5 authority/provenance verification used by the previous
+phases. No whole-archive D6 activation is claimed yet.
+
 **Owner:** `mq-agent`
 
-Add synthesis only after selective retrieval is reliable.
+D6 synthesizes only after D5 has produced bounded provenance-bearing evidence.
 
-Provisional surface:
+Operator surface:
 
 ```text
 mq-agent notebook research "<question>"
 ```
 
-A research result should separate:
+The implementation separates:
 
 - common findings supported by independent sources;
 - disagreements and conflicting source claims;
@@ -477,19 +484,44 @@ A research result should separate:
 - NotebookLM-derived interpretations;
 - unanswered questions and missing evidence.
 
-A cross-source conclusion requires at least two distinct source documents when
-the conclusion is presented as cross-source. More files from the same generated
-artifact chain do not count as independent evidence.
+A cross-source conclusion requires at least two independent source documents
+and must span at least two notebooks. When content hashes are available, two
+Drive items with the same `content_sha256` count as one source rather than
+fabricating corroboration from a duplicate. Derived and interaction material
+cannot satisfy the source requirement.
+
+The local Ollama synthesizer proposes a structure; deterministic validation over
+the D5 evidence bundle decides whether each proposed support reference is
+eligible. The model therefore cannot promote derived material or invent source
+authority.
 
 **Exit gate**
 
-- cross-notebook answers can name which independent sources support each
+- [x] cross-notebook answers name which independent sources support each
   synthesis;
-- disagreements are not averaged away;
-- a derived artifact cannot satisfy the independent-source requirement by
+- [x] disagreements are not averaged away;
+- [x] a derived artifact cannot satisfy the independent-source requirement by
   repeating its source;
-- the result can be saved as a review candidate without becoming durable memory
-  automatically.
+- [x] the result can be saved as a local review candidate without becoming
+  durable memory automatically.
+
+### D6 implementation result
+
+D6 now provides `mq-agent notebook research` above the D5 retrieval path.
+Common findings survive only with at least two independent, claim-eligible
+sources across at least two notebooks. Supported disagreements remain separate
+positions, derived interpretations remain explicitly secondary, and unanswered
+questions remain visible instead of being filled from chat history.
+
+The implementation also keeps `--scope live-runtime` outside the archive lane:
+it delegates to current runtime/source tools and performs no corpus synthesis.
+
+The implementation boundary and activation conditions are recorded in
+[`docs/notebooklm-d6-implementation.md`](../notebooklm-d6-implementation.md).
+
+**Result:** D6 implementation is closed. Whole-archive activation remains
+pending the complete current D3 catalog, frozen D4 evaluation and D5 authority
+verification.
 
 ## Phase 6 — Interaction-history and research-gap analysis
 
@@ -657,8 +689,10 @@ Keep implementation reviewable and independently reversible:
 6. **D5 — selective fetch + provenance:** **implementation completed
    2026-09-29** in `mq-agent` PR #306 — bounded provenance-bearing retrieval;
    whole-archive activation remains gated on complete D3/D4;
-7. **D6 — cross-notebook research:** blocked from whole-archive activation until
-   the D3/D4 activation gate is satisfied;
+7. **D6 — cross-notebook research:** **implementation completed 2026-09-29**
+   in `mq-agent` PR #307 — deterministic provenance validation over D5 evidence;
+   whole-archive activation remains gated on complete D3/D4 plus D5 authority
+   verification;
 8. **D7 — interaction-gap analysis:** questions/gaps without evidence promotion;
 9. **D8 — semantic retrieval experiment:** only if the D4 baseline misses the
    frozen gate;
