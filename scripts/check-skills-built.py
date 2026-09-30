@@ -18,6 +18,12 @@ into a temporary directory. It writes nothing.
 Local-only: `.gitignore` keeps `skills-src/` and all three built trees out of
 the repo apart from two force-added source skills, so CI has almost nothing to
 compare. `scripts/check-gate-parity.py` declares it LOCAL_ONLY with that reason.
+
+A fresh checkout is not drift. In CI, `skills-src/` exists -- two source skills
+are force-added -- while all three built trees are absent, because they are
+gitignored. Reading that as "the build is stale" made this check fail on every
+push before the distinction existed. Nothing built means nothing to be
+inconsistent with; *some* trees built and others missing is real drift.
 """
 
 from __future__ import annotations
@@ -66,11 +72,20 @@ def stale_built_skills(root: Path = REPO_ROOT) -> list[str]:
     if not names:
         return []
 
+    present = [d for d in BUILT_DIRS if (root / d).is_dir()]
+    if not present:
+        # A checkout where the build has never run: the built trees are
+        # gitignored, so their absence is the normal state, not staleness.
+        return []
+
     problems: list[str] = []
     for built_dir in BUILT_DIRS:
         built_root = root / built_dir
         if not built_root.is_dir():
-            problems.append(f"{built_dir} is missing; run tools/build-skills.sh")
+            problems.append(
+                f"{built_dir} is missing while other built trees exist; "
+                "run tools/build-skills.sh"
+            )
             continue
 
         built_names = sorted(p.name for p in built_root.iterdir() if p.is_dir())
@@ -89,6 +104,9 @@ def stale_built_skills(root: Path = REPO_ROOT) -> list[str]:
 def main() -> int:
     if not (REPO_ROOT / SRC).is_dir():
         print("skills build check skipped: no local skills-src/")
+        return 0
+    if not any((REPO_ROOT / d).is_dir() for d in BUILT_DIRS):
+        print("skills build check skipped: skills are not built in this checkout")
         return 0
 
     problems = stale_built_skills()
