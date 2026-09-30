@@ -70,6 +70,12 @@ STEPS: dict[str, object] = {
 
 # Local checks with no CI counterpart, and why.
 LOCAL_ONLY: dict[str, str] = {
+    "check-skills-built.py": (
+        "local-only: .gitignore keeps skills-src/ and all three built skill trees "
+        "out of the repo apart from two force-added source skills, so CI has "
+        "almost nothing to compare. The drift it catches -- editing a built copy, "
+        "or adding a skill and not rebuilding -- happens where the source lives."
+    ),
     "check-learn-namespace.py": (
         "local-only by necessity: it inspects memory/learn/, which .gitignore keeps "
         "out of the repo, so CI has no vault to check. The defect it guards against "
