@@ -69,7 +69,14 @@ STEPS: dict[str, object] = {
 }
 
 # Local checks with no CI counterpart, and why.
-LOCAL_ONLY: dict[str, str] = {}
+LOCAL_ONLY: dict[str, str] = {
+    "check-learn-namespace.py": (
+        "local-only by necessity: it inspects memory/learn/, which .gitignore keeps "
+        "out of the repo, so CI has no vault to check. The defect it guards against "
+        "is local damage -- an export overwriting an authored note that was placed "
+        "in the generator's namespace -- and it is caught where the vault exists."
+    ),
+}
 
 
 def workflow_steps() -> dict[str, list[str]]:

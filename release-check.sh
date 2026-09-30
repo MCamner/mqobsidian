@@ -78,6 +78,9 @@ run "check-context-links.py" python3 scripts/check-context-links.py
 step "Own context export fresh"
 run "check-context-export-fresh.py" python3 scripts/check-context-export-fresh.py
 
+step "Learn namespace ownership"
+run "check-learn-namespace.py" python3 scripts/check-learn-namespace.py
+
 step "Agent entrypoints canonical"
 run "check-agent-entrypoints.py" python3 scripts/check-agent-entrypoints.py
 
