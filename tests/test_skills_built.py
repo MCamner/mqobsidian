@@ -74,6 +74,24 @@ class SkillsBuiltTests(unittest.TestCase):
         self.assertEqual(MODULE.source_skills(self.tmp), ["alpha", "beta"])
         self.assertEqual(MODULE.stale_built_skills(self.tmp), [])
 
+    def test_fresh_checkout_with_no_built_trees_is_not_drift(self) -> None:
+        """The CI condition, which turned main red before this distinction existed.
+
+        skills-src/ exists there because two source skills are force-added, while
+        all three built trees are gitignored and absent. Nothing built means
+        nothing to be inconsistent with.
+        """
+        for built in BUILT_DIRS:
+            shutil.rmtree(self.tmp / built.split("/")[0])
+        self.assertEqual(MODULE.stale_built_skills(self.tmp), [])
+
+    def test_partially_built_trees_are_drift(self) -> None:
+        """Some built and some missing is a real half-finished build."""
+        shutil.rmtree(self.tmp / ".codex")
+        problems = MODULE.stale_built_skills(self.tmp)
+        self.assertEqual(len(problems), 1, problems)
+        self.assertIn(".codex/skills is missing while other built trees exist", problems[0])
+
     def test_absent_source_is_not_a_failure(self) -> None:
         """skills-src/ is gitignored, so CI has almost nothing to compare."""
         empty = Path(tempfile.mkdtemp())
