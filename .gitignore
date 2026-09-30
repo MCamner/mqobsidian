@@ -7,6 +7,7 @@
 .mcp.json
 AGENTS.md
 CLAUDE.md
+agents-local-extension.md
 !templates/AGENTS.md
 !templates/CLAUDE.md
 !examples/generated-agent-entrypoints/

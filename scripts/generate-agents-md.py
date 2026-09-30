@@ -7,7 +7,7 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-from agent_entrypoints import render_agents, write_entrypoint
+from agent_entrypoints import append_extension, render_agents, write_entrypoint
 from mq_repos import CORE_MQ_REPOS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,6 +44,16 @@ def parse_args() -> ArgumentParser:
         action="store_true",
         help="Dry-run: validate and report drift vs the on-disk file, write nothing",
     )
+    parser.add_argument(
+        "--extension",
+        type=Path,
+        help=(
+            "Append this file's contents after the canonical contract, as a local "
+            "extension. The canonical sections and canaries are still enforced, so "
+            "an extension can add repo-local governance but cannot replace or weaken "
+            "the contract. Used by mqobsidian for its own root AGENTS.md."
+        ),
+    )
     return parser
 
 
@@ -67,6 +77,8 @@ def main() -> int:
         parser.error("--repo is required unless --all is used")
 
     content = render_agents(template, args.repo, args.vault_path)
+    if args.extension:
+        content = append_extension(content, args.extension.read_text(encoding="utf-8"))
 
     if args.output:
         return write_entrypoint(args.output, content, kind="agents", force=args.force, check=args.check)
