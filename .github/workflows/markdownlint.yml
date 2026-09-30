@@ -2,7 +2,12 @@ name: Markdownlint
 
 on:
   workflow_dispatch:
+  # Scoped to main: a bare `push:` also fires on feature branches, so a branch
+  # with an open PR reports the same check name twice on one SHA, and required
+  # status checks match on the name while ignoring the event. Pushes to main
+  # stay post-merge verification.
   push:
+    branches: [main]
   pull_request:
 
 permissions:
