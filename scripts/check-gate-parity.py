@@ -70,6 +70,14 @@ STEPS: dict[str, object] = {
 
 # Local checks with no CI counterpart, and why.
 LOCAL_ONLY: dict[str, str] = {
+    "check-clean-checkout.py": (
+        "local-only because it is redundant in CI: the CI working tree already IS "
+        "a clean checkout of tracked files, so running the suite against "
+        "git archive HEAD there proves nothing new. Its value is catching the "
+        "divergence locally, before the push -- a test that reads gitignored files "
+        "is green in a working tree that has them and red in CI, which is exactly "
+        "how check-skills-built.py turned main red on the push that added it."
+    ),
     "check-skills-built.py": (
         "local-only: .gitignore keeps skills-src/ and all three built skill trees "
         "out of the repo apart from two force-added source skills, so CI has "

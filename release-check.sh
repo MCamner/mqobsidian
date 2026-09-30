@@ -96,6 +96,9 @@ run "ruff" bash scripts/check-ruff-pinned.sh
 step "Gate parity"
 run "check-gate-parity.py" python3 scripts/check-gate-parity.py
 
+step "Clean-checkout parity"
+run "check-clean-checkout.py" python3 scripts/check-clean-checkout.py
+
 step "Unit tests"
 run "unittest" python3 -m unittest discover -s tests -q
 

@@ -25,8 +25,14 @@ BUDGETS = {
     "examples/sanitized-context-pack.md": 120,
 }
 
+# This repo's own root AGENTS.md is the canonical 120-line contract plus a local
+# extension, because mqobsidian consumes the contract it distributes instead of
+# keeping a hand-written fork of it. 220 is the assembled size (200) plus a
+# documented margin, not a round number: the contract must not be made less
+# explicit to fit a budget that predates the extension. The per-repo renders
+# under examples/ stay at 120 -- they carry no extension.
 OPTIONAL_BUDGETS = {
-    "AGENTS.md": 120,
+    "AGENTS.md": 220,
     "CLAUDE.md": 120,
     **{f".mq/context/{name}": CONTEXT_BUDGETS[name] for name in LOCAL_CONTEXT_FILES},
 }

@@ -56,6 +56,24 @@ def render_claude(template: str, repo: str) -> str:
     return template.replace("<REPO_NAME>", repo)
 
 
+EXTENSION_HEADING = "## Local Extension"
+
+
+def append_extension(content: str, extension: str) -> str:
+    """Append a repo-local extension after the canonical contract.
+
+    The canonical checks are substring-based, so an extension can add local
+    governance on top of the contract but cannot remove or weaken it: drop a
+    canonical section and `check_rendered` still fails. mqobsidian uses this for
+    its own root AGENTS.md, so the repo that owns the contract is also its first
+    consumer rather than a hand-maintained fork of it.
+    """
+    body = extension.strip("\n")
+    if EXTENSION_HEADING not in body:
+        raise ValueError(f"extension must contain a '{EXTENSION_HEADING}' heading")
+    return content.rstrip("\n") + "\n\n---\n\n" + body + "\n"
+
+
 def check_rendered(content: str, *, kind: str) -> list[str]:
     """Return regression findings for a rendered entrypoint. Empty list == OK.
 
