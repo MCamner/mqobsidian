@@ -19,7 +19,7 @@ memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`.
 `v0.4.0` (2026-09-11) stängde Execution and Routing Contract Integrity: ADR-010
 delade routing per modellanrop, `mq.model-route-outcome.v1` är kanoniskt här,
 `application` och `execution_run_id` skiljer tillämpad routing från råd, och
-`.mq/repo-contract.json` deklarerar nu 32 kontrakt som grindas mot `schemas/` i
+`.mq/repo-contract.json` deklarerar nu 33 kontrakt som grindas mot `schemas/` i
 båda riktningar. Task-aware skill selection har kontrakt men ingen exekvering
 här. Det är en kontraktsgrund, inte levererad Execution Intelligence: fallback
 recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
@@ -75,6 +75,7 @@ recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
 - Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval? (Teknisk nytta är nu mätt och utebliven; frågan kvarstår organisatoriskt.)
 
 ## Recent changes
+- 2026-09-30: `mq.semantic-refresh.v1` landade (#124) och gjorde registret 33 kontrakt. Kontraktet definierar logisk identitet (repo + artifact_type), authority, replacement semantics och en postcondition: exakt en aktiv generation i den auktoritativa store-mängden och ingen retrieval-auktoritativ generation utanför den. `mq-agent` implementerade latest-only refresh, konvergensväntan och legacy-avveckling (#312–#314), och `memory status` skiljer nu `configured`, `reachable` och `fresh` med källrevision som grund. Freshness-gaten täcker nu även kontraktsantalet i hot och index — det påståendet hade glidit två gånger med gröna gates.
 - 2026-09-29: NotebookLM D3–D8 stängdes i `mq-agent` (#307–#309) och registrerades här som implementationsposter. `mq.notebook-corpus-index.v1` (#114) gjorde registret 32 kontrakt. D8 är ett opt-in semantiskt experiment mot den frysta D4-lexikala baslinjen, med lokal `nomic-embed-text` via Ollama och ingen hostad embedding-egress; det är inte en aktiverad default-retrievalväg. Den organisatoriska dataapprovalfrågan är oförändrad.
 - 2026-09-17: Refreshade hot/index till v0.4.0-läget och överförde de 14 `applied`-posterna (130 -> 144). Write-gaten avvisade fem av dem: `record-routing-outcome.py` krävde `model_output_received=true` på varje PASS, ett krav från tiden före ADR-010 D8 när varje route var ett modellanrop. `deterministic-local` kör ingen modellinferens, så kravet avvisade den enda sanna post en sådan körning kan skriva. Invarianten är nu route-medveten i båda riktningar — en deterministisk route får inte heller påstå mottagen modelloutput.
 - 2026-09-13: Regenererade agent views efter learn-refresh (#106) och bevarade 2026-08-04-inventeringen av vector stores som research node.

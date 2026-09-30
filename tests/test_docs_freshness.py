@@ -47,6 +47,14 @@ def build_repo(root: Path, *, version: str = "1.2.3", with_wiki: bool = True) ->
     (wiki / "Memory-Model.md").write_text(CONTRACT_PAGE, encoding="utf-8")
 
 
+def write_read_order(root: Path, claim: str) -> None:
+    """Write the read-order surface the contract-count check reads."""
+    sysdir = root / "systems" / "mqobsidian"
+    sysdir.mkdir(parents=True, exist_ok=True)
+    (sysdir / "hot.md").write_text(f"# Hot\n\n{claim}\n", encoding="utf-8")
+    (sysdir / "index.md").write_text(f"# Index\n\n{claim}\n", encoding="utf-8")
+
+
 class DocsFreshnessTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = Path(tempfile.mkdtemp())
@@ -99,6 +107,44 @@ class DocsFreshnessTests(unittest.TestCase):
         failures = MODULE.check(self.tmp)
         self.assertEqual(len(failures), 1)
         self.assertIn("docs/wiki/Memory-Model.md", failures[0])
+
+    def test_read_order_claiming_the_wrong_contract_count_fails(self) -> None:
+        """The surface agents read first must not contradict the register.
+
+        This is the defect that recurred within a day of being fixed by hand:
+        the register grew from 32 to 33 contracts, docs/memory-model.md followed
+        because it is gated, and hot.md/index.md kept saying 32 while every gate
+        stayed green.
+        """
+        write_read_order(self.tmp, "`.mq/repo-contract.json` deklarerar 9 kontrakt.")
+        failures = MODULE.check(self.tmp)
+        self.assertEqual(len(failures), 2, failures)
+        self.assertTrue(any("hot.md" in f for f in failures), failures)
+        self.assertTrue(any("index.md" in f for f in failures), failures)
+        self.assertTrue(all("9" in f and "2" in f for f in failures), failures)
+
+    def test_read_order_with_the_right_count_passes(self) -> None:
+        write_read_order(self.tmp, "`.mq/repo-contract.json` deklarerar 2 kontrakt.")
+        self.assertEqual(MODULE.check(self.tmp), [])
+
+    def test_nu_variant_of_the_claim_is_checked(self) -> None:
+        write_read_order(self.tmp, "Registret deklarerar nu 7 kontrakt.")
+        self.assertEqual(len(MODULE.check(self.tmp)), 2)
+
+    def test_past_tense_claim_is_history_and_is_not_checked(self) -> None:
+        """A dated log entry records what was true then, not now.
+
+        index.md carries `deklarerade då 31 kontrakt` inside the v0.4.0 entry.
+        Reading that as a present-tense claim would make the gate demand that
+        history be rewritten on every contract addition.
+        """
+        write_read_order(self.tmp, "2026-09-11: Registret deklarerade då 31 kontrakt.")
+        self.assertEqual(MODULE.check(self.tmp), [])
+
+    def test_absent_read_order_surface_is_not_a_failure(self) -> None:
+        """systems/ is gitignored for most repos; absence is not staleness."""
+        self.assertFalse((self.tmp / "systems").exists())
+        self.assertEqual(MODULE.check(self.tmp), [])
 
     def test_real_repo_is_fresh(self) -> None:
         """The gate must hold for the checked-in docs, not just fixtures."""

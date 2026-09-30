@@ -32,7 +32,7 @@ stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
 ## Most important facts
 - `mq-agent` äger context selection, pack-generation, runtime-writer och CLI.
   `mqobsidian` äger schemas, durable notes, templates och public-safe examples.
-- `.mq/repo-contract.json` deklarerar 32 kontrakt. Ett odeklarerat schema äger
+- `.mq/repo-contract.json` deklarerar 33 kontrakt. Ett odeklarerat schema äger
   inget (#103) — registret och `schemas/` grindas mot varandra.
 - `mq.model-route-outcome.v1` är kanoniskt här, inte löst från ett sibling
   `mq-agent`-checkout; mq-agent vendorar en grindad kopia.
@@ -40,17 +40,17 @@ stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
   (`advisory | shadow | applied`) skiljer råd från tillämpning och route
   readiness räknar bara `applied`. `route` på `mq.execution-outcome.v1` är
   deprekerad; applied-route-fakta hör till routingkontraktet.
-- `execution_run_id` korrelerar routingobservation med exekvering; korrelation
-  är ovillkorlig i v1.
+- `execution_run_id` korrelerar routingobservation med exekvering, ovillkorligt i v1.
 - `runtime_fingerprint` är valfri och additiv (DEC-006). Frånvaro betyder att
   proveniens inte observerades — annan fakta än `identity quality: unknown`.
 - NotebookLM D3–D8 är implementerat i `mq-agent` (#307–#309), opt-in inte default.
   `mq.notebook-corpus-index.v1` (#114) är kanoniskt här; dataapproval är öppen.
+- `mq.semantic-refresh.v1` (#124) är kanoniskt här: identitet är repo +
+  artifact_type, och exakt en aktiv generation per identitet i auktoritativa stores.
 - Skill selection har kontrakt (`mq.skill-profile.v1`, `mq.skill-route.v1`,
   `skill-selection-vocabulary.v1`); mq-agent äger exekveringen.
-- `.mq/context-selection-vocabulary.json` (DEC-005) och
-  `.mq/context-budgets.json` (`context-budget.v1`) är publicerade
-  kontraktskällor. Konsumenter läser dem; ingen håller en egen kopia.
+- `.mq/context-selection-vocabulary.json` (DEC-005) och `.mq/context-budgets.json`
+  (`context-budget.v1`) är publicerade kontraktskällor; ingen håller en egen kopia.
 - `--clean` rör bara exportens fem ägda filer — nu sant för båda exportörerna.
 - Evidensläge 2026-09-17: `routing/outcomes.jsonl` har 144 poster, i linje med
   mq-agents store. De 14 `applied` (2026-09-01 → 09-04) delar ett `decision_id`

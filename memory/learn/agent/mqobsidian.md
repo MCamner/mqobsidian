@@ -1,7 +1,7 @@
 ---
 type: agent-view
 system: mqobsidian
-generated: 2026-09-29
+generated: 2026-09-30
 generator: mq-agent agent-views rebuild
 sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md, memory/learn/repos/mqobsidian.md]
 ---
@@ -31,8 +31,9 @@ Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution- o
 
 ## Relevant lessons
 
-- assess whether a completed semantic-memory upload proves the retrieval surface is correct
-- refresh the OpenAI semantic repository memory after finding the store 20 days stale
+- Document and verify CodeGraph CLI query patterns for mqobsidian
+- Prove the mqobsidian token-reduction MVP with one real context pack before broad rollout
+- Keep mqobsidian context-export cleanup ownership-based and idempotent
 
 ## Read next
 
