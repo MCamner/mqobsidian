@@ -78,6 +78,9 @@ run "check-context-links.py" python3 scripts/check-context-links.py
 step "Own context export fresh"
 run "check-context-export-fresh.py" python3 scripts/check-context-export-fresh.py
 
+step "Skills built from source"
+run "check-skills-built.py" python3 scripts/check-skills-built.py
+
 step "Learn namespace ownership"
 run "check-learn-namespace.py" python3 scripts/check-learn-namespace.py
 
