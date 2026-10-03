@@ -1,0 +1,4 @@
+interface:
+  display_name: "MQ Felsökning"
+  short_description: "Reproducera, isolera och verifiera MQ-fel"
+  default_prompt: "Använd $mq-diagnosing-bugs för den aktuella MQ-uppgiften."

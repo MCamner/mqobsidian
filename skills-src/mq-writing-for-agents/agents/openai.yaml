@@ -1,0 +1,4 @@
+interface:
+  display_name: "MQ Agentinstruktioner"
+  short_description: "Skriv tydliga skills och agentinstruktioner"
+  default_prompt: "Använd $mq-writing-for-agents för den aktuella MQ-uppgiften."

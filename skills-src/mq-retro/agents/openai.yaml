@@ -1,0 +1,4 @@
+interface:
+  display_name: "MQ Retro"
+  short_description: "Förbättra MQ-arbetssätt efter en session"
+  default_prompt: "Använd $mq-retro för den aktuella MQ-uppgiften."

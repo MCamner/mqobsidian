@@ -1,0 +1,4 @@
+interface:
+  display_name: "MQ Domänmodellering"
+  short_description: "Förtydliga MQ-begrepp och ansvarsgränser"
+  default_prompt: "Använd $mq-domain-modeling för den aktuella MQ-uppgiften."
