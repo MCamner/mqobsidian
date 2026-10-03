@@ -1,0 +1,4 @@
+interface:
+  display_name: "MQ TDD"
+  short_description: "Testa MQ-beteende före kirurgiska ändringar"
+  default_prompt: "Använd $mq-tdd för den aktuella MQ-uppgiften."
