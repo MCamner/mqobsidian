@@ -50,11 +50,16 @@ def source_skills(root: Path) -> list[str]:
     return sorted(p.name for p in src.iterdir() if p.is_dir() and (p / "SKILL.md").is_file())
 
 
+def _is_content(path: Path) -> bool:
+    """A file the build ships, not Finder's .DS_Store written on browsing a folder."""
+    return path.is_file() and path.name != ".DS_Store"
+
+
 def _tree_differences(source: Path, built: Path, label: str) -> list[str]:
     """Return one message per file that differs, is missing, or is unexpected."""
     problems: list[str] = []
-    src_files = {p.relative_to(source) for p in source.rglob("*") if p.is_file()}
-    built_files = {p.relative_to(built) for p in built.rglob("*") if p.is_file()}
+    src_files = {p.relative_to(source) for p in source.rglob("*") if _is_content(p)}
+    built_files = {p.relative_to(built) for p in built.rglob("*") if _is_content(p)}
 
     for rel in sorted(src_files - built_files):
         problems.append(f"{label}: missing {rel}")
