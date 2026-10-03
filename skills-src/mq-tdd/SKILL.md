@@ -8,6 +8,7 @@ description: "Implementera MQ-features och bugfixar testdrivet vid publika CLI-,
 Läs repo-instruktioner, befintliga tester och faktisk check-konfiguration. Definiera önskat beteende och testgräns från uppgiften och etablerade kontrakt. Bekräftelse behövs bara om beteende eller publikt kontrakt är oklart, inte för ett redan etablerat gränssnitt.
 
 Arbeta en vertikal beteendeskiva i taget:
+
 1. Skriv ett test med oberoende förväntat resultat: specificerad JSON, känd fixture, exitkod eller dokumenterat kontrakt.
 2. Kör det och kontrollera att det faller av rätt anledning, inte bara på trasig setup.
 3. Gör minsta ändring som uppfyller beteendet och kör testet igen.
@@ -21,4 +22,4 @@ Undvik tester som speglar implementationen, tautologiska förväntningar och sto
 
 ## Ursprung
 
-MQ-anpassning av Matt Pococks motsvarande skill, MIT, commit d81f3a183412e71a5b1e84ca21bc1a35eea03a60. Källa: https://github.com/mattpocock/skills. Licens: [LICENSE](LICENSE).
+MQ-anpassning av Matt Pococks motsvarande skill, MIT, commit d81f3a183412e71a5b1e84ca21bc1a35eea03a60. Källa: [mattpocock/skills](https://github.com/mattpocock/skills). Licens: [LICENSE](LICENSE).

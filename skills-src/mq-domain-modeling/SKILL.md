@@ -17,4 +17,4 @@ Skapa ADR endast för ett betydande, dyrt att reversera val med verkliga alterna
 
 ## Ursprung
 
-MQ-anpassning av Matt Pococks motsvarande skill, MIT, commit d81f3a183412e71a5b1e84ca21bc1a35eea03a60. Källa: https://github.com/mattpocock/skills. Licens: [LICENSE](LICENSE).
+MQ-anpassning av Matt Pococks motsvarande skill, MIT, commit d81f3a183412e71a5b1e84ca21bc1a35eea03a60. Källa: [mattpocock/skills](https://github.com/mattpocock/skills). Licens: [LICENSE](LICENSE).

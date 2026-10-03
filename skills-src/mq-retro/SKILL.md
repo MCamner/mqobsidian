@@ -8,6 +8,7 @@ description: "Granska en genomförd MQ-arbetssession och prioritera konkreta fö
 Utgå från den session användaren anger, annars aktuell session. Läs tillgängliga diffar, kommandoutfall och fel; uppfinn inte historik.
 
 Identifiera högst tre förbättringar med belagd effekt:
+
 - Navigation: saknade referenser, föråldrat index eller otydliga ansvar som fördröjde arbetet.
 - Kontroller: befintliga tester, lint eller doctor som inte kördes eller vars signal missades. Läs faktisk CI och checks före förslag om nya.
 - Instruktioner: motsägelser, dubblerade regler eller otydliga triggers som gav ett observerat fel.
@@ -19,4 +20,4 @@ Rapportera fynd, sessionsbevis, konsekvens och minsta konkreta förbättring i p
 
 ## Ursprung
 
-MQ-anpassning av Matt Pococks motsvarande skill, MIT, commit d81f3a183412e71a5b1e84ca21bc1a35eea03a60. Källa: https://github.com/mattpocock/skills. Licens: [LICENSE](LICENSE).
+MQ-anpassning av Matt Pococks motsvarande skill, MIT, commit d81f3a183412e71a5b1e84ca21bc1a35eea03a60. Källa: [mattpocock/skills](https://github.com/mattpocock/skills). Licens: [LICENSE](LICENSE).
