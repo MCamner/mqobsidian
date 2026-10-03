@@ -69,6 +69,16 @@ class SkillsBuiltTests(unittest.TestCase):
         problems = MODULE.stale_built_skills(self.tmp)
         self.assertEqual(problems, [".agents/skills/beta: missing reference.md"])
 
+    def test_finder_metadata_in_a_built_copy_is_not_drift(self) -> None:
+        """Opening a built skill in Finder writes .DS_Store; no skill content changed."""
+        (self.tmp / ".claude/skills/alpha/.DS_Store").write_bytes(b"\0\0\0\1Bud1")
+        self.assertEqual(MODULE.stale_built_skills(self.tmp), [])
+
+    def test_finder_metadata_in_a_source_skill_is_not_drift(self) -> None:
+        """The same file created after the build must not read as 'missing'."""
+        (self.tmp / "skills-src/beta/.DS_Store").write_bytes(b"\0\0\0\1Bud1")
+        self.assertEqual(MODULE.stale_built_skills(self.tmp), [])
+
     def test_a_directory_without_skill_md_is_not_a_source_skill(self) -> None:
         (self.tmp / "skills-src" / "notes").mkdir()
         self.assertEqual(MODULE.source_skills(self.tmp), ["alpha", "beta"])
