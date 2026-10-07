@@ -323,6 +323,45 @@
     "recorded_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "fallback": {
+      "description": "Measured fallback that changed the runtime path. Absent means no fallback was measured, never that fallback count was zero.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "to",
+        "reason",
+        "stage",
+        "source"
+      ],
+      "properties": {
+        "from": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "stage": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "source": {
+          "enum": [
+            "measured"
+          ]
+        }
+      }
     }
   }
 }
