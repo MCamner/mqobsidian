@@ -148,7 +148,7 @@ and does not route answers through NotebookLM.
 - [x] `mq.execution-outcome.v1` contract, example and validation
 - [x] runtime writer in mq-agent
 - [x] optional measured provenance for route/model/context
-- [ ] fallback recording (no runtime measures it yet)
+- [x] fallback recording with measured from/to/reason/stage evidence from mq-agent runtime
 - [x] failure recording, fixtures and mutation tests in mq-agent
 
 ### v2.5 — Execution inspection

@@ -152,6 +152,41 @@ class ExecutionOutcomeContractTests(unittest.TestCase):
         that producer's decision, not this schema's."""
         self.assertNotIn("runtime_fingerprint", self.schema["required"])
 
+    def test_measured_fallback_is_optional_and_structured(self) -> None:
+        record = {
+            **self.example,
+            "fallbacks": 1,
+            "fallback": {
+                "from": "mq-mcp-tool-policy",
+                "to": "static-read-only-allowlist",
+                "reason": "policy-unavailable-or-invalid",
+                "stage": "workflow-policy",
+                "source": "measured",
+            },
+        }
+
+        self.assertEqual(list(self.validator.iter_errors(record)), [])
+
+        without = {key: value for key, value in record.items() if key != "fallback"}
+        self.assertEqual(list(self.validator.iter_errors(without)), [])
+
+    def test_fallback_cannot_claim_unmeasured_or_smuggle_detail(self) -> None:
+        base = {
+            "from": "mq-mcp-tool-policy",
+            "to": "static-read-only-allowlist",
+            "reason": "policy-unavailable-or-invalid",
+            "stage": "workflow-policy",
+            "source": "measured",
+        }
+        for mutation in (
+            {**base, "source": "inferred"},
+            {**base, "prompt": "raw prompt"},
+            {key: value for key, value in base.items() if key != "reason"},
+        ):
+            with self.subTest(mutation=mutation):
+                record = {**self.example, "fallbacks": 1, "fallback": mutation}
+                self.assertTrue(list(self.validator.iter_errors(record)))
+
     def test_unknown_fields_are_rejected(self) -> None:
         mutated = dict(self.example, routing_score=0.91)
         self.assertTrue(list(self.validator.iter_errors(mutated)))
