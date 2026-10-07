@@ -17,6 +17,14 @@ mq-hal, repo-signal, macos-scripts or this vault.
 * `mq.skill-route.v1`: one deterministic task selection. No timestamps, private
   filesystem paths, learning metrics or execution outcomes belong in this record.
 
+The canonical vocabulary also carries narrow control-plane domains so specialized
+skills do not overmatch generic implementation work:
+
+* `feedback`: feedback candidates, approval, canary, activation, rollback and
+  kill-switch operations;
+* `contracts`: canonical ownership, vendoring and schema-drift migrations;
+* `recovery`: state snapshot, restore and disaster-recovery work.
+
 The default budget is five total and three optional. Available required skills
 are never removed by budget or supersession. Required overflow uses SKS007.
 A matched description never creates a requirement; only `required_for` does.
