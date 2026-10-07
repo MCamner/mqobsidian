@@ -16,14 +16,14 @@
       "implementera",
       "add",
       "build",
-      "l\u00e4gg till",
+      "lägg till",
       "bygg"
     ],
     "fix": [
       "fix",
       "repair",
       "bug",
-      "r\u00e4tta",
+      "rätta",
       "fixa"
     ],
     "review": [
@@ -35,7 +35,7 @@
       "release",
       "publish",
       "tag",
-      "sl\u00e4pp"
+      "släpp"
     ],
     "document": [
       "docs",
@@ -97,6 +97,30 @@
     "stack": [
       "mq stack",
       "cross-repo"
+    ],
+    "feedback": [
+      "feedback",
+      "activation",
+      "canary",
+      "rollback",
+      "kill switch",
+      "policy activation"
+    ],
+    "contracts": [
+      "canonical contract",
+      "contract owner",
+      "vendored contract",
+      "schema drift",
+      "canonical schema",
+      "vendoring"
+    ],
+    "recovery": [
+      "state snapshot",
+      "state restore",
+      "disaster recovery",
+      "recovery",
+      "snapshot",
+      "restore"
     ]
   },
   "risks": {
@@ -106,9 +130,9 @@
       "fix",
       "fixa",
       "modify",
-      "\u00e4ndra",
+      "ändra",
       "bygg",
-      "l\u00e4gg till"
+      "lägg till"
     ],
     "git_write": [
       "commit",
