@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+- `mq.execution-outcome.v1` gains the task class `repo-review`, for the
+  outcome of mq-agent `review repo`. It is its own class, not an alias for
+  `audit`: feedback evidence correlates to it through the exact run id, never
+  through a mapping between task-class vocabularies. Additive under DEC-006:
+  every historical record stays valid. The forward cost DEC-006 names applies
+  as well: an older closed-schema reader classifies a `repo-review` record as
+  invalid rather than reading it.
+
 ## [0.4.0] - 2026-09-11
 
 - `mq.execution-outcome.v1` gains an optional `runtime_fingerprint`: which

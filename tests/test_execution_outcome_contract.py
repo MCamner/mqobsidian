@@ -147,6 +147,25 @@ class ExecutionOutcomeContractTests(unittest.TestCase):
                 )
                 self.assertNotEqual(list(self.validator.iter_errors(record)), [])
 
+    def test_repo_review_is_a_task_class(self) -> None:
+        """mq-agent `review repo` produces outcomes under its own class. It is
+        not mapped onto `audit`: correlation to feedback evidence goes through
+        the exact run id, never through a borrowed vocabulary."""
+        record = {**self.example, "task_class": "repo-review"}
+        self.assertEqual(list(self.validator.iter_errors(record)), [])
+
+    def test_every_historical_task_class_stays_valid(self) -> None:
+        for task_class in (
+            "audit", "ci", "docs", "release", "release-check", "signal",
+            "task", "unclassified",
+        ):
+            record = {**self.example, "task_class": task_class}
+            self.assertEqual(list(self.validator.iter_errors(record)), [], task_class)
+
+    def test_an_undeclared_task_class_is_rejected(self) -> None:
+        record = {**self.example, "task_class": "review"}
+        self.assertNotEqual(list(self.validator.iter_errors(record)), [])
+
     def test_the_fingerprint_is_not_required(self) -> None:
         """Optional in the contract. Whether a given producer must write it is
         that producer's decision, not this schema's."""
