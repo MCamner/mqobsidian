@@ -147,6 +147,7 @@
         "docs",
         "release",
         "release-check",
+        "repo-review",
         "signal",
         "task",
         "unclassified"
