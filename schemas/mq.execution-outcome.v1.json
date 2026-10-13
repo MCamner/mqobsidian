@@ -363,6 +363,159 @@
           ]
         }
       }
+    },
+    "completeness": {
+      "description": "Measured execution coverage, independent of model verification and routing verification. Optional for historical compatibility; absence means unmeasured, never complete. A producer derives step states from executor status and, for fan-out, measured counts and completion flag. Counts are emitted together only when both were measured; producers must verify equality before marking a fan-out complete. Empty plans cannot claim complete. Partial includes failed, skipped, unexecuted or unmeasured work and is never a PASS outcome. No paths or raw material are carried.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "steps"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "complete",
+            "partial"
+          ]
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "step",
+              "status"
+            ],
+            "properties": {
+              "step": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "status": {
+                "enum": [
+                  "complete",
+                  "partial",
+                  "failed",
+                  "skipped",
+                  "not-executed",
+                  "unmeasured"
+                ]
+              },
+              "source_item_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "executed_call_count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "dependentRequired": {
+              "source_item_count": [
+                "executed_call_count"
+              ],
+              "executed_call_count": [
+                "source_item_count"
+              ]
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "complete"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "steps": {
+                "minItems": 1,
+                "items": {
+                  "properties": {
+                    "status": {
+                      "const": "complete"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "partial"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "steps": {
+                "anyOf": [
+                  {
+                    "maxItems": 0
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "status": {
+                          "not": {
+                            "const": "complete"
+                          }
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "completeness"
+        ],
+        "properties": {
+          "completeness": {
+            "properties": {
+              "status": {
+                "const": "partial"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "const": "FAIL"
+          },
+          "exit_status": {
+            "enum": [
+              "error",
+              "aborted"
+            ]
+          }
+        }
+      }
+    }
+  ]
 }
