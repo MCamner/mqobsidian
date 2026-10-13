@@ -6,6 +6,7 @@ tags: [index, system]
 updated: 2026-09-17
 owner:
 links_to: [hot]
+agent_view: versioned
 ---
 
 # mqobsidian Index

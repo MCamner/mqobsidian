@@ -64,6 +64,14 @@ jobs:
       - name: Check this repo's own context export is fresh
         run: python3 scripts/check-context-export-fresh.py
 
+      # memory/learn/agent/mqobsidian.md is committed, so it must rebuild
+      # byte-for-byte from committed sources alone (DEC-007). The generator is
+      # mq-agent's; a clean checkout is exactly the vault without local data.
+      - name: Check the committed agent view is reproducible
+        run: |
+          python3 -m pip install "mq-agent @ git+https://github.com/MCamner/mq-agent@main"
+          mq-agent agent-views check --vault . --system mqobsidian
+
       - name: Check context exports are regenerated
         run: |
           python3 scripts/generate-repo-context-export.py --all

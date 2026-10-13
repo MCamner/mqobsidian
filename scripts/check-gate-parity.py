@@ -59,6 +59,12 @@ STEPS: dict[str, object] = {
     "Run focused unit tests": "unittest",
     "Check agent-entrypoint canonical contract": "check-agent-entrypoints.py",
     "Check this repo's own context export is fresh": "check-context-export-fresh.py",
+    "Check the committed agent view is reproducible": CiOnly(
+        "CI-only: it installs mq-agent, which owns the generator and is not a "
+        "dependency of this repo. A local vault also holds gitignored lessons, "
+        "so a clean checkout is the environment the check is about. The local "
+        "guard is tests/test_versioned_agent_view.py, run by the unittest step."
+    ),
     "Check context exports are regenerated": CiOnly(
         "CI-only by design, and release-check.sh's header says so: the step runs "
         "generate-repo-context-export.py --all and diffs the result, so it "
