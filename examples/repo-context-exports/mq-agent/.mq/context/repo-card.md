@@ -2,7 +2,7 @@
 schema: context-card.v1
 repo: mq-agent
 role: MQ-stack workflow orchestrator and context-export owner
-updated_at: 2026-09-29T00:00:00Z
+updated_at: 2026-10-13T00:00:00Z
 freshness: current
 scope: repo
 publishability: public-safe
@@ -12,7 +12,7 @@ publishability: public-safe
 
 ## Current blockers
 
-* No code blockers as of 2026-09-13; the remaining constraint is evidence volume, not code.
+* No code blockers. Remaining work is operational proof of the Post-v1.30 controlled activation gate: Evidence #3 on a second UTC day, followed by approval, canary, promotion, activation, post-activation verification, and deterministic rollback.
 
 ## Owns
 
