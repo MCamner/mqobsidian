@@ -2,7 +2,7 @@
 
 ## Known Blockers
 
-* No code blockers. Remaining work is operational proof of the Post-v1.30 controlled activation gate: Evidence #3 on a second UTC day, followed by approval, canary, promotion, activation, post-activation verification, and deterministic rollback.
+* No code blockers. Controlled activation/rollback is proven and learned-routing readiness is calibrated. Automatic routing stays disabled until current-era applied `docs-review` evidence meets the gate (2 routes, 10 samples per route, at least 14 days), followed by explicit operator promotion review. Telemetry alone grants no execution right.
 
 ## Check Before Acting
 
