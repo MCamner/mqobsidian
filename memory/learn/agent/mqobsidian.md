@@ -1,9 +1,9 @@
 ---
 type: agent-view
 system: mqobsidian
-generated: 2026-09-30
+generated: 2026-09-17
 generator: mq-agent agent-views rebuild
-sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md, memory/learn/repos/mqobsidian.md]
+sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md]
 ---
 
 # mqobsidian — agent view
@@ -28,11 +28,6 @@ Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution- o
 - Överföringen till `routing/outcomes.jsonl` är manuell, så vault och runtime-store glider isär tyst mellan körningar.
 - Ett underlag dominerat av en task class ser ut som routingevidens utan att kunna jämföra routes.
 - Kontrakt kan vara kompletta i båda ändar utan att sömmen körs; en tom yta bevisar ingenting.
-
-## Relevant lessons
-
-- assess whether a completed semantic-memory upload proves the retrieval surface is correct
-- refresh the OpenAI semantic repository memory after finding the store 20 days stale
 
 ## Read next
 

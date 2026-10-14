@@ -17,6 +17,13 @@
   every historical record stays valid. The forward cost DEC-006 names applies
   as well: an older closed-schema reader classifies a `repo-review` record as
   invalid rather than reading it.
+- DEC-007: the committed front-door view `memory/learn/agent/mqobsidian.md` is
+  built from committed sources only. `systems/mqobsidian/index.md` declares
+  `agent_view: versioned`, so the view no longer quotes the gitignored
+  `memory/learn/repos/` lessons and dates itself from its sources' `updated:`.
+  An operator vault and a clean clone now rebuild it byte for byte. Public Safe
+  Check verifies that with mq-agent's `agent-views check`;
+  `tests/test_versioned_agent_view.py` is the local guard.
 
 ## [0.4.0] - 2026-09-11
 
