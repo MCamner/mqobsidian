@@ -210,6 +210,93 @@ class ExecutionOutcomeContractTests(unittest.TestCase):
         mutated = dict(self.example, routing_score=0.91)
         self.assertTrue(list(self.validator.iter_errors(mutated)))
 
+    def _complete(self) -> dict:
+        return {
+            "status": "complete",
+            "steps": [{"step": 1, "status": "complete"}],
+        }
+
+    def _partial(self) -> dict:
+        return {
+            "status": "partial",
+            "steps": [{
+                "step": 1, "status": "partial",
+                "source_item_count": 91, "executed_call_count": 25,
+            }],
+        }
+
+    def test_complete_execution_and_partial_failure_are_valid(self) -> None:
+        records = (
+            {**self.example, "completeness": self._complete()},
+            {**self.example, "result": "FAIL", "exit_status": "error",
+             "completeness": self._partial()},
+        )
+        for record in records:
+            with self.subTest(record=record):
+                self.assertEqual(list(self.validator.iter_errors(record)), [])
+
+    def test_partial_execution_cannot_be_pass_or_ok(self) -> None:
+        for result, exit_status in (("PASS", "ok"), ("PASS", "error"),
+                                    ("FAIL", "ok"), ("SKIPPED", "skipped")):
+            record = {**self.example, "result": result, "exit_status": exit_status,
+                      "completeness": self._partial()}
+            with self.subTest(result=result, exit_status=exit_status):
+                self.assertTrue(list(self.validator.iter_errors(record)))
+
+    def test_completeness_status_matches_its_step_states(self) -> None:
+        for completeness in (
+            {"status": "complete", "steps": self._partial()["steps"]},
+            {"status": "partial", "steps": self._complete()["steps"]},
+            {"status": "complete", "steps": []},
+        ):
+            record = {**self.example, "result": "FAIL", "exit_status": "error",
+                      "completeness": completeness}
+            self.assertTrue(list(self.validator.iter_errors(record)))
+
+    def test_empty_plan_is_explicitly_partial(self) -> None:
+        record = {**self.example, "result": "FAIL", "exit_status": "error",
+                  "completeness": {"status": "partial", "steps": []}}
+        self.assertEqual(list(self.validator.iter_errors(record)), [])
+
+    def test_incomplete_step_states_are_explicit(self) -> None:
+        for status in ("partial", "failed", "skipped", "not-executed", "unmeasured"):
+            record = {**self.example, "result": "FAIL", "exit_status": "error",
+                      "completeness": {"status": "partial", "steps": [
+                          {"step": 1, "status": status},
+                      ]}}
+            self.assertEqual(list(self.validator.iter_errors(record)), [], status)
+
+    def test_completeness_rejects_missing_or_invalid_measurements(self) -> None:
+        for step in (
+            {"step": 1},
+            {"status": "partial"},
+            {"step": 0, "status": "partial"},
+            {"step": 1, "status": "guessed"},
+            {"step": 1, "status": "partial", "source_item_count": 91},
+            {"step": 1, "status": "partial", "executed_call_count": 25},
+            {"step": 1, "status": "partial", "source_item_count": -1,
+             "executed_call_count": 25},
+            {"step": 1, "status": "partial", "source_item_count": 91,
+             "executed_call_count": -1},
+            {"step": 1, "status": "partial", "path": "private-path"},
+        ):
+            record = {**self.example, "result": "FAIL", "exit_status": "error",
+                      "completeness": {"status": "partial", "steps": [step]}}
+            with self.subTest(step=step):
+                self.assertTrue(list(self.validator.iter_errors(record)))
+
+    def test_old_closed_reader_rejects_new_field_but_accepts_history(self) -> None:
+        import copy
+
+        old = copy.deepcopy(self.schema)
+        old["properties"].pop("completeness", None)
+        old.pop("allOf", None)
+        validator = Draft202012Validator(old)
+        self.assertEqual(list(validator.iter_errors(self.example)), [])
+        self.assertTrue(list(validator.iter_errors(
+            {**self.example, "completeness": self._complete()}
+        )))
+
 
 if __name__ == "__main__":
     unittest.main()

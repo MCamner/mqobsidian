@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+- `mq.execution-outcome.v1` gains optional measured `completeness`, separating
+  complete execution from partial, failed, skipped, unexecuted and unmeasured
+  steps. Partial execution requires `FAIL` and `error` or `aborted`; route or
+  model verification cannot turn it into execution `PASS`. Historical records
+  remain valid and unchanged; absence means unmeasured. Older closed-schema
+  readers reject records carrying the new field. See
+  `docs/execution-completeness-contract.md`.
+
 - `mq.execution-outcome.v1` gains the task class `repo-review`, for the
   outcome of mq-agent `review repo`. It is its own class, not an alias for
   `audit`: feedback evidence correlates to it through the exact run id, never
