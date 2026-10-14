@@ -67,9 +67,11 @@ jobs:
       # memory/learn/agent/mqobsidian.md is committed, so it must rebuild
       # byte-for-byte from committed sources alone (DEC-007). The generator is
       # mq-agent's; a clean checkout is exactly the vault without local data.
+      # Pinned to a release tag, not main: a generator change in mq-agent must
+      # not turn this repo red without a change here. Bump the tag deliberately.
       - name: Check the committed agent view is reproducible
         run: |
-          python3 -m pip install "mq-agent @ git+https://github.com/MCamner/mq-agent@main"
+          python3 -m pip install "mq-agent @ git+https://github.com/MCamner/mq-agent@v1.34.0"
           mq-agent agent-views check --vault . --system mqobsidian
 
       - name: Check context exports are regenerated

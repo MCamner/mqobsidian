@@ -60,9 +60,10 @@ committed output.
   never reproducible there, and they are still in the local vault and in the
   local views.
 - `agent-views check` now reports a stale view only when its sources changed.
-- The CI step installs mq-agent from `main`. When the generator changes there,
-  this repo goes red until the view is rebuilt. That drift is real, and the gate
-  is meant to catch it.
+- The CI step installs mq-agent at a release tag (first `v1.34.0`), not
+  `main`. A generator change reaches this repo only when the tag is bumped here,
+  and the view is rebuilt in the same change. Until 2026-10-15 the step used
+  `main`, which would have turned this repo red on an unrelated mq-agent merge.
 - Making another view versioned means adding the marker to that system's
   `index.md`, tracking the view, and adding it to the CI step.
 
