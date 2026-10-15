@@ -71,7 +71,7 @@ jobs:
       # not turn this repo red without a change here. Bump the tag deliberately.
       - name: Check the committed agent view is reproducible
         run: |
-          python3 -m pip install "mq-agent @ git+https://github.com/MCamner/mq-agent@v1.34.0"
+          python3 -m pip install "mq-agent @ git+https://github.com/MCamner/mq-agent@v1.35.0"
           mq-agent agent-views check --vault . --system mqobsidian
 
       - name: Check context exports are regenerated
