@@ -75,3 +75,7 @@ __pycache__/
 # Local NotebookLM state and generated packs. Only the consumer profile,
 # schemas, templates, policy, and sanitized examples are publishable.
 /.notebooklm/
+
+# repo-signal packs: regenerated per checkout (`repo-signal export .`), never
+# committed. The symbol index names its checkout and expires after 24 hours.
+/.repo-signal/
