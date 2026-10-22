@@ -9,6 +9,7 @@ nothing but the repo.
 
 import re
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -18,6 +19,12 @@ VERSIONED_RE = re.compile(r"^agent_view:\s*versioned\s*$", re.MULTILINE)
 
 
 def tracked_views(root: Path = ROOT) -> list[str]:
+    if not (root / ".git").exists():
+        # A `git archive` export (the clean-checkout gate) has no .git; every
+        # file in it is tracked by construction.
+        return sorted(
+            p.relative_to(root).as_posix() for p in (root / "memory/learn/agent").glob("*.md")
+        )
     out = subprocess.run(
         ["git", "ls-files", "memory/learn/agent/*.md"],
         cwd=root,
@@ -58,6 +65,13 @@ class VersionedAgentViewTest(unittest.TestCase):
             with self.subTest(view=rel):
                 sources = _read(f"systems/{system}/hot.md") + _read(f"systems/{system}/index.md")
                 self.assertEqual(problems(system, sources, _read(rel)), [])
+
+    def test_tracked_views_without_git_lists_the_export(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "memory/learn/agent").mkdir(parents=True)
+            (root / "memory/learn/agent/mqobsidian.md").write_text("x\n", encoding="utf-8")
+            self.assertEqual(tracked_views(root), ["memory/learn/agent/mqobsidian.md"])
 
     def test_a_view_citing_local_lessons_is_rejected(self) -> None:
         view = "sources: [systems/mqobsidian/hot.md, memory/learn/repos/mqobsidian.md]\n"
