@@ -2,7 +2,7 @@
 
 ## Known Blockers
 
-* No confirmed blockers as of 2026-09-17.
+* No confirmed blockers as of 2026-10-23.
 
 ## Check Before Acting
 
