@@ -4,7 +4,7 @@ system: mqobsidian
 status: active
 max_words: 500
 tags: [hot, cache, active-context]
-updated: 2026-09-17
+updated: 2026-10-23
 owner:
 links_to: [index]
 ---
@@ -20,8 +20,8 @@ och routingkontrakt senare lager läser.
 
 ## Current status
 `v0.4.0` (2026-09-11) är en kontraktsgrund, inte levererad Execution
-Intelligence: kontrakten är kompletta och grindade, men fallback recording och
-aktiv-vs-shadow-divergens är öppna.
+Intelligence: kontrakten är grindade och fallback recording är stängd (#134),
+men aktiv-vs-shadow-divergens och policylagret är öppna.
 Execution- och routingkontrakten är kanoniska här och registret hålls mot
 `schemas/` i båda riktningar. Phase 12 och ownership-spåret (DEC-005) är
 stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
@@ -43,21 +43,19 @@ stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
 - `execution_run_id` korrelerar routingobservation med exekvering, ovillkorligt i v1.
 - `runtime_fingerprint` är valfri och additiv (DEC-006). Frånvaro betyder att
   proveniens inte observerades — annan fakta än `identity quality: unknown`.
-- NotebookLM D3–D8 är implementerat i `mq-agent` (#307–#309), opt-in inte default.
-  `mq.notebook-corpus-index.v1` (#114) är kanoniskt här; dataapproval är öppen.
+- `mq.execution-outcome.v1` har mätt fallback (#134), mätt `completeness` (#140)
+  och task class `repo-review` (#136), additivt under DEC-006. Frånvaro = omätt.
+- Agent view för mqobsidian är versionerad (DEC-007, #139): byggd bara från hot/index.
+- `mq.notebook-corpus-index.v1` (#114) är kanoniskt här; NotebookLM är opt-in.
 - `mq.semantic-refresh.v1` (#124) är kanoniskt här: identitet är repo +
   artifact_type, och exakt en aktiv generation per identitet i auktoritativa stores.
 - Skill selection har kontrakt (`mq.skill-profile.v1`, `mq.skill-route.v1`,
   `skill-selection-vocabulary.v1`); mq-agent äger exekveringen.
 - `.mq/context-selection-vocabulary.json` (DEC-005) och `.mq/context-budgets.json`
   (`context-budget.v1`) är publicerade kontraktskällor; ingen håller en egen kopia.
-- `--clean` rör bara exportens fem ägda filer — nu sant för båda exportörerna.
-- Evidensläge 2026-09-17: `routing/outcomes.jsonl` har 144 poster, i linje med
-  mq-agents store. De 14 `applied` (2026-09-01 → 09-04) delar ett `decision_id`
-  — samma task enligt kontraktet — med 14 skilda `run_id`, alla `docs-review`,
-  9 PASS / 3 UNAVAILABLE / 2 FAIL, på `local-shadow` (9) och
-  `deterministic-local` (5). Execution-outcomes: 54 i mq-agents store,
-  2026-08-19 → 09-15, en med fingerprint, noll fallback.
+- Evidensläge (oförändrat sedan 2026-09-17, 144 poster 2026-10-23): de 14
+  `applied` delar ett `decision_id`, alla `docs-review`, 9 PASS / 3 UNAVAILABLE
+  / 2 FAIL, på `local-shadow` (9) och `deterministic-local` (5).
 - Write-gaten är route-medveten: `deterministic-local` kör ingen modellinferens,
   så `model_output_received: false` är enda sanna värdet på en PASS, och `true`
   avvisas för den routen.
