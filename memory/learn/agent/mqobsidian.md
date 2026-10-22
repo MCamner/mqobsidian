@@ -18,7 +18,7 @@ Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution- o
 ## Active priorities
 
 - Regenerera steg 0 när hot eller index ändras; read-order-kedjan ska vara liten och sann.
-- Skaffa applied-evidens från fler än en task; de 14 överförda posterna är alla samma `docs-review`-beslut.
+- Operatörsbeslut om `docs-review`-readiness (32 applied, ett beslut); fler task classes saknas fortfarande.
 - Samla execution outcomes per task class och route; underlaget domineras i dag av task class `docs`.
 - Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
 
