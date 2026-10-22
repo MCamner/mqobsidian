@@ -1,7 +1,7 @@
 ---
 type: agent-view
 system: mqobsidian
-generated: 2026-09-17
+generated: 2026-10-23
 generator: mq-agent agent-views rebuild
 sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md]
 ---
@@ -13,7 +13,7 @@ edit by hand; re-run `mq-agent agent-views rebuild`.
 
 ## Current state
 
-Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution- och routingkontrakt senare lager läser. `v0.4.0` (2026-09-11) är en kontraktsgrund, inte levererad Execution Intelligence: kontrakten är kompletta och grindade, men fallback recording och aktiv-vs-shadow-divergens är öppna. Execution- och routingkontrakten är kanoniska här och registret…
+Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution- och routingkontrakt senare lager läser. `v0.4.0` (2026-09-11) är en kontraktsgrund, inte levererad Execution Intelligence: kontrakten är grindade och fallback recording är stängd (#134), men aktiv-vs-shadow-divergens och policylagret är öppna. Execution- och routingkontrakten är kanoniska…
 
 ## Active priorities
 

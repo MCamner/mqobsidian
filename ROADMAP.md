@@ -6,9 +6,10 @@ this repo owns are now complete, canonical and gated, and the register that
 declares them is held to `schemas/` in both directions.
 
 This release describes a contract foundation, **not** a finished Execution
-Intelligence track. Fallback recording, active-versus-shadow divergence
-reporting and the whole human-gated policy layer in v2.7 stay genuinely open
-below; nothing was ticked to make a release look complete. The layers that need
+Intelligence track. Fallback recording has since closed (#134), but
+active-versus-shadow divergence reporting and the whole human-gated policy
+layer in v2.7 stay genuinely open below; nothing was ticked to make a release
+look complete. The layers that need
 this foundation come next, and they come on their own evidence.
 
 The `v0.3.0` plan is kept below as history, as are the SSOT & Promotion
