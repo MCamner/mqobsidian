@@ -11,6 +11,7 @@ usage-backed scores arrive in FAS 8; re-run this then.
 
 from __future__ import annotations
 
+import argparse
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -123,7 +124,10 @@ def write(name: str, title: str, note: str, content: str) -> None:
     )
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    # No options. Parsing still runs first, so `--help` prints and exits and an
+    # unknown flag stops with 2 — before anything is written into views/.
+    argparse.ArgumentParser(description=__doc__.splitlines()[0]).parse_args(argv)
     patterns = load_jsonl(PATTERNS)
     observations = load_jsonl(OBSERVATIONS)
     compute_signals(patterns, observations)
@@ -222,7 +226,8 @@ def emit_mqlaunch_output(ranked: list[dict], all_tags: list[str]) -> None:
         return [p["id"] for p in ranked if pred(p)]
 
     default_visible_risk = ["read-only"]
-    visible = lambda p: p["risk_class"] in default_visible_risk
+    def visible(p):
+        return p["risk_class"] in default_visible_risk
 
     slices = {
         # default-visible slices exclude mutating; mqlaunch opts in via `mutating`
