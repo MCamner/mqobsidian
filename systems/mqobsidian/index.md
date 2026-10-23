@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-09-17
+updated: 2026-10-23
 owner:
 links_to: [hot]
 agent_view: versioned
@@ -30,7 +30,7 @@ recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
 
 ## Current priorities
 1. Regenerera steg 0 när hot eller index ändras; read-order-kedjan ska vara liten och sann.
-2. Skaffa applied-evidens från fler än en task; de 14 överförda posterna är alla samma `docs-review`-beslut.
+2. Operatörsbeslut om `docs-review`-readiness (32 applied, ett beslut); fler task classes saknas fortfarande.
 3. Samla execution outcomes per task class och route; underlaget domineras i dag av task class `docs`.
 4. Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
 5. Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.

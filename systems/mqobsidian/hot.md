@@ -53,9 +53,11 @@ stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
   `skill-selection-vocabulary.v1`); mq-agent äger exekveringen.
 - `.mq/context-selection-vocabulary.json` (DEC-005) och `.mq/context-budgets.json`
   (`context-budget.v1`) är publicerade kontraktskällor; ingen håller en egen kopia.
-- Evidensläge (oförändrat sedan 2026-09-17, 144 poster 2026-10-23): de 14
-  `applied` delar ett `decision_id`, alla `docs-review`, 9 PASS / 3 UNAVAILABLE
-  / 2 FAIL, på `local-shadow` (9) och `deterministic-local` (5).
+- Evidensläge 2026-10-23: 163 poster, vault synkad med mq-agents store. De 32
+  `applied` (09-01 → 10-18) delar ett `decision_id`, alla `docs-review`:
+  `deterministic-local` 14 PASS; `local-shadow` 7 PASS / 7 FAIL / 4 UNAVAILABLE.
+- `docs-review`: readiness `AWAITING_OPERATOR_APPROVAL` (min 14/route, 48 d);
+  divergens i aktuell era 1/route, `INSUFFICIENT_EVIDENCE` (10/route, 14 d krävs).
 - Write-gaten är route-medveten: `deterministic-local` kör ingen modellinferens,
   så `model_output_received: false` är enda sanna värdet på en PASS, och `true`
   avvisas för den routen.
@@ -63,8 +65,8 @@ stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
 
 ## Immediate next actions
-1. Skaffa applied-evidens från mer än en task: alla 14 `applied` är samma `docs-review`-beslut, så ingen jämförelse mellan task classes är möjlig.
-2. Lägg till aktiv-vs-shadow-divergens först när samma task class kan jämföras; `docs` dominerar underlaget.
+1. Operatörsbeslut om `docs-review`-readiness; eligibility tillåter granskning, aldrig automatisk routing.
+2. Divergens kräver fler riktiga körningar i aktuell era; inga körningar för att höja räknaren.
 3. Behandla 30 körningar, 2 routes, 14 dagar och 10 per route som hypotes, inte som aktiveringsregel.
 
 ## Critical links
