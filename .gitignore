@@ -53,6 +53,26 @@ learn/
 memory/*
 !memory/context-cards/
 !memory/context-cards/*.md
+# The memory CLI and the modules it imports are code, not memory: Pulse and the
+# dashboard read `memory_cli.py status --json` through mq-agent, so the producer
+# must survive a fresh clone. The data beside it (inbox, feedback, journals,
+# scores, local/) stays ignored.
+!memory/commands/
+memory/commands/*
+!memory/commands/memory_cli.py
+!memory/commands/build_views.py
+!memory/commands/emit_generic_score.py
+!memory/commands/emit_learn_writeback.py
+!memory/commands/emit_memory_score.py
+!memory/commands/transition_journal.py
+!memory/commands/tests/
+memory/commands/tests/*
+!memory/commands/tests/conftest.py
+!memory/commands/tests/test_memory_cli.py
+!memory/commands/tests/test_generic_score.py
+!memory/commands/tests/test_learn_writeback.py
+!memory/commands/tests/test_transition_journal.py
+!memory/commands/tests/test_derive_tier_characterization.py
 mq-stack/
 roadmap/
 decisions/

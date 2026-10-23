@@ -222,7 +222,8 @@ def emit_mqlaunch_output(ranked: list[dict], all_tags: list[str]) -> None:
         return [p["id"] for p in ranked if pred(p)]
 
     default_visible_risk = ["read-only"]
-    visible = lambda p: p["risk_class"] in default_visible_risk
+    def visible(p):
+        return p["risk_class"] in default_visible_risk
 
     slices = {
         # default-visible slices exclude mutating; mqlaunch opts in via `mutating`
