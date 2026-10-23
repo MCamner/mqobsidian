@@ -90,6 +90,6 @@ def test_t04_explicit_contradiction_deprecates():
     ...
 
 
-@pytest.mark.skip(reason="derive_tier has no real/fixture distinction; the real guard is test_two_track_separation (T18/T25)")
+@pytest.mark.skip(reason="derive_tier has no real/fixture distinction; the real guard is the local-only test_two_track_separation (T18/T25)")
 def test_t18_fixture_negative_not_counted():
     ...

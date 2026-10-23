@@ -73,6 +73,7 @@ memory/commands/tests/*
 !memory/commands/tests/test_learn_writeback.py
 !memory/commands/tests/test_transition_journal.py
 !memory/commands/tests/test_derive_tier_characterization.py
+!memory/commands/tests/test_build_views.py
 mq-stack/
 roadmap/
 decisions/

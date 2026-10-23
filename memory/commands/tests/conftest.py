@@ -1,8 +1,11 @@
-"""Pytest config for the command-memory tests (tracked; they run on tmp paths only).
+"""Pytest config for the command-memory tests.
 
-Two honest blocks only (decision 2026-06-27, Väg B):
-  - test_two_track_separation.py    — real invariants that pass TODAY
+The tracked tests run on tmp paths only. Two blocks cover derive_tier
+(decision 2026-06-27, Väg B):
   - test_derive_tier_characterization.py — what derive_tier does TODAY (tracked gaps)
+  - test_two_track_separation.py — real invariants that pass TODAY. Local-only and
+    not tracked: it audits this machine's real inbox, feedback, fixtures/ and local/
+    trees, which a clean clone does not have. The mem* fixtures below exist for it.
 
 No DD-001 engine is exercised: there is no effective_confidence, no
 explicit_contradiction signal, no evaluation window, and no real/fixture
