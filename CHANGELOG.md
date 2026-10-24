@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-24
+
 - `mq.execution-outcome.v1` gains optional measured `completeness`, separating
   complete execution from partial, failed, skipped, unexecuted and unmeasured
   steps. Partial execution requires `FAIL` and `error` or `aborted`; route or
