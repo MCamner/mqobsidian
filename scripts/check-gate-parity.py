@@ -76,6 +76,12 @@ STEPS: dict[str, object] = {
 
 # Local checks with no CI counterpart, and why.
 LOCAL_ONLY: dict[str, str] = {
+    "check-github-releases.sh": (
+        "local-only by design: it asks GitHub whether VERSION is already "
+        "published, and main in CI sits between releases, so the answer there "
+        "would always be 'bump VERSION'. It is a pre-release question for the "
+        "operator, and release-check.sh skips it under CI, --dry-run and --json."
+    ),
     "check-clean-checkout.py": (
         "local-only because it is redundant in CI: the CI working tree already IS "
         "a clean checkout of tracked files, so running the suite against "
