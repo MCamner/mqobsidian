@@ -1,6 +1,6 @@
 # Roadmap
 
-**Current version:** 0.4.0
+**Current version:** 0.5.0
 **Current direction:** v0.4.0 released — the execution and routing contracts
 this repo owns are now complete, canonical and gated, and the register that
 declares them is held to `schemas/` in both directions.

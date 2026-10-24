@@ -31,9 +31,8 @@ for arg in "$@"; do
     *) echo "usage: ./release-check.sh [--dry-run] [--json]" >&2; exit 2 ;;
   esac
 done
-# --dry-run is accepted for contract compatibility; this check is already
-# read-only, so it is a no-op.
-: "$DRY_RUN"
+# --dry-run skips the one network step (the GitHub release lookup); every
+# other check is already read-only and local.
 
 FAILED=0
 BLOCKERS=()
@@ -61,6 +60,16 @@ if grep -q "\[${VERSION}\]" CHANGELOG.md; then
   pass "CHANGELOG references [$VERSION]"
 else
   fail "CHANGELOG does not reference [$VERSION]"
+fi
+
+step "GitHub release publication"
+# Is VERSION already published, and was the previous CHANGELOG version ever
+# published. Network, so --dry-run, --json (the stack preflight) and CI skip it;
+# main sits between releases there and the answer would always be "bump".
+if [[ "$DRY_RUN" -eq 1 || "$JSON" -eq 1 || -n "${CI:-}" ]]; then
+  [[ "$JSON" -eq 1 ]] || printf "\033[1;33m[SKIP]\033[0m %s\n" "GitHub release lookup (dry-run, --json or CI)"
+else
+  run "check-github-releases.sh" bash scripts/check-github-releases.sh
 fi
 
 step "Public-safe — no sensitive content"
