@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-10-23
+updated: 2026-10-28
 owner:
 links_to: [hot]
 agent_view: versioned
@@ -33,7 +33,7 @@ recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
 2. Operatörsbeslut om `docs-review`-readiness (32 applied, ett beslut); fler task classes saknas fortfarande.
 3. Samla execution outcomes per task class och route; underlaget domineras i dag av task class `docs`.
 4. Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
-5. Samla verkliga `feedback-signal.v1`-utfall och utvärdera precision/recall tillsammans med tokenreduktion.
+5. Hybrid retrieval är `ACTIVE_ONLY` i mq-agent; fler operatörsetiketterade `repo-review`-fall före fas 1.
 
 ## Key links
 - [[hot]]
@@ -76,6 +76,7 @@ recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
 - Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval? (Teknisk nytta är nu mätt och utebliven; frågan kvarstår organisatoriskt.)
 
 ## Recent changes
+- 2026-10-28: Cognee-planen fick ett lägesavsnitt. Fas 0 och 2 levererades i `mq-agent` (v1.30 Feedback Engine, Hybrid Retrieval v2), inte här, och planen visade dem fortfarande som öppna. Utfallet: inget valfritt spår godkändes, beslutet är `ACTIVE_ONLY` (2026-10-08), och kontrollerad aktivering med rollback är bevisad (mq-agent #391). Fas 1 (provenance-graf) är inte påbörjad; se [[../../docs/plans/cognee-inspired-memory-roadmap]].
 - 2026-09-30: `mq.semantic-refresh.v1` landade (#124) och gjorde registret 33 kontrakt. Kontraktet definierar logisk identitet (repo + artifact_type), authority, replacement semantics och en postcondition: exakt en aktiv generation i den auktoritativa store-mängden och ingen retrieval-auktoritativ generation utanför den. `mq-agent` implementerade latest-only refresh, konvergensväntan och legacy-avveckling (#312–#314), och `memory status` skiljer nu `configured`, `reachable` och `fresh` med källrevision som grund. Freshness-gaten täcker nu även kontraktsantalet i hot och index — det påståendet hade glidit två gånger med gröna gates.
 - 2026-09-29: NotebookLM D3–D8 stängdes i `mq-agent` (#307–#309) och registrerades här som implementationsposter. `mq.notebook-corpus-index.v1` (#114) gjorde registret 32 kontrakt. D8 är ett opt-in semantiskt experiment mot den frysta D4-lexikala baslinjen, med lokal `nomic-embed-text` via Ollama och ingen hostad embedding-egress; det är inte en aktiverad default-retrievalväg. Den organisatoriska dataapprovalfrågan är oförändrad.
 - 2026-09-17: Refreshade hot/index till v0.4.0-läget och överförde de 14 `applied`-posterna (130 -> 144). Write-gaten avvisade fem av dem: `record-routing-outcome.py` krävde `model_output_received=true` på varje PASS, ett krav från tiden före ADR-010 D8 när varje route var ett modellanrop. `deterministic-local` kör ingen modellinferens, så kravet avvisade den enda sanna post en sådan körning kan skriva. Invarianten är nu route-medveten i båda riktningar — en deterministisk route får inte heller påstå mottagen modelloutput.

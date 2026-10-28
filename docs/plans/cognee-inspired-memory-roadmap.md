@@ -18,6 +18,30 @@ authorized source
   -> usage feedback and evaluation
 ```
 
+## Status (2026-10-28)
+
+Phases 0 and 2 were delivered in `mq-agent`, not here. Read its roadmap before
+treating any phase below as open work.
+
+- **Baseline and shadow hybrid retrieval:** `mq-agent` v1.30.0 (Feedback
+  Engine F0–F6) and the Hybrid Retrieval v2 checkpoints. Vector, keyword,
+  Notebook and CodeGraph channels were measured as zero-effect shadow evidence
+  against explicit relevance fixtures.
+- **Measured result:** no optional channel earned admission. The 2026-10-08
+  admission decision is `ACTIVE_ONLY` globally and for `repo-review`, `ci` and
+  `docs`. Adding channels kept precision at 0.1 while adding tokens.
+- **Controlled activation and rollback:** proven end to end on real
+  `repo-review` executions (`mq-agent` #391).
+- **Open in `mq-agent`:** broaden `repo-review` retrieval evidence with more
+  operator-authored cases and relevance labels before proposing any automatic
+  agent integration.
+- **Not started:** Phase 1 (provenance graph projection) and Phases 3–5. The
+  shadow evidence above gives no traversal need that would justify Phase 1 yet.
+
+Sources: `mq-agent` `ROADMAP.md` (Hybrid Retrieval v2 checkpoints),
+`docs/plans/2026-10-11-hybrid-repo-review-evidence.md` and
+`docs/feedback-controlled-activation-e2e-evidence.md` in `mq-agent`.
+
 ## Ownership
 
 | Capability | Owner | Boundary |
