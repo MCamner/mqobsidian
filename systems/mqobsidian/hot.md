@@ -4,7 +4,7 @@ system: mqobsidian
 status: active
 max_words: 500
 tags: [hot, cache, active-context]
-updated: 2026-10-23
+updated: 2026-10-28
 owner:
 links_to: [index]
 ---
@@ -45,6 +45,7 @@ stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
   proveniens inte observerades — annan fakta än `identity quality: unknown`.
 - `mq.execution-outcome.v1` har mätt fallback (#134), mätt `completeness` (#140)
   och task class `repo-review` (#136), additivt under DEC-006. Frånvaro = omätt.
+- Hybrid retrieval mättes i mq-agent: inget valfritt spår godkändes, `ACTIVE_ONLY` (2026-10-08). Fas 1 ej påbörjad.
 - Agent view för mqobsidian är versionerad (DEC-007, #139): byggd bara från hot/index.
 - `mq.notebook-corpus-index.v1` (#114) är kanoniskt här; NotebookLM är opt-in.
 - `mq.semantic-refresh.v1` (#124) är kanoniskt här: identitet är repo +
@@ -61,7 +62,6 @@ stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
 - Write-gaten är route-medveten: `deterministic-local` kör ingen modellinferens,
   så `model_output_received: false` är enda sanna värdet på en PASS, och `true`
   avvisas för den routen.
-- Omätta räknare är okända, inte noll.
 - Runtime truth hör hemma i källrepo eller verktyg, inte i vault-notes.
 
 ## Immediate next actions
