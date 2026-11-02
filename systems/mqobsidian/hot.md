@@ -4,7 +4,7 @@ system: mqobsidian
 status: active
 max_words: 500
 tags: [hot, cache, active-context]
-updated: 2026-10-28
+updated: 2026-11-02
 owner:
 links_to: [index]
 ---
@@ -19,9 +19,9 @@ Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution-
 och routingkontrakt senare lager läser.
 
 ## Current status
-`v0.4.0` (2026-09-11) är en kontraktsgrund, inte levererad Execution
-Intelligence: kontrakten är grindade och fallback recording är stängd (#134),
-men aktiv-vs-shadow-divergens och policylagret är öppna.
+`v0.5.0` (2026-10-24): mätt `completeness`, task class `repo-review`,
+versionerad agent view. Divergensrapporten finns i mq-agent; policylagret
+(v2.7) är öppet.
 Execution- och routingkontrakten är kanoniska här och registret hålls mot
 `schemas/` i båda riktningar. Phase 12 och ownership-spåret (DEC-005) är
 stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
@@ -54,11 +54,10 @@ stängda. NotebookLM är fortfarande opt-in och valfri, inte provider.
   `skill-selection-vocabulary.v1`); mq-agent äger exekveringen.
 - `.mq/context-selection-vocabulary.json` (DEC-005) och `.mq/context-budgets.json`
   (`context-budget.v1`) är publicerade kontraktskällor; ingen håller en egen kopia.
-- Evidensläge 2026-10-23: 163 poster, vault synkad med mq-agents store. De 32
-  `applied` (09-01 → 10-18) delar ett `decision_id`, alla `docs-review`:
-  `deterministic-local` 14 PASS; `local-shadow` 7 PASS / 7 FAIL / 4 UNAVAILABLE.
-- `docs-review`: readiness `AWAITING_OPERATOR_APPROVAL` (min 14/route, 48 d);
-  divergens i aktuell era 1/route, `INSUFFICIENT_EVIDENCE` (10/route, 14 d krävs).
+- Evidens 2026-11-02: 163 poster, vault synkad; 32 `applied` `docs-review`
+  (09-01 → 10-18): `deterministic-local` 14 PASS; `local-shadow` 7/7/4 PASS/FAIL/UNAVAILABLE.
+- `docs-review`: readiness `AWAITING_OPERATOR_APPROVAL`. Era `stated-evidence-floor`:
+  0 fullständiga lyckade, divergens `INSUFFICIENT_EVIDENCE` (2 routes, 10/route, 14 d).
 - Write-gaten är route-medveten: `deterministic-local` kör ingen modellinferens,
   så `model_output_received: false` är enda sanna värdet på en PASS, och `true`
   avvisas för den routen.
