@@ -3,7 +3,7 @@ type: index
 system: mqobsidian
 status: active
 tags: [index, system]
-updated: 2026-10-28
+updated: 2026-11-02
 owner:
 links_to: [hot]
 agent_view: versioned
@@ -17,14 +17,16 @@ Navsidan för `mqobsidian`: MQ-stackens durable memory layer och agent-routade k
 ## Current state
 `mqobsidian` lagrar reviewed knowledge, schemas, templates, examples och compact
 memory. Det kör inte workflows och ska inte ersätta `mq-agent` eller `mq-mcp`.
-`v0.4.0` (2026-09-11) stängde Execution and Routing Contract Integrity: ADR-010
-delade routing per modellanrop, `mq.model-route-outcome.v1` är kanoniskt här,
-`application` och `execution_run_id` skiljer tillämpad routing från råd, och
-`.mq/repo-contract.json` deklarerar nu 33 kontrakt som grindas mot `schemas/` i
-båda riktningar. Task-aware skill selection har kontrakt men ingen exekvering
-här. Det är en kontraktsgrund, inte levererad Execution Intelligence: fallback
-recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
-öppna. Phase 12 och ownership-spåret (DEC-005) är stängda. NotebookLM-spåret D3–D8
+`v0.5.0` (2026-10-24) lade till mätt `completeness` och task class
+`repo-review` på `mq.execution-outcome.v1`, och gjorde agent view versionerad
+(DEC-007). `v0.4.0` (2026-09-11) stängde Execution and Routing Contract
+Integrity: ADR-010 delade routing per modellanrop, `mq.model-route-outcome.v1`
+är kanoniskt här, `application` och `execution_run_id` skiljer tillämpad routing
+från råd, och `.mq/repo-contract.json` deklarerar 33 kontrakt som grindas mot
+`schemas/` i båda riktningar. Task-aware skill selection har kontrakt men ingen
+exekvering här. Fallback recording (#134) och divergensrapporten
+(`mq-agent route divergence`) finns; det human-gated policylagret (v2.7) är
+öppet. Phase 12 och ownership-spåret (DEC-005) är stängda. NotebookLM-spåret D3–D8
 är implementerat i `mq-agent` och förblir opt-in: `mq.notebook-corpus-index.v1`
 är kanoniskt här, exekveringen ligger där, och dataapproval är öppen.
 
@@ -32,7 +34,7 @@ recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
 1. Regenerera steg 0 när hot eller index ändras; read-order-kedjan ska vara liten och sann.
 2. Operatörsbeslut om `docs-review`-readiness (32 applied, ett beslut); fler task classes saknas fortfarande.
 3. Samla execution outcomes per task class och route; underlaget domineras i dag av task class `docs`.
-4. Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
+4. Divergensrapporten finns i mq-agent; aktuell era saknar fullständiga lyckade körningar att jämföra.
 5. Hybrid retrieval är `ACTIVE_ONLY` i mq-agent; fler operatörsetiketterade `repo-review`-fall före fas 1.
 
 ## Key links
@@ -76,6 +78,7 @@ recording, aktiv-vs-shadow-divergens och hela det human-gated policylagret är
 - Får något verkligt MQ-material skickas till NotebookLM, och under vilken organisatorisk dataapproval? (Teknisk nytta är nu mätt och utebliven; frågan kvarstår organisatoriskt.)
 
 ## Recent changes
+- 2026-11-02: Hot och index uppdaterade till `v0.5.0` (2026-10-24). Divergensrapporteringen bockades av i roadmapen: `mq-agent route divergence` levererades där (#415), men v2.6 visade den fortfarande som öppen. Aktuell era `stated-evidence-floor` har 4 poster och 0 fullständiga lyckade körningar, så rapporten säger `INSUFFICIENT_EVIDENCE`; senaste `applied` är 2026-10-18.
 - 2026-10-28: Cognee-planen fick ett lägesavsnitt. Fas 0 och 2 levererades i `mq-agent` (v1.30 Feedback Engine, Hybrid Retrieval v2), inte här, och planen visade dem fortfarande som öppna. Utfallet: inget valfritt spår godkändes, beslutet är `ACTIVE_ONLY` (2026-10-08), och kontrollerad aktivering med rollback är bevisad (mq-agent #391). Fas 1 (provenance-graf) är inte påbörjad; se [[../../docs/plans/cognee-inspired-memory-roadmap]].
 - 2026-09-30: `mq.semantic-refresh.v1` landade (#124) och gjorde registret 33 kontrakt. Kontraktet definierar logisk identitet (repo + artifact_type), authority, replacement semantics och en postcondition: exakt en aktiv generation i den auktoritativa store-mängden och ingen retrieval-auktoritativ generation utanför den. `mq-agent` implementerade latest-only refresh, konvergensväntan och legacy-avveckling (#312–#314), och `memory status` skiljer nu `configured`, `reachable` och `fresh` med källrevision som grund. Freshness-gaten täcker nu även kontraktsantalet i hot och index — det påståendet hade glidit två gånger med gröna gates.
 - 2026-09-29: NotebookLM D3–D8 stängdes i `mq-agent` (#307–#309) och registrerades här som implementationsposter. `mq.notebook-corpus-index.v1` (#114) gjorde registret 32 kontrakt. D8 är ett opt-in semantiskt experiment mot den frysta D4-lexikala baslinjen, med lokal `nomic-embed-text` via Ollama och ingen hostad embedding-egress; det är inte en aktiverad default-retrievalväg. Den organisatoriska dataapprovalfrågan är oförändrad.
