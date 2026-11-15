@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+- `context-pack.v1` gains optional provenance frontmatter so a reader can tell
+  whether a task pack still describes what it was built from: `task_class`,
+  `source_commit` and `source_state` (`clean` or `dirty`) for the primary
+  repo, that repo's `contract_version`, and the `vault_commit` the cards were
+  read at. Every key is optional and existing packs stay valid; a missing key
+  means not recorded, not unchanged. Older closed-schema readers reject a pack
+  carrying the new keys.
+
 ## [0.5.0] - 2026-10-24
 
 - `mq.execution-outcome.v1` gains optional measured `completeness`, separating
