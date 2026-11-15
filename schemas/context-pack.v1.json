@@ -32,6 +32,26 @@
       "type": "string",
       "minLength": 1
     },
+    "task_class": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "source_state": {
+      "type": "string",
+      "enum": ["clean", "dirty"]
+    },
+    "contract_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "vault_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
     "relevant_repos": {
       "type": "array",
       "items": {
