@@ -162,7 +162,9 @@ and does not route answers through NotebookLM.
 ### v2.6 — Shadow routing
 
 - [x] shadow decision contract
-- [ ] active-versus-shadow divergence reporting
+- [x] active-versus-shadow divergence reporting — `mq-agent route divergence`
+  compares applied routes within one era and never promotes (mq-agent #415
+  enforces the era's 14-day window)
 - [x] zero-effect guarantee
 - [x] machine-checked evidence threshold before policy experiments
 

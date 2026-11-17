@@ -1,7 +1,7 @@
 ---
 type: agent-view
 system: mqobsidian
-generated: 2026-10-28
+generated: 2026-11-02
 generator: mq-agent agent-views rebuild
 sources: [systems/mqobsidian/hot.md, systems/mqobsidian/index.md]
 ---
@@ -13,14 +13,14 @@ edit by hand; re-run `mq-agent agent-views rebuild`.
 
 ## Current state
 
-Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution- och routingkontrakt senare lager läser. `v0.4.0` (2026-09-11) är en kontraktsgrund, inte levererad Execution Intelligence: kontrakten är grindade och fallback recording är stängd (#134), men aktiv-vs-shadow-divergens och policylagret är öppna. Execution- och routingkontrakten är kanoniska…
+Hålla MQ-stackens durable memory tunn och public-safe, och äga de execution- och routingkontrakt senare lager läser. `v0.5.0` (2026-10-24): mätt `completeness`, task class `repo-review`, versionerad agent view. Divergensrapporten finns i mq-agent; policylagret (v2.7) är öppet. Execution- och routingkontrakten är kanoniska här och registret hålls mot `schemas/`…
 
 ## Active priorities
 
 - Regenerera steg 0 när hot eller index ändras; read-order-kedjan ska vara liten och sann.
 - Operatörsbeslut om `docs-review`-readiness (32 applied, ett beslut); fler task classes saknas fortfarande.
 - Samla execution outcomes per task class och route; underlaget domineras i dag av task class `docs`.
-- Rapportera aktiv-vs-shadow-divergens innan någon kandidatpolicy bedöms.
+- Divergensrapporten finns i mq-agent; aktuell era saknar fullständiga lyckade körningar att jämföra.
 
 ## Current blockers
 
